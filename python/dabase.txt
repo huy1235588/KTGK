@@ -1,0 +1,9 @@
+(name, price, original_price, description, image) VALUE
+(Trái cây sấy Rộp Rộp gói 100g, 26.000₫, null, '', '')
+(Mít sấy Nhabexims gói 100g, 32.000₫, null, '', '')
+(Xoài sấy dẻo Đỉnh Nam Wenatur gói 100g, 39.000₫, null, '', '')
+(Khoai môn sấy Rộp Rộp gói 100g, 36.000₫, null, '', '')
+(Dâu sấy dẻo Ohla gói 30g, 19.000₫, null, '', '')
+(Xoài chín cây sấy dẻo Ohla gói 35g, 19.000₫, null, '', '')
+(Trái cây sấy giòn Đỉnh Nam Wenatur gói 100g, 28.500₫, null, '', '')
+(Chuối sấy giòn kẹp me cay Tamarind House gói 90g, 59.000₫, 85.000₫, '', '')
