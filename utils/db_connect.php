@@ -1,7 +1,7 @@
 <?php
 function MoKetNoi()
 {
-    $host = "localhost";
+    $host = "localhost:3307";
     $username = "root";
     $password = "";
     $database = "baithigiuaky";
