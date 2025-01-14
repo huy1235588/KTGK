@@ -1,0 +1,69 @@
+{
+    "data": {
+        "products": [
+            {
+                "_id": 3,
+                "title": "PUBG: BATTLEGROUNDS",
+                "type": "Game",
+                "description": "Play PUBG: BATTLEGROUNDS for free. Land on strategic locations, loot weapons and supplies, and survive to become the last team standing across various, diverse Battlegrounds. Squad up and join the Battlegrounds for the original Battle Royale experience that only PUBG: BATTLEGROUNDS can offer.",
+                "price": 0,
+                "discount": 0,
+                "discountStartDate": null,
+                "discountEndDate": null,
+                "releaseDate": "1513789200000",
+                "rating": 0,
+                "isActive": true,
+                "headerImage": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/578080/header.jpg?t=1736389084",
+                "screenshots": [
+                    "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/578080/ss_1d009689dcded2de5771af55fb7134a77c4da642.1920x1080.jpg?t=1736389084",
+                    "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/578080/ss_2da334ea597d9588aaa8c716d71b3c2e60a69853.1920x1080.jpg?t=1736389084",
+                    "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/578080/ss_fe5340f8ea6e0d2f3899ef1e7d2ebdfc07e32f67.1920x1080.jpg?t=1736389084",
+                    "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/578080/ss_1fc0cca99883a1dbaeaadfffc1492f81e4e77d32.1920x1080.jpg?t=1736389084",
+                ],
+                "videos": [],
+                "genres": [
+                    "Action",
+                    "Adventure",
+                    "Massively Multiplayer",
+                    "Free To Play"
+                ],
+                "tags": [
+                    "Survival",
+                    "Shooter",
+                    "Battle Royale",
+                    "Multiplayer",
+                    "FPS"
+                ],
+                "features": [
+                    "Online PvP",
+                    "Stats",
+                    "Remote Play on Phone",
+                    "Remote Play on Tablet"
+                ],
+                "systemRequirements": {
+                    "win": [
+                        {
+                            "title": "OS",
+                            "minimum": "64-bit Windows 10",
+                            "recommended": "64-bit Windows 10"
+                        },
+                        {
+                            "title": "Processor",
+                            "minimum": "Intel Core i5-4430 / AMD FX-6300",
+                            "recommended": "Intel Core i5-6600K / AMD Ryzen 5 1600"
+                        },
+                        {
+                            "title": "Memory",
+                            "minimum": "8 GB RAM",
+                            "recommended": "16 GB RAM"
+                        }
+                    ],
+                    "mac": [],
+                    "linux": []
+                },
+                "createdAt": "1736719543853",
+                "updatedAt": "1736719543853"
+            }
+        ]
+    }
+}
