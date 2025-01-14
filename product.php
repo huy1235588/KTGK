@@ -2,6 +2,7 @@
 <html lang="en">
 
 <?php
+session_start();
 include 'utils/db_connect.php';
 $conn = MoKetNoi();
 
@@ -96,6 +97,9 @@ DongKetNoi($conn);
                 <h2 class="title">
                     Thông tin sản phẩm
                 </h2>
+                <p class="description">
+                    <?= $description ?>
+                </p>
 
             </section>
 

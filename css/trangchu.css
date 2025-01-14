@@ -123,15 +123,31 @@ h1 {
 }
 
 /* Price */
-.original-price{
+.original-price {
     color: #9da7bc;
     text-decoration-line: line-through;
 }
 
-.discount{
+.discount {
     display: inline-block;
     margin-left: 7px;
     padding: 3px 5px;
     border-radius: 5px;
     background-color: #ff0101b3;
+}
+
+.xem-them {
+    display: inline-block;
+    padding: 10px 50px; /* Điều chỉnh khoảng cách trên/dưới và trái/phải */
+    margin-bottom: 30px;
+    background-color: #007bff; /* Màu nền */
+    color: #fff; /* Màu chữ */
+    text-decoration: none; /* Loại bỏ gạch chân */
+    border-radius: 5px; /* Bo góc */
+    font-size: 16px; /* Kích thước chữ */
+    font-weight: bold; /* Chữ đậm */
+    transition: background-color 0.3s ease; /* Hiệu ứng hover */
+}
+.xem-them:hover {
+    background-color: #0056b3; /* Đổi màu nền khi hover */
 }

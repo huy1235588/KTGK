@@ -1,23 +1,31 @@
 <?php
 function MoKetNoi()
 {
+    $host = "localhost";
+    $username = "root";
+    $password = "";
+    $database = "baithigiuaky";
 
-    // Thông tin cấu hình cơ sở dữ liệu
-    $host = "localhost"; // Tên server, mặc định là localhost
-    $username = "root";  // Tên đăng nhập, mặc định là root
-    $password = "";      // Mật khẩu, để trống nếu dùng XAMPP hoặc LAMP
-    $database = "baithigiuaky"; // Tên cơ sở dữ liệu
-
-    // Mở kết nối đến cơ sở dữ liệu
-    $conn = new mysqli($host, $username, $password, $database);
+    // Kết nối tới MySQL server (không chỉ định database)
+    $conn = new mysqli($host, $username, $password);
 
     // Kiểm tra kết nối
     if ($conn->connect_error) {
         die("Kết nối thất bại: " . $conn->connect_error);
     }
 
+    // Tạo cơ sở dữ liệu nếu chưa tồn tại
+    $sql = "CREATE DATABASE IF NOT EXISTS $database";
+    if (!$conn->query($sql)) {
+        die("Không thể tạo cơ sở dữ liệu: " . $conn->error);
+    }
+
+    // Kết nối tới cơ sở dữ liệu
+    $conn->select_db($database);
+
     return $conn;
 }
+
 
 function DongKetNoi($conn)
 {

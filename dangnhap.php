@@ -12,25 +12,43 @@
 <body class="">
     <!-- Header -->
     <?php
+    session_start();
     include 'header.php';
     include 'nav.php';
     include 'aside.php';
     ?>
 
     <?php
+    include_once 'utils/db_connect.php';
+    $conn = MoKetNoi();
+
+    $error = "";
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $username = $_POST['username'];
         $password = $_POST['password'];
 
-        // Kiểm tra mật khẩu khớp
-        if ($password !== $confirm_password) {
-            echo "Mật khẩu không khớp. Vui lòng thử lại.";
-            exit;
-        }
+        $stmt = $conn->prepare("SELECT * FROM users WHERE userName = ? AND password = ?");
+        $stmt->bind_param("ss", $username, $password);
+        $stmt->execute();
 
-        // Thực hiện các thao tác lưu trữ dữ liệu
-        echo "Đăng ký thành công!";
-        // Bạn có thể lưu vào database tại đây
+        // Lấy kết quả
+        $result = $stmt->get_result();
+        if ($result->num_rows > 0) {
+            $user = $result->fetch_assoc(); // Lấy dữ liệu người dùng
+            
+            // Lưu username vào session
+            $_SESSION['username'] = $username;
+            $_SESSION['role'] = $user['role'];
+
+            $stmt->close();
+            DongKetNoi($conn);
+
+            // Chuyển hướng tới trang chủ
+            echo "<script> window.location.href = 'trangchu.php'; </script>";
+            exit();
+        } else {
+            $error = "Sai tên đăng nhập hoặc mật khẩu.";
+        }
     }
     ?>
 
@@ -38,7 +56,11 @@
     <!-- Content -->
     <main class="container">
         <h1>ĐĂNG NHẬP</h1>
-        <form action="register.php" method="post">
+        <!-- Hiển thị thông báo lỗi nếu có -->
+        <?php if ($error): ?>
+            <p class="error-login"><?= htmlspecialchars($error) ?></p>
+        <?php endif; ?>
+        <form action="dangnhap.php" method="post">
             <table>
                 <tr>
                     <td class="label">Tên đăng nhập:</td>
@@ -50,14 +72,14 @@
                 </tr>
                 <tr>
                     <td colspan="2">
-                        <button type="submit">Đăng ký</button>
+                        <button type="submit">Đăng nhập</button>
                     </td>
                 </tr>
             </table>
         </form>
     </main>
 
-    <?php 
+    <?php
     include 'footer.php';
     ?>
 </body>

@@ -4,7 +4,8 @@
 
 a,
 ul,
-li,p {
+li,
+p {
     padding: 0;
     margin: 0;
     text-decoration: none;
@@ -278,6 +279,11 @@ aside.right-content {
     -webkit-box-orient: vertical; /* Định hướng các dòng theo chiều dọc */
     overflow: hidden; /* Ẩn nội dung tràn */
     text-overflow: ellipsis; /* Hiển thị dấu ... */
+}
+
+/* Description */
+.description {
+    color: #d63384;
 }
 /********************************
         Sản phẩm liên quan

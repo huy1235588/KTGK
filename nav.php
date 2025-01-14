@@ -5,11 +5,16 @@
 
     .menu ul {
         display: flex;
-
     }
 
     .menu ul li {
-        margin-left: 10px;
+        display: flex;
+        align-items: center;
+        margin-left: 20px;
+    }
+
+    .menu ul li:last-child {
+        margin-right: 20px;
     }
 
     .menu ul li a {
@@ -17,8 +22,12 @@
         padding: 12px 14px;
     }
 
-    .menu ul li:hover {
+    .menu ul li a:hover {
         background-color: #333553;
+    }
+
+    .left-menu {
+        margin-right: auto;
     }
 </style>
 <nav class="menu">
@@ -29,14 +38,55 @@
             </a>
         </li>
         <li>
-            <a href="dangnhap.php">
-                Đăng nhập
+            <a href="trangchu.php">
+                Sản phẩm
             </a>
         </li>
         <li>
-            <a href="dangky.php">
-                Đăng ký
+            <a href="trangchu.php">
+                Danh mục
             </a>
         </li>
+        <li class="left-menu">
+            <a href="trangchu.php">
+                Giới thiệu
+            </a>
+        </li>
+        <?php if (isset($_SESSION['username'])): ?>
+            <?php if (isset($_SESSION['role']) && $_SESSION['role'] === 'user'): ?>
+                <li>
+                    <a href="">
+                        Giỏ hàng
+                    </a>
+                </li>
+            <?php else: ?>
+                <li>
+                    <a href="">
+                        Quản trị website
+                    </a>
+                </li>
+
+            <?php endif; ?>
+            <li>
+                <p>
+                    Xin chào
+                    <?= htmlspecialchars($_SESSION['username']) ?>
+                </p>
+                <a href="dangxuat.php">
+                    đăng xuất
+                </a>
+            </li>
+        <?php else: ?>
+            <li>
+                <a href="dangnhap.php">
+                    Đăng nhập
+                </a>
+            </li>
+            <li>
+                <a href="dangky.php">
+                    Đăng ký
+                </a>
+            </li>
+        <?php endif; ?>
     </ul>
 </nav>

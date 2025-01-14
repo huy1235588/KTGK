@@ -36,7 +36,14 @@
     $sanPhamCam = $conn->query($sqlCam);
 
     // Đóng kết nối
-    DongKetNoi($conn);
+    if (isset($_POST['button_id'])) {
+        // Gán giá trị của button_id vào session
+        $_SESSION['xem_them'] = $_POST['button_id'];
+        // Điều hướng về trang trước hoặc một trang khác
+        echo "<script> window.location.href = 'danhmuc.php'; </script>";
+        exit();
+    } 
+
     ?>
 
     <!-- Content -->
@@ -94,6 +101,11 @@
                             </li>
                         <?php endforeach; ?>
                     <?php endif; ?>
+
+                    <form method="POST" action="trangchu.php">
+                        <button type="submit" class="xem-them" name="button_id" value="Táo%">Xem thêm</button>
+                    </form>
+
                 </ul>
             </section>
 
@@ -101,7 +113,7 @@
             <section>
                 <h2 class="section-header">QUÀ TẾT GIÁ TỐT</h2>
                 <ul class="product">
-                    <?php if (!empty($sanPhamTao)): ?>
+                    <?php if (!empty($sanPhamQua)): ?>
                         <?php foreach ($sanPhamQua as $product): ?>
                             <li class="product-item">
                                 <a href="product.php?id=<?= htmlspecialchars($product['id']) ?>">
@@ -145,34 +157,16 @@
                             </li>
                         <?php endforeach; ?>
                     <?php endif; ?>
+
+                    <form method="POST" action="trangchu.php">
+                        <button type="submit" class="xem-them" name="button_id" value="%trái cây%">Xem thêm</button>
+                    </form>
+
                 </ul>
             </section>
 
             <!-- Cam -->
-            <section>
-                <h2 class="section-header">Danh sách sản phẩm Cam</h2>
-                <ul class="product">
-                    <?php if (!empty($sanPhamCam)): ?>
-                        <?php foreach ($sanPhamCam as $product): ?>
-                            <li class="product-item">
-                                <a href="">
-                                    <p class="product-img-container">
-                                        <img class="product-img"
-                                            src="<?= htmlspecialchars($product['image_url']) ?>"
-                                            alt="<?= htmlspecialchars($product['name']) ?>">
-                                    </p>
-                                    <h4>
-                                        <?= htmlspecialchars($product['name']) ?>
-                                    </h4>
-                                    <p>
-                                        <?= htmlspecialchars($product['price']) ?>&nbsp;₫
-                                    </p>
-                                </a>
-                            </li>
-                        <?php endforeach; ?>
-                    <?php endif; ?>
-                </ul>
-            </section>
+            y
         </main>
     </article>
 

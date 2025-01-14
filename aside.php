@@ -18,6 +18,14 @@
         width: 100%;
         height: auto;
     }
+
+    /* override swipers transition */
+    .swiper-container-free-mode>.swiper-wrapper {
+        -webkit-transition-timing-function: linear;
+        -o-transition-timing-function: linear;
+        transition-timing-function: linear;
+        margin: 0 auto;
+    }
 </style>
 
 <!-- Slider main container -->
@@ -72,11 +80,13 @@
             // Thêm các tùy chọn sau
             loop: true, // Nối tiếp các slide
             autoplay: {
-                delay: 2000, // Thời gian chuyển đổi giữa các slide (3 giây)
+                delay: 0, // Thời gian chuyển đổi giữa các slide (3 giây)
+
                 disableOnInteraction: false, // Không dừng autoplay khi người dùng tương tác
             },
             slidesPerView: 3, // Hiển thị 1 slide mỗi lần
             spaceBetween: 2, // Khoảng cách giữa các slide
+            speed: 3000
         });
     });
 </script>
