@@ -22,151 +22,96 @@
     include 'utils/db_connect.php';
     $conn = MoKetNoi();
 
-    // Truy vấn danh sách sản phẩm Táo
-    $sqlTao = "SELECT * FROM products WHERE name like 'Táo%' LIMIT 8";
-    $sanPhamTao = $conn->query($sqlTao);
-
-    $sqlQua = "SELECT * FROM products WHERE name like '%trái cây%' LIMIT 8";
-    $sanPhamQua = $conn->query($sqlQua);
-
-    $sqlChuoi = "SELECT * FROM products WHERE name like 'Chuối%' LIMIT 8";
-    $sanPhamChuoi = $conn->query($sqlChuoi);
-
-    $sqlCam = "SELECT * FROM products WHERE name like 'Cam%' LIMIT 8";
-    $sanPhamCam = $conn->query($sqlCam);
+    // Truy vấn danh sách genres
+    $sqlGenres = "SELECT * 
+    FROM product_genres
+    GROUP BY genre";
+    // Thực thi truy vấn
+    $genres = $conn->query($sqlGenres);
 
     // Đóng kết nối
-    if (isset($_POST['button_id'])) {
-        // Gán giá trị của button_id vào session
-        $_SESSION['xem_them'] = $_POST['button_id'];
-        // Điều hướng về trang trước hoặc một trang khác
-        echo "<script> window.location.href = 'danhmuc.php'; </script>";
-        exit();
-    } 
-
+    DongKetNoi($conn);
     ?>
 
     <!-- Content -->
     <article class="container">
         <!-- Menu phụ -->
-        <?php include 'sidebar.php' ?>
+        <!-- <?php include 'sidebar.php' ?> -->
 
         <!-- Content chính -->
         <main class="main">
-            <!-- Táo -->
-            <section>
-                <h2 class="section-header">Táo</h2>
-                <ul class="product">
-                    <?php if (!empty($sanPhamTao)): ?>
-                        <?php foreach ($sanPhamTao as $product): ?>
-                            <li class="product-item">
-                                <a href="product.php?id=<?= htmlspecialchars($product['id']) ?>">
-                                    <p class="product-img-container">
-                                        <img class="product-img"
-                                            src="<?= htmlspecialchars($product['image']) ?>/anh_bia.jpg"
-                                            alt="<?= htmlspecialchars($product['name']) ?>">
-                                    </p>
-                                    <p class="product-title">
-                                        <?= htmlspecialchars(($product['name'])) ?>
-                                    </p>
-                                    <!-- Price -->
-                                    <div class="price-container">
-                                        <span class="price">
-                                            <?php
-                                            if ($product['price'] != null) {
-                                                echo number_format($product['price'], 3) . "₫";
-                                            } else {
-                                                echo number_format(htmlspecialchars($product['original_price']), 3) . "₫";
-                                            }
-                                            ?>
-                                        </span>
+            <?php if (!empty($genres)): ?>
+                <?php foreach ($genres as $genre): ?>
+                    <?php
+                    // Kết nối CSDL
+                    $conn = MoKetNoi();
 
-                                        <!-- Origin price -->
-                                        <?php if ($product['price'] && htmlspecialchars($product['original_price']) > 0): ?>
-                                            <p class="origin-price">
-                                                <span class="original-price">
-                                                    <?= number_format(htmlspecialchars($product['original_price']), 3) ?>
-                                                </span>
-                                                <span class="discount">
+                    // Truy vấn sản phẩm theo thể loại
+                    $sqlProducts = "SELECT * 
+                            FROM products p JOIN product_genres pg ON p.id = pg.product_id
+                            WHERE pg.genre = '" . htmlspecialchars($genre['genre']) . "' LIMIT 8";
+                    // Thực thi truy vấn
+                    $products = $conn->query($sqlProducts);
+                    ?>
+                    <section>
+                        <h2 class="section-header">
+                            <?= htmlspecialchars($genre['genre']) ?>
+                        </h2>
+                        <ul class="product">
+                            <?php if (!empty($products)): ?>
+                                <?php foreach ($products as $product): ?>
+                                    <li class="product-item">
+                                        <a href="product.php?id=<?= htmlspecialchars($product['id']) ?>">
+                                            <p class="product-img-container">
+                                                <img class="product-img"
+                                                    src="<?= htmlspecialchars($product['headerImage']) ?>/anh_bia.jpg"
+                                                    alt="<?= htmlspecialchars($product['title']) ?>">
+                                            </p>
+                                            <p class="product-title">
+                                                <?= htmlspecialchars(($product['title'])) ?>
+                                            </p>
+                                            <!-- Price -->
+                                            <div class="price-container">
+                                                <span class="price">
                                                     <?php
-                                                    // Calculate the discount percentage
-                                                    $discount = (($product['original_price'] - $product['price']) / $product['original_price']) * 100;
-                                                    echo "-" . number_format($discount, 0) . '%';
+                                                    if ($product['price'] != null) {
+                                                        echo "$" . number_format($product['price'], 2);
+                                                    } else {
+                                                        echo "$" . number_format(htmlspecialchars($product['price']), 2);
+                                                    }
                                                     ?>
                                                 </span>
-                                            </p>
-                                        <?php endif ?>
-                                    </div>
-                                </a>
-                            </li>
-                        <?php endforeach; ?>
-                    <?php endif; ?>
 
-                    <form method="POST" action="trangchu.php">
-                        <button type="submit" class="xem-them" name="button_id" value="Táo%">Xem thêm</button>
-                    </form>
+                                                <!-- Origin price -->
+                                                <?php if ($product['price'] && htmlspecialchars($product['discount']) > 0): ?>
+                                                    <p class="origin-price">
+                                                        <span class="original-price">
+                                                            <?php
+                                                            // Tình giá gốc
+                                                            $originPrice = $product['price'] / (1 - $product['discount'] / 100);
+                                                            ?>
 
-                </ul>
-            </section>
-
-            <!-- Chuối -->
-            <section>
-                <h2 class="section-header">QUÀ TẾT GIÁ TỐT</h2>
-                <ul class="product">
-                    <?php if (!empty($sanPhamQua)): ?>
-                        <?php foreach ($sanPhamQua as $product): ?>
-                            <li class="product-item">
-                                <a href="product.php?id=<?= htmlspecialchars($product['id']) ?>">
-                                    <p class="product-img-container">
-                                        <img class="product-img"
-                                            src="<?= htmlspecialchars($product['image']) ?>/anh_bia.jpg"
-                                            alt="<?= htmlspecialchars($product['name']) ?>">
-                                    </p>
-                                    <p class="product-title">
-                                        <?= htmlspecialchars(($product['name'])) ?>
-                                    </p>
-                                    <!-- Price -->
-                                    <div class="price-container">
-                                        <span class="price">
-                                            <?php
-                                            if ($product['price'] != null) {
-                                                echo number_format($product['price'], 3) . "₫";
-                                            } else {
-                                                echo number_format(htmlspecialchars($product['original_price']), 3) . "₫";
-                                            }
-                                            ?>
-                                        </span>
-
-                                        <!-- Origin price -->
-                                        <?php if ($product['price'] && htmlspecialchars($product['original_price']) > 0): ?>
-                                            <p class="origin-price">
-                                                <span class="original-price">
-                                                    <?= number_format(htmlspecialchars($product['original_price']), 3) ?>
-                                                </span>
-                                                <span class="discount">
-                                                    <?php
-                                                    // Calculate the discount percentage
-                                                    $discount = (($product['original_price'] - $product['price']) / $product['original_price']) * 100;
-                                                    echo "-" . number_format($discount, 0) . '%';
-                                                    ?>
-                                                </span>
-                                            </p>
-                                        <?php endif ?>
-                                    </div>
-                                </a>
-                            </li>
-                        <?php endforeach; ?>
-                    <?php endif; ?>
-
-                    <form method="POST" action="trangchu.php">
-                        <button type="submit" class="xem-them" name="button_id" value="%trái cây%">Xem thêm</button>
-                    </form>
-
-                </ul>
-            </section>
-
-            <!-- Cam -->
-            y
+                                                            <?= number_format($originPrice, 2) ?>
+                                                        </span>
+                                                        <span class="discount">
+                                                            <?php
+                                                            echo "-" .  number_format(htmlspecialchars($product['discount']), 0) . "%";
+                                                            ?>
+                                                        </span>
+                                                    </p>
+                                                <?php endif ?>
+                                            </div>
+                                        </a>
+                                    </li>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
+                        </ul>
+                        <div class="view-more">
+                            <a href="genre.php?genre=<?= htmlspecialchars($genre['genre']) ?>">Xem thêm</a>
+                        </div>
+                    </section>
+                <?php endforeach; ?>
+            <?php endif; ?>
         </main>
     </article>
 

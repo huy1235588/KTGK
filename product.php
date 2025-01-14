@@ -18,18 +18,51 @@ $result = $stmt->get_result();
 if ($result->num_rows > 0) {
     // Lấy dữ liệu sản phẩm
     $product = $result->fetch_assoc();
-    $name = htmlspecialchars($product['name']);
+    $name = htmlspecialchars($product['title']);
     $price = floatval(htmlspecialchars($product['price']));
-    $original_price = floatval(htmlspecialchars($product['original_price']));
+    $discount = intval(htmlspecialchars($product['discount']));
     $description = htmlspecialchars($product['description']);
-    $image = htmlspecialchars($product['image']);
 } else {
     die("Sản phẩm không tồn tại.");
 }
 
-// Truy vấn danh sách sản phẩm Táo
-$sqlTao = "SELECT * FROM products WHERE name like 'Táo%' LIMIT 8";
-$sanPhamTao = $conn->query($sqlTao);
+// Truy vấn danh sách screenshot
+$stmt = $conn->prepare("SELECT * FROM product_screenshots WHERE product_id = ?");
+$stmt->bind_param("i", $productId);
+$stmt->execute();
+$result = $stmt->get_result();
+
+// Lấy danh sách screenshot
+$screenshot = [];
+if ($result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        $screenshot[] = $row['screenshot'];
+    }
+}
+
+// Lấy genre của sản phẩm
+$stmt = $conn->prepare("SELECT genre FROM product_genres WHERE product_id = ?");
+$stmt->bind_param("i", $productId);
+$stmt->execute();
+$result = $stmt->get_result();
+
+if ($result->num_rows > 0) {
+    $genre = $result->fetch_assoc();
+}
+
+// Truy vấn sản phẩm cùng genres
+$stmt = $conn->prepare("SELECT * FROM products p JOIN product_genres pg ON p.id = pg.product_id WHERE pg.genre = ? AND p.id != ? LIMIT 4");
+$stmt->bind_param("si", $genre, $productId);
+$stmt->execute();
+$result = $stmt->get_result();
+
+// Lấy danh sách sản phẩm cùng genres
+$sanPhamGenre = [];
+if ($result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        $sanPhamGenre[] = $row;
+    }
+}
 
 // Đóng kết nối
 $stmt->close();
@@ -52,15 +85,6 @@ DongKetNoi($conn);
     include 'aside.php';
     ?>
 
-    <?php
-    $folder = $image;
-    $imageFiles = array_filter(scandir($folder), function ($file) use ($folder) {
-        return is_file($folder . '/' . $file)
-            && preg_match('/\.(jpg|jpeg|png|gif)$/i', $file)
-            && $file !== 'anh_bia.jpg'; // Loại trừ file header.jpg    
-    });
-    ?>
-
     <!-- Content -->
     <article class="container">
         <!-- Left content -->
@@ -69,9 +93,9 @@ DongKetNoi($conn);
             <section class="img-container">
                 <div class="swiper product-img">
                     <ul class="swiper-wrapper">
-                        <?php foreach ($imageFiles as $img): ?>
+                        <?php foreach ($screenshot as $img): ?>
                             <li class="swiper-slide">
-                                <img src="<?= $image . '/' . $img ?>" alt="<?= $name ?>">
+                                <img src="<?= $img ?>" alt="<?= $name ?>">
                             </li>
                         <?php endforeach; ?>
                     </ul>
@@ -83,9 +107,9 @@ DongKetNoi($conn);
                 <!-- Swiper thu nhỏ bên dưới -->
                 <div class="swiper swiper-thumbs">
                     <ul class="swiper-wrapper">
-                        <?php foreach ($imageFiles as $img): ?>
+                        <?php foreach ($screenshot as $img): ?>
                             <li class="swiper-slide">
-                                <img src="<?= $image . '/' . $img ?>" alt="<?= htmlspecialchars($name) ?>" class="thumb-img">
+                                <img src="<?= $img ?>" alt="<?= htmlspecialchars($name) ?>" class="thumb-img">
                             </li>
                         <?php endforeach; ?>
                     </ul>
@@ -110,40 +134,43 @@ DongKetNoi($conn);
 
                 <div class="swiper product-relate">
                     <ul class="swiper-wrapper">
-                        <?php foreach ($sanPhamTao as $tao): ?>
+                        <?php foreach ($sanPhamGenre as $sp): ?>
                             <li class="swiper-slide">
-                                <a href="product.php?id=<?= htmlspecialchars($tao['id']) ?>">
+                                <a href="product.php?id=<?= htmlspecialchars($sp['id']) ?>">
                                     <p class="product-img-container">
                                         <img class="product-img"
-                                            src="<?= htmlspecialchars($tao['image']) ?>/anh_bia.jpg"
-                                            alt="<?= htmlspecialchars($tao['name']) ?>">
+                                            src="<?= htmlspecialchars($sp['headerImage']) ?>/anh_bia.jpg"
+                                            alt="<?= htmlspecialchars($sp['title']) ?>">
                                     </p>
                                     <p class="product-name">
-                                        <?= htmlspecialchars(($tao['name'])) ?>
+                                        <?= htmlspecialchars(($sp['title'])) ?>
                                     </p>
                                     <!-- Price -->
                                     <div class="price-container">
                                         <span class="price">
                                             <?php
-                                            if ($tao['price'] != null) {
-                                                echo number_format($tao['price'], 3) . "₫";
+                                            if ($sp['price'] != null) {
+                                                echo "$" . number_format($product['price'], 2);
                                             } else {
-                                                echo number_format(htmlspecialchars($tao['original_price']), 3) . "₫";
+                                                echo "$" . number_format(htmlspecialchars($product['price']), 2);
                                             }
                                             ?>
                                         </span>
 
                                         <!-- Origin price -->
-                                        <?php if ($tao['price'] && htmlspecialchars($tao['original_price']) > 0): ?>
+                                        <?php if ($product['price'] && htmlspecialchars($product['discount']) > 0): ?>
                                             <p class="origin-price">
                                                 <span class="original-price">
-                                                    <?= number_format(htmlspecialchars($tao['original_price']), 3) ?>
+                                                    <?php
+                                                    // Tình giá gốc
+                                                    $originPrice = $product['price'] / (1 - $product['discount'] / 100);
+                                                    ?>
+
+                                                    <?= number_format($originPrice, 2) ?>
                                                 </span>
                                                 <span class="discount">
                                                     <?php
-                                                    // Calculate the discount percentage
-                                                    $discount = (($tao['original_price'] - $tao['price']) / $product['original_price']) * 100;
-                                                    echo "-" . number_format($discount, 0) . '%';
+                                                    echo "-" .  number_format(htmlspecialchars($product['discount']), 0) . "%";
                                                     ?>
                                                 </span>
                                             </p>
@@ -178,16 +205,19 @@ DongKetNoi($conn);
                 </span>
 
                 <!-- Origin price -->
-                <?php if ($price && $original_price > 0): ?>
+                <?php if ($price && $discount > 0): ?>
                     <p class="origin-price">
                         <span class="original-price">
-                            <?= number_format($original_price, 3) . "đ" ?>
+                            <?php
+                            // Tình giá gốc
+                            $originPrice = $price / (1 - $discount / 100);
+                            ?>
+
+                            <?= number_format($discount, 3) . "₫" ?>
                         </span>
                         <span class="discount">
                             <?php
-                            // Tính phần trăm giảm giá
-                            $discount = (($original_price - $price) / $original_price) * 100;
-                            echo "-" . number_format($discount, 0) . '%';
+                            echo "-" .  number_format(htmlspecialchars($product['discount']), 0) . "%";
                             ?>
                         </span>
                     </p>

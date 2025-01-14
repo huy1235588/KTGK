@@ -85,7 +85,8 @@ def json_to_sql(data, output_file):
                 if product["discountEndDate"]
                 else "NULL"
             )
-            releaseDate = f"'{datetime.fromtimestamp(int(product['releaseDate']) / 1000).strftime('%Y-%m-%d')}'"
+            if product["releaseDate"]:
+                releaseDate = f"'{datetime.fromtimestamp(int(product['releaseDate']) / 1000).strftime('%Y-%m-%d')}'"
             rating = product["rating"]
             isActive = "TRUE" if product["isActive"] else "FALSE"
             headerImage = product["headerImage"].replace("'", "''")
