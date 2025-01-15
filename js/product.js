@@ -127,22 +127,4 @@ document.addEventListener('DOMContentLoaded', () => {
         slidesPerView: 4, // Hiển thị 5 slide mỗi lần
         spaceBetween: 10, // Khoảng cách giữa các slide
     });
-
-    const decrementButton = document.getElementById("decrement");
-    const incrementButton = document.getElementById("increment");
-    const quantityInput = document.getElementById("quantity");
-
-    decrementButton.addEventListener("click", () => {
-        let currentValue = parseInt(quantityInput.value) || 0;
-        if (currentValue > parseInt(quantityInput.min)) {
-            quantityInput.value = currentValue - 1;
-        }
-    });
-
-    incrementButton.addEventListener("click", () => {
-        let currentValue = parseInt(quantityInput.value) || 0;
-        if (currentValue < parseInt(quantityInput.max)) {
-            quantityInput.value = currentValue + 1;
-        }
-    });
 });

@@ -165,7 +165,7 @@ h1 {
 
 /* Thanh trượt */
 .media-container .swiper-thumbs .swiper-scrollbar {
-    height: 20px; /* Chiều cao của thanh trượt */
+    height: 18px; /* Chiều cao của thanh trượt */
     background: #e0e0e0; /* Màu nền thanh trượt */
     border-radius: 10px; /* Bo góc */
     margin-top: 5px;
@@ -190,7 +190,8 @@ aside.right-content {
     position: sticky;
     top: 30px;
     flex: 1;
-    height: calc(80vh);
+    height: auto;
+    min-height: 100vh;
     padding: 0px 0px 20px;
     border-radius: 10px;
     margin: 0 0 0 10px;
@@ -249,45 +250,77 @@ aside.right-content .product-info {
     padding: 10px 0;
     margin-top: 25px;
     border-radius: 5px;
-    background-color: #007e42;
+    background: linear-gradient(to right, #47bfff 0%, #1a44c2 60%);
     font-size: 20px;
+    transition: all 0.3s ease-in-out;
+}
+
+/* Button giỏ hàng */
+.cart-btn {
+    width: 100%;
+    padding: 10px 0;
+    margin-top: 10px;
+    border-radius: 5px;
+    background: linear-gradient(to right, #75b022 5%, #588a1b 95%);
+    font-size: 20px;
+    transition: all 0.3s ease-in-out;
 }
 
 .buy-btn:hover {
-    background-color: #22994f;
+    background: linear-gradient(to right, #47bfff 5%, #1a44c2 95%);
 }
 
-/* Refund */
-.refund {
-    margin: 20px 0;
-    color: #858d9f;
-    font-size: 16ox;
-    text-align: center;
+.cart-btn:hover {
+    background: linear-gradient(to right, #8ed629 5%, #6aa621 95%);
 }
 
-/* policises */
-.product-policises-container {
-    padding: 10px;
-    border: 1px solid #000;
-}
-
-.product-policises-container h5 {
-    margin: 0 0 10px;
-}
-
-.product-policises li {
-    display: flex;
-    align-items: center;
-}
-
-.product-policises img {
-    width: 32px;
-    margin-right: 10px;
-}
-
-.product-policises-text {
+/* Features */
+.features {
+    margin-top: 20px;
     color: #000;
 }
+
+.features .feature-list {
+    /* display: flex;
+    align-items: center;
+    margin-bottom: 10px; */
+}
+
+.feature-list .feature-link {
+    display: flex;
+    align-items: center;
+    margin-bottom: 5px;
+    background: #000000c2;
+}
+
+.features .feature-list .feature-icon {
+    padding: 0px 6px;
+    display: flex;
+}
+
+.features .feature-list .feature-icon img {
+    width: 26px;
+    height: 16px;
+}
+
+.features .feature-list .feature-title {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 8px;
+    height: 100%;
+    background: #67c1f51a;
+    width: 100%;
+    border-radius: 1px;
+    color: #66c0f4;
+}
+
+.features .feature-link:hover .feature-title {
+    text-decoration: none;
+    color: #ffffff;
+    background: #67c1f5;
+    background: linear-gradient(135deg, #67c1f5 0%, #417a9b 100%);
+}
+
 /********************
         ASIDE
 ********************/

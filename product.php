@@ -93,6 +93,20 @@ DongKetNoi($conn);
         $genre = $result->fetch_assoc();
     }
 
+    // Truy vấn features
+    $stmt = $conn->prepare("SELECT * FROM product_features WHERE product_id = ?");
+    $stmt->bind_param("i", $productId);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    // Lấy danh sách features
+    $features = [];
+    if ($result->num_rows > 0) {
+        while ($row = $result->fetch_assoc()) {
+            $features[] = $row;
+        }
+    }
+
     // Truy vấn sản phẩm cùng genres
     // $stmt = $conn->prepare("SELECT * FROM products p JOIN product_genres pg ON p.id = pg.product_id WHERE pg.genre = ? AND p.id != ? LIMIT 4");
     // $stmt->bind_param("si", $genre, $productId);
@@ -147,8 +161,7 @@ DongKetNoi($conn);
                                         data-video-id="<?= $videoId ?>"
                                         frameborder="0"
                                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                        allowfullscreen
-                                        >
+                                        allowfullscreen>
                                     </iframe>;
                                 <?php else: ?>
                                     <video
@@ -156,8 +169,7 @@ DongKetNoi($conn);
                                         preload="metadata"
                                         poster="<?= $video['thumbnail'] ?>"
                                         muted
-                                        autoplay
-                                        >
+                                        autoplay>
                                         <source src="<?= $video['mp4'] ?>" type="video/mp4">
                                         <source src="<?= $video['webm'] ?>" type="video/webm">
                                         Your browser does not support the video tag.
@@ -284,10 +296,11 @@ DongKetNoi($conn);
                 <div class="price-container">
                     <span class="price">
                         <?php
-                        if ($product['price'] != null) {
-                            echo number_format($price, 3) . "₫";
+                        $priceFormat = number_format($product['price'], 2);
+                        if ($priceFormat == 0) {
+                            echo "Free to play";
                         } else {
-                            echo number_format($original_price, 3) . "₫";
+                            echo "$" . $priceFormat;
                         }
                         ?>
                     </span>
@@ -301,7 +314,7 @@ DongKetNoi($conn);
                                 $originPrice = $price / (1 - $discount / 100);
                                 ?>
 
-                                <?= number_format($discount, 3) . "₫" ?>
+                                <?= "$" . number_format($originPrice, 2) ?>
                             </span>
                             <span class="discount">
                                 <?php
@@ -312,48 +325,87 @@ DongKetNoi($conn);
                     <?php endif ?>
                 </div>
 
-                <!-- Số lượng -->
-                <div class="quantity-container">
-                    <label class="quantity-label" for="quantity">Số lượng:</label>
-                    <div>
-                        <button id="decrement">
-                            -
-                        </button>
-                        <input type="number" id="quantity" value="20" min="1" max="100">
-                        <button id="increment">
-                            +
-                        </button>
-                    </div>
-                </div>
-
                 <!-- Nút mua -->
                 <button class="buy-btn">
-                    MUA NGAY
+                    BUY NOW
                 </button>
 
-                <p class="refund">
-                    ĂN KHÔNG NGON, 1 ĐỔI 1
-                </p>
+                <!-- Nút giỏ hàng -->
+                <button class="cart-btn">
+                    ADD TO CART
+                </button>
 
-                <div class="product-policises-container">
-                    <h5 class="m-0 mb-3">
-                        Tiêu chuẩn dịch vụ
-                    </h5>
-                    <ul class="product-policises">
-                        <li>
-                            <img src="//theme.hstatic.net/1000141988/1001239110/14/policy_product_image_1.png?v=374">
-                            <p class="product-policises-text">
-                                Giao hàng nội thành 2 - 4 giờ
-                            </p>
-                        </li>
-                        <li>
-                            <img src="https://theme.hstatic.net/1000141988/1001239110/14/policy_product_image_3.png?v=374">
-                            <p class="product-policises-text">
-                                Đổi trả trong 48 giờ nếu sản phẩm không đạt chất lượng cam kết
-                            </p>
-                        </li>
+                <!-- Features -->
+                <div class="features">
+                    <h3 class="title">
+                        Features
+                    </h3>
+                    <ul class="feature-list">
+                        <?php foreach ($features as $feature): ?>
+                            <li class="feature-item">
+                                <a href="#" class="feature-link">
+                                    <span class="feature-icon">
+                                        <img
+                                            <?php
+                                            // Chuyển chuỗi feature về chữ thường để so sánh không phân biệt hoa thường
+                                            $featureLower = trim(strtolower($feature['feature']));
+
+                                            // Nếu chuỗi feature có remote ở đầu -> ico_remote_play.png
+                                            if (stripos($feature['feature'], 'Remote') === 0) {
+                                                $featureIcon = 'ico_remote_play.png';
+                                            }
+                                            // Nếu có pvp hoặc MMO hoặc multiplayer-> ico_multiplayer.png
+                                            else if (stripos($featureLower, 'pvp') !== false || stripos($featureLower, 'mmo') !== false || stripos($featureLower, 'multiplayer') !== false) {
+                                                $featureIcon = 'ico_multiplayer.png';
+                                            }
+
+                                            // Nếu có Co-op -> ico_coop.png
+                                            else if (stripos($featureLower, 'co-op') !== false) {
+                                                $featureIcon = 'ico_coop.png';
+                                            }
+
+                                            // Nếu có sdk -> ico_sdk.png
+                                            else if (stripos($featureLower, 'sdk') !== false) {
+                                                $featureIcon = 'ico_sdk.png';
+                                            }
+
+                                            // Nếu có editor -> ico_editor.png
+                                            else if (stripos($featureLower, 'editor') !== false) {
+                                                $featureIcon = 'ico_editor.png';
+                                            }
+
+                                            // Nếu có chữ "available" -> ico_ + tên feature + .png
+                                            else if (stripos($featureLower, 'available') !== false) {
+                                                $featureIcon = 'ico_' . trim(str_replace('available', '', $featureLower)) . '.png';
+                                            }
+
+                                            // Nếu có chữ "steam" -> ico_ + tên feature + .png
+                                            else if (stripos($featureLower, 'steam') !== false) {
+                                                $featureIcon = 'ico_' . trim(str_replace('steam', '', $featureLower)) . '.png';
+                                                // Chuyển khoảng cách thành dấu _
+                                                $featureIcon = str_replace(' ', '_', $featureIcon);
+                                            }
+
+                                            // Mặc định chuyển chuỗi feature thành tên file icon
+                                            else {
+                                                $featureIcon = 'ico_' . str_replace(' ', '_', $featureLower) . '.png';
+                                            }
+                                            ?>
+
+
+                                            src="assets/icons/features/<?= $featureIcon ?>"
+                                            alt="<?= htmlspecialchars($feature['feature']) ?>">
+                                    </span>
+                                    <span class="feature-title">
+                                        <?= htmlspecialchars($feature['feature']) ?>
+                                    </span>
+                                </a>
+                            </li>
+                        <?php endforeach; ?>
                     </ul>
                 </div>
+
+
             </div>
         </aside>
     </article>
