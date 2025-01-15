@@ -19,7 +19,6 @@
     ?>
 
     <?php
-    include 'utils/db_connect.php';
     $conn = MoKetNoi();
 
     // Lấy thể loại từ URL
@@ -52,12 +51,12 @@
                                 <a href="product.php?id=<?= htmlspecialchars($product['id']) ?>">
                                     <p class="product-img-container">
                                         <img class="product-img"
-                                            src="<?= htmlspecialchars($product['headerImage']) ?>/anh_bia.jpg"
+                                            src="<?= htmlspecialchars($product['headerImage']) ?>"
                                             alt="<?= htmlspecialchars($product['title']) ?>">
                                     </p>
-                                    <p class="product-title">
+                                    <h3 class="product-title">
                                         <?= htmlspecialchars(($product['title'])) ?>
-                                    </p>
+                                    </h3>
                                     <!-- Price -->
                                     <div class="price-container">
                                         <span class="price">

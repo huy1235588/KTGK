@@ -31,5 +31,6 @@ function DongKetNoi($conn)
 {
     if ($conn) {
         $conn->close();
+        $conn = null;
     }
 }

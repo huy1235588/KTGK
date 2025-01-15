@@ -1,74 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<?php
-session_start();
-include 'utils/db_connect.php';
-$conn = MoKetNoi();
-
-// Lấy ID sản phẩm từ URL
-$productId = isset($_GET['id']) ? intval($_GET['id']) : 0;
-
-// Truy vấn sản phẩm 
-$stmt = $conn->prepare("SELECT * FROM products WHERE id = ?");
-$stmt->bind_param("i", $productId);
-$stmt->execute();
-$result = $stmt->get_result();
-
-if ($result->num_rows > 0) {
-    // Lấy dữ liệu sản phẩm
-    $product = $result->fetch_assoc();
-    $name = htmlspecialchars($product['title']);
-    $price = floatval(htmlspecialchars($product['price']));
-    $discount = intval(htmlspecialchars($product['discount']));
-    $description = htmlspecialchars($product['description']);
-} else {
-    die("Sản phẩm không tồn tại.");
-}
-
-// Truy vấn danh sách screenshot
-$stmt = $conn->prepare("SELECT * FROM product_screenshots WHERE product_id = ?");
-$stmt->bind_param("i", $productId);
-$stmt->execute();
-$result = $stmt->get_result();
-
-// Lấy danh sách screenshot
-$screenshot = [];
-if ($result->num_rows > 0) {
-    while ($row = $result->fetch_assoc()) {
-        $screenshot[] = $row['screenshot'];
-    }
-}
-
-// Lấy genre của sản phẩm
-$stmt = $conn->prepare("SELECT genre FROM product_genres WHERE product_id = ?");
-$stmt->bind_param("i", $productId);
-$stmt->execute();
-$result = $stmt->get_result();
-
-if ($result->num_rows > 0) {
-    $genre = $result->fetch_assoc();
-}
-
-// Truy vấn sản phẩm cùng genres
-$stmt = $conn->prepare("SELECT * FROM products p JOIN product_genres pg ON p.id = pg.product_id WHERE pg.genre = ? AND p.id != ? LIMIT 4");
-$stmt->bind_param("si", $genre, $productId);
-$stmt->execute();
-$result = $stmt->get_result();
-
-// Lấy danh sách sản phẩm cùng genres
-$sanPhamGenre = [];
-if ($result->num_rows > 0) {
-    while ($row = $result->fetch_assoc()) {
-        $sanPhamGenre[] = $row;
-    }
-}
-
-// Đóng kết nối
-$stmt->close();
-DongKetNoi($conn);
-?>
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -83,6 +15,72 @@ DongKetNoi($conn);
     include 'header.php';
     include 'nav.php';
     include 'aside.php';
+    ?>
+
+    <?php
+    $conn = MoKetNoi();
+
+    // Lấy ID sản phẩm từ URL
+    $productId = isset($_GET['id']) ? intval($_GET['id']) : 0;
+
+    // Truy vấn sản phẩm 
+    $stmt = $conn->prepare("SELECT * FROM products WHERE id = ?");
+    $stmt->bind_param("i", $productId);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result->num_rows > 0) {
+        // Lấy dữ liệu sản phẩm
+        $product = $result->fetch_assoc();
+        $name = htmlspecialchars($product['title']);
+        $price = floatval(htmlspecialchars($product['price']));
+        $discount = intval(htmlspecialchars($product['discount']));
+        $description = htmlspecialchars($product['description']);
+    } else {
+        die("Sản phẩm không tồn tại.");
+    }
+
+    // Truy vấn danh sách screenshot
+    $stmt = $conn->prepare("SELECT * FROM product_screenshots WHERE product_id = ?");
+    $stmt->bind_param("i", $productId);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    // Lấy danh sách screenshot
+    $screenshot = [];
+    if ($result->num_rows > 0) {
+        while ($row = $result->fetch_assoc()) {
+            $screenshot[] = $row['screenshot'];
+        }
+    }
+
+    // Lấy genre của sản phẩm
+    $stmt = $conn->prepare("SELECT genre FROM product_genres WHERE product_id = ?");
+    $stmt->bind_param("i", $productId);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result->num_rows > 0) {
+        $genre = $result->fetch_assoc();
+    }
+
+    // Truy vấn sản phẩm cùng genres
+    // $stmt = $conn->prepare("SELECT * FROM products p JOIN product_genres pg ON p.id = pg.product_id WHERE pg.genre = ? AND p.id != ? LIMIT 4");
+    // $stmt->bind_param("si", $genre, $productId);
+    // $stmt->execute();
+    // $result = $stmt->get_result();
+
+    // Lấy danh sách sản phẩm cùng genres
+    $sanPhamGenre = [];
+    if ($result->num_rows > 0) {
+        while ($row = $result->fetch_assoc()) {
+            $sanPhamGenre[] = $row;
+        }
+    }
+
+    // Đóng kết nối
+    $stmt->close();
+    DongKetNoi($conn);
     ?>
 
     <!-- Content -->
