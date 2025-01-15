@@ -48,7 +48,7 @@
                     <?php if (!empty($products)): ?>
                         <?php foreach ($products as $product): ?>
                             <li class="product-item">
-                                <a href="product.php?id=<?= htmlspecialchars($product['id']) ?>">
+                                <a href="product.php?id=<?= htmlspecialchars($product['product_id']) ?>">
                                     <p class="product-img-container">
                                         <img class="product-img"
                                             src="<?= htmlspecialchars($product['headerImage']) ?>"

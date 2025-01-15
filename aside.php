@@ -29,7 +29,11 @@
 </style>
 
 <?php
-include 'utils/db_connect.php';
+// Nếu MoKetNoi() đã tồn tại
+if (!function_exists('MoKetNoi')) {
+    include 'utils/db_connect.php';
+}
+
 // Mở kết nối
 $conn = MoKetNoi();
 
@@ -55,9 +59,18 @@ DongKetNoi($conn);
             <?php if (!empty($headerImages)): ?>
                 <?php foreach ($headerImages as $headerImage): ?>
                     <div class="swiper-slide">
+                        <?php
+                        // Nếu ảnh chưa load
+                        if (empty($headerImage['headerImage'])) {
+                            // Sử dụng ảnh mặc định
+                            $headerImage['headerImage'] = 'assets/no-image.png';
+                        }
+                        ?>
+
+                        <!-- Ảnh -->
                         <img
                             class="aside-img"
-                            src="<?= htmlspecialchars($headerImage['headerImage']) ?>/anh_bia.jpg"
+                            src="<?= htmlspecialchars($headerImage['headerImage']) ?>"
                             alt="">
                     </div>
                 <?php endforeach; ?>

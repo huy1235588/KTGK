@@ -72,32 +72,41 @@ h1 {
 *****************************/
 
 /********************
-        Image
+        Media
 ********************/
-.main .product-img {
+.main .product-media {
     width: 100%;
     height: 420px;
-    padding: 20px 0;
+    padding: 20px 0 10px;
     background-color: #fff;
     user-select: none;
 }
 
-.main .product-img .swiper-wrapper .swiper-slide {
+.main .product-media .swiper-wrapper .swiper-slide {
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
-.main .product-img .swiper-wrapper img {
+/* Image */
+.main .product-media .swiper-wrapper img {
     width: calc(100% - 100px);
     height: 100%;
+}
+
+/* Videos */
+.main .product-media .swiper-wrapper video,
+.main .product-media .swiper-wrapper iframe {
+    width: calc(100% - 100px);
+    height: 100%;
+    background-color: #000;
 }
 
 /* Thumbs */
 .main .swiper-thumbs {
     width: 90%;
-    height: 120px;
-    padding: 20px 0;
+    height: 130px;
+    padding: 10px 0 30px;
     margin: 0 auto;
     background-color: #fff;
     user-select: none;
@@ -107,6 +116,8 @@ h1 {
     display: flex;
     justify-content: center;
     align-items: center;
+    border: 3px solid transparent;
+    cursor: pointer;
 }
 
 .main .swiper-thumbs .swiper-wrapper img {
@@ -114,8 +125,24 @@ h1 {
     height: 100%;
 }
 
-.swiper-thumbs .swiper-slide.swiper-slide-thumb-active {
-    border: 2px solid #007bff; /* Màu border cho ảnh được chọn */
+.main .swiper-thumbs .swiper-slide.swiper-slide-thumb-active {
+    border-color: #007bff; /* Màu border cho ảnh được chọn */
+}
+
+.main .swiper-thumbs .swiper-wrapper .play-icon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 32px;
+    height: 32px;
+    background: url("/assets/icons/play-video.png") no-repeat center center;
+    background-color: #000;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
 }
 
 /* Button */
@@ -135,8 +162,25 @@ h1 {
 .swiper-button.swiper-button-next {
     right: 0;
 }
+
+/* Thanh trượt */
+.media-container .swiper-thumbs .swiper-scrollbar {
+    height: 20px; /* Chiều cao của thanh trượt */
+    background: #e0e0e0; /* Màu nền thanh trượt */
+    border-radius: 10px; /* Bo góc */
+    margin-top: 5px;
+}
+
+.media-container .swiper-thumbs .swiper-scrollbar-drag {
+    background-color: #233c5166; /* Màu thanh kéo */
+    border-radius: 10px;
+}
+
+.media-container .swiper-thumbs .swiper-scrollbar-drag:hover {
+    background-color: #233c51; /* Màu thanh kéo khi hover */
+}
 /********************
-        Image
+        MEDIA
 ********************/
 
 /********************
@@ -147,18 +191,21 @@ aside.right-content {
     top: 30px;
     flex: 1;
     height: calc(80vh);
-    padding: 5px 20px 20px;
+    padding: 0px 0px 20px;
     border-radius: 10px;
     margin: 0 0 0 10px;
     background-color: #fff;
 }
 
-.product-name {
-    margin-top: 10px;
-    color: #000;
-    font-size: 20px;
-    line-height: 1.5;
-    text-align: start;
+/* Header image */
+.product-header-img {
+    width: 100%;
+    height: 200px;
+    padding: 0;
+}
+
+aside.right-content .product-info {
+    padding: 10px;
 }
 
 /* Price */

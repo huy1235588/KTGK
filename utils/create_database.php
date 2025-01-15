@@ -186,6 +186,27 @@ function TaoDatabaseVaTable()
         die("Lỗi khi tạo bảng 'product_system_requirements': " . $conn->error);
     }
 
+    // Bảng product_reviews
+    $sqlProductReviews = "CREATE TABLE IF NOT EXISTS product_reviews (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        product_id INT NOT NULL,
+        user_id INT NOT NULL,
+        rating INT NOT NULL,
+        title VARCHAR(255) NOT NULL,
+        content TEXT NOT NULL,
+        isRecommended BOOLEAN DEFAULT TRUE,
+        isPurchased BOOLEAN DEFAULT FALSE,
+        createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE,
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+    )";
+
+    if ($conn->query($sqlProductReviews) === TRUE) {
+        echo "Bảng 'product_reviews' đã được tạo hoặc đã tồn tại.<br>";
+    } else {
+        die("Lỗi khi tạo bảng 'product_reviews': " . $conn->error);
+    }
+
     // Đóng kết nối
     DongKetNoi($conn);
 }
@@ -225,4 +246,4 @@ function ChenDuLieuTuFileSQL($sqlFile = 'data.sql')
 TaoDatabaseVaTable();
 
 // Gọi hàm chèn dữ liệu từ file sql
-ChenDuLieuTuFileSQL("../database/insert.sql");
+// ChenDuLieuTuFileSQL("../database/insert.sql");

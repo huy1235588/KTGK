@@ -1,13 +1,44 @@
 <!DOCTYPE html>
 <html lang="en">
 
+<?php
+include 'utils/db_connect.php';
+
+$conn = MoKetNoi();
+
+// Lấy ID sản phẩm từ URL
+$productId = isset($_GET['id']) ? intval($_GET['id']) : 0;
+
+// Truy vấn sản phẩm 
+$stmt = $conn->prepare("SELECT * FROM products WHERE id = ?");
+$stmt->bind_param("i", $productId);
+$stmt->execute();
+$result = $stmt->get_result();
+
+if ($result->num_rows > 0) {
+    // Lấy dữ liệu sản phẩm
+    $product = $result->fetch_assoc();
+    $name = htmlspecialchars($product['title']);
+    $price = floatval(htmlspecialchars($product['price']));
+    $discount = intval(htmlspecialchars($product['discount']));
+    $description = htmlspecialchars($product['description']);
+} else {
+    die("Sản phẩm không tồn tại.");
+}
+
+// Đóng kết nối
+$stmt->close();
+DongKetNoi($conn);
+?>
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= $name ?></title>
     <link rel="stylesheet" href="css/product.css">
-    <link rel="icon" type="image/x-icon" href="assets/logo.ico">
+    <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <script src="https://www.youtube.com/iframe_api"></script>
 </head>
 
 <body>
@@ -20,26 +51,6 @@
     <?php
     $conn = MoKetNoi();
 
-    // Lấy ID sản phẩm từ URL
-    $productId = isset($_GET['id']) ? intval($_GET['id']) : 0;
-
-    // Truy vấn sản phẩm 
-    $stmt = $conn->prepare("SELECT * FROM products WHERE id = ?");
-    $stmt->bind_param("i", $productId);
-    $stmt->execute();
-    $result = $stmt->get_result();
-
-    if ($result->num_rows > 0) {
-        // Lấy dữ liệu sản phẩm
-        $product = $result->fetch_assoc();
-        $name = htmlspecialchars($product['title']);
-        $price = floatval(htmlspecialchars($product['price']));
-        $discount = intval(htmlspecialchars($product['discount']));
-        $description = htmlspecialchars($product['description']);
-    } else {
-        die("Sản phẩm không tồn tại.");
-    }
-
     // Truy vấn danh sách screenshot
     $stmt = $conn->prepare("SELECT * FROM product_screenshots WHERE product_id = ?");
     $stmt->bind_param("i", $productId);
@@ -51,6 +62,24 @@
     if ($result->num_rows > 0) {
         while ($row = $result->fetch_assoc()) {
             $screenshot[] = $row['screenshot'];
+        }
+    }
+
+    // Truy vấn danh sách videos
+    $stmt = $conn->prepare("SELECT * FROM product_videos WHERE product_id = ?");
+    $stmt->bind_param("i", $productId);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    $videos = [];
+    // Lấy danh sách videos
+    if ($result->num_rows > 0) {
+        while ($row = $result->fetch_assoc()) {
+            $videos[] = array(
+                'mp4' => $row['mp4'],
+                'webm' => $row['webm'],
+                'thumbnail' => $row['thumbnail']
+            );
         }
     }
 
@@ -87,10 +116,57 @@
     <article class="container">
         <!-- Left content -->
         <main class="main">
-            <!-- Image -->
-            <section class="img-container">
-                <div class="swiper product-img">
+            <!-- Tiêu đề -->
+            <h1 class="product-name">
+                <?= $name ?>
+            </h1>
+
+            <!-- Media -->
+            <section class="media-container">
+                <div class="swiper product-media">
                     <ul class="swiper-wrapper">
+                        <!-- Videos -->
+                        <?php foreach ($videos as $video): ?>
+                            <li class="swiper-slide">
+                                <?php
+                                // Nếu nguồn video là youtube
+                                if (strpos($video['mp4'], 'youtube') !== false):
+                                    // Lấy ID video
+                                    $videoId = explode('=', $video['mp4'])[1];
+
+                                    // Nếu video đầu tiên, tự động phát
+                                    if ($video === $videos[0]) {
+                                        $autoplay = 1;
+                                    } else {
+                                        $autoplay = 0;
+                                    }
+                                ?>
+                                    <iframe
+                                        class="youtube-video"
+                                        src="https://www.youtube.com/embed/<?= $videoId ?>?enablejsapi=1&mute=1&autoplay=<?= $autoplay ?>"
+                                        data-video-id="<?= $videoId ?>"
+                                        frameborder="0"
+                                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                        allowfullscreen
+                                        >
+                                    </iframe>;
+                                <?php else: ?>
+                                    <video
+                                        controls
+                                        preload="metadata"
+                                        poster="<?= $video['thumbnail'] ?>"
+                                        muted
+                                        autoplay
+                                        >
+                                        <source src="<?= $video['mp4'] ?>" type="video/mp4">
+                                        <source src="<?= $video['webm'] ?>" type="video/webm">
+                                        Your browser does not support the video tag.
+                                    </video>
+                                <?php endif; ?>
+                            </li>
+                        <?php endforeach; ?>
+
+                        <!-- Image -->
                         <?php foreach ($screenshot as $img): ?>
                             <li class="swiper-slide">
                                 <img src="<?= $img ?>" alt="<?= $name ?>">
@@ -105,12 +181,21 @@
                 <!-- Swiper thu nhỏ bên dưới -->
                 <div class="swiper swiper-thumbs">
                     <ul class="swiper-wrapper">
+                        <?php foreach ($videos as $video): ?>
+                            <li class="swiper-slide">
+                                <img src="<?= $video['thumbnail'] ?>" alt="<?= $name ?>" class="thumb-img">
+                                <div class="play-icon"></div>
+                            </li>
+                        <?php endforeach; ?>
+
                         <?php foreach ($screenshot as $img): ?>
                             <li class="swiper-slide">
                                 <img src="<?= $img ?>" alt="<?= htmlspecialchars($name) ?>" class="thumb-img">
                             </li>
                         <?php endforeach; ?>
                     </ul>
+                    <!-- Thanh trượt -->
+                    <div class="swiper-scrollbar"></div>
                 </div>
             </section>
 
@@ -187,82 +272,88 @@
 
         <!-- Right content -->
         <aside class="right-content">
-            <h1 class="product-name">
-                <?= $name ?>
-            </h1>
-            <!-- Price -->
-            <div class="price-container">
-                <span class="price">
-                    <?php
-                    if ($product['price'] != null) {
-                        echo number_format($price, 3) . "₫";
-                    } else {
-                        echo number_format($original_price, 3) . "₫";
-                    }
-                    ?>
-                </span>
-
-                <!-- Origin price -->
-                <?php if ($price && $discount > 0): ?>
-                    <p class="origin-price">
-                        <span class="original-price">
-                            <?php
-                            // Tình giá gốc
-                            $originPrice = $price / (1 - $discount / 100);
-                            ?>
-
-                            <?= number_format($discount, 3) . "₫" ?>
-                        </span>
-                        <span class="discount">
-                            <?php
-                            echo "-" .  number_format(htmlspecialchars($product['discount']), 0) . "%";
-                            ?>
-                        </span>
-                    </p>
-                <?php endif ?>
-            </div>
-
-            <!-- Số lượng -->
-            <div class="quantity-container">
-                <label class="quantity-label" for="quantity">Số lượng:</label>
-                <div>
-                    <button id="decrement">
-                        -
-                    </button>
-                    <input type="number" id="quantity" value="20" min="1" max="100">
-                    <button id="increment">
-                        +
-                    </button>
-                </div>
-            </div>
-
-            <!-- Nút mua -->
-            <button class="buy-btn">
-                MUA NGAY
-            </button>
-
-            <p class="refund">
-                ĂN KHÔNG NGON, 1 ĐỔI 1
+            <!-- Hình ảnh header -->
+            <p class="product-header-img-container">
+                <img class="product-header-img"
+                    src="<?= htmlspecialchars($product['headerImage']) ?>"
+                    alt="<?= htmlspecialchars($product['title']) ?>">
             </p>
 
-            <div class="product-policises-container">
-                <h5 class="m-0 mb-3">
-                    Tiêu chuẩn dịch vụ
-                </h5>
-                <ul class="product-policises">
-                    <li>
-                        <img src="//theme.hstatic.net/1000141988/1001239110/14/policy_product_image_1.png?v=374">
-                        <p class="product-policises-text">
-                            Giao hàng nội thành 2 - 4 giờ
+            <div class="product-info">
+                <!-- Price -->
+                <div class="price-container">
+                    <span class="price">
+                        <?php
+                        if ($product['price'] != null) {
+                            echo number_format($price, 3) . "₫";
+                        } else {
+                            echo number_format($original_price, 3) . "₫";
+                        }
+                        ?>
+                    </span>
+
+                    <!-- Origin price -->
+                    <?php if ($price && $discount > 0): ?>
+                        <p class="origin-price">
+                            <span class="original-price">
+                                <?php
+                                // Tình giá gốc
+                                $originPrice = $price / (1 - $discount / 100);
+                                ?>
+
+                                <?= number_format($discount, 3) . "₫" ?>
+                            </span>
+                            <span class="discount">
+                                <?php
+                                echo "-" .  number_format(htmlspecialchars($product['discount']), 0) . "%";
+                                ?>
+                            </span>
                         </p>
-                    </li>
-                    <li>
-                        <img src="https://theme.hstatic.net/1000141988/1001239110/14/policy_product_image_3.png?v=374">
-                        <p class="product-policises-text">
-                            Đổi trả trong 48 giờ nếu sản phẩm không đạt chất lượng cam kết
-                        </p>
-                    </li>
-                </ul>
+                    <?php endif ?>
+                </div>
+
+                <!-- Số lượng -->
+                <div class="quantity-container">
+                    <label class="quantity-label" for="quantity">Số lượng:</label>
+                    <div>
+                        <button id="decrement">
+                            -
+                        </button>
+                        <input type="number" id="quantity" value="20" min="1" max="100">
+                        <button id="increment">
+                            +
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Nút mua -->
+                <button class="buy-btn">
+                    MUA NGAY
+                </button>
+
+                <p class="refund">
+                    ĂN KHÔNG NGON, 1 ĐỔI 1
+                </p>
+
+                <div class="product-policises-container">
+                    <h5 class="m-0 mb-3">
+                        Tiêu chuẩn dịch vụ
+                    </h5>
+                    <ul class="product-policises">
+                        <li>
+                            <img src="//theme.hstatic.net/1000141988/1001239110/14/policy_product_image_1.png?v=374">
+                            <p class="product-policises-text">
+                                Giao hàng nội thành 2 - 4 giờ
+                            </p>
+                        </li>
+                        <li>
+                            <img src="https://theme.hstatic.net/1000141988/1001239110/14/policy_product_image_3.png?v=374">
+                            <p class="product-policises-text">
+                                Đổi trả trong 48 giờ nếu sản phẩm không đạt chất lượng cam kết
+                            </p>
+                        </li>
+                    </ul>
+                </div>
             </div>
         </aside>
     </article>
