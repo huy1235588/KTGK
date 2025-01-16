@@ -71,7 +71,8 @@ DongKetNoi($conn);
                         <img
                             class="aside-img"
                             src="<?= htmlspecialchars($headerImage['headerImage']) ?>"
-                            alt="">
+                            alt=""
+                            loading="lazy" />
                     </div>
                 <?php endforeach; ?>
             <?php endif; ?>

@@ -10,7 +10,6 @@ p {
     margin: 0;
     text-decoration: none;
     list-style: none;
-    color: #fff;
 }
 
 button {
@@ -53,6 +52,12 @@ h1 {
     background-color: #fff;
 }
 
+.section {
+    width: 100%;
+    padding: 10px 30px;
+    background-color: #fff;
+}
+
 /* Price */
 .original-price {
     color: #9da7bc;
@@ -66,6 +71,32 @@ h1 {
     border-radius: 5px;
     color: #fff;
     background-color: #ff0101b3;
+}
+
+.discount-end {
+    display: inline-block;
+    margin-top: 7px;
+}
+
+/* Tag */
+.tag-container {
+    display: flex;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.tag-container .tag {
+    padding: 5px 10px;
+    margin-right: 10px;
+    border-radius: 5px;
+    background-color: #000000c2;
+    color: #fff;
+}
+
+.tag-container .tag:hover {
+    background-color: #000000;
 }
 /*****************************
         Left content
@@ -191,7 +222,7 @@ aside.right-content {
     top: 30px;
     flex: 1;
     height: auto;
-    min-height: 100vh;
+    min-height: 500px;
     padding: 0px 0px 20px;
     border-radius: 10px;
     margin: 0 0 0 10px;
@@ -328,12 +359,6 @@ aside.right-content .product-info {
 /********************************
         Sản phẩm liên quan
 ********************************/
-.section {
-    width: 100%;
-    padding: 10px;
-    background-color: #fff;
-}
-
 .product-relate .swiper-slide {
     height: 280px;
     border: 1px #858d9f solid;

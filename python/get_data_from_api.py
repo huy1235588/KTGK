@@ -10,6 +10,7 @@ query {
         title
         type
         description
+        detail
         price
         discount
         discountStartDate
@@ -73,6 +74,8 @@ def json_to_sql(data, output_file):
             title = product["title"].replace("'", "''")
             ptype = product["type"].replace("'", "''")
             description = product["description"].replace("'", "''")
+            # Thêm dấu nháy đơn vào đầu và cuối chuỗi nếu có
+            detail = f"'{product['detail'].replace('\'', '\'\'')}'" if product["detail"] else "NULL"
             price = product["price"]
             discount = product["discount"]
             discountStartDate = (
@@ -93,8 +96,8 @@ def json_to_sql(data, output_file):
 
             # Insert product
             file.write(
-                f"INSERT INTO products (id, title, type, description, price, discount, discountStartDate, discountEndDate, releaseDate, rating, isActive, headerImage)\n"
-                f"VALUES ({product_id}, '{title}', '{ptype}', '{description}', {price}, {discount}, {discountStartDate}, {discountEndDate}, {releaseDate}, {rating}, {isActive}, '{headerImage}');\n\n"
+                f"INSERT INTO products (id, title, type, description, detail, price, discount, discountStartDate, discountEndDate, releaseDate, rating, isActive, headerImage)\n"
+                f"VALUES ({product_id}, '{title}', '{ptype}', '{description}', {detail}, {price}, {discount}, {discountStartDate}, {discountEndDate}, {releaseDate}, {rating}, {isActive}, '{headerImage}');\n\n"
             )
 
             # Insert developer in a single statement

@@ -34,14 +34,12 @@ function TaoDatabaseVaTable()
         title VARCHAR(255) NOT NULL,
         type VARCHAR(255),
         description TEXT,
+        detail TEXT,
         price DECIMAL(10, 3) DEFAULT 0,
         discount DECIMAL(10, 3) DEFAULT 0,
         discountStartDate DATETIME,
         discountEndDate DATETIME,
         releaseDate DATETIME,
-        developer VARCHAR(255),
-        publisher VARCHAR(255),
-        platform VARCHAR(255),
         rating INT,
         isActive BOOLEAN DEFAULT TRUE,
         headerImage VARCHAR(255) NOT NULL,
@@ -222,16 +220,19 @@ function ChenDuLieuTuFileSQL($sqlFile = 'data.sql')
     }
 
     // Đọc file sql
-    $sqlFile = file_get_contents($sqlFile);
+    // $sqlFile = file_get_contents($sqlFile);
 
-    // Tách các câu lệnh sql
-    $sqlArray = explode(';', $sqlFile);
+    // Đọc file SQL
+    $sqlFileContent = file_get_contents($sqlFile);
 
-    // Chạy từng câu lệnh sql
+    // Sử dụng biểu thức chính quy để chia các câu lệnh SQL theo dấu `;`
+    $sqlArray = preg_split('/;\s*$/m', $sqlFileContent);
+
+    // Thực thi từng câu lệnh SQL
     foreach ($sqlArray as $sql) {
         if (trim($sql)) {
             if ($conn->query($sql) === TRUE) {
-                echo "Câu lệnh SQL đã được thực thi thành công.<br>";
+                echo "Câu lệnh SQL đã được thực thi thành công: " . substr($sql, 0, 50) . "...<br>";
             } else {
                 echo "Lỗi khi thực thi câu lệnh SQL: " . $conn->error . "<br>";
             }
@@ -246,4 +247,4 @@ function ChenDuLieuTuFileSQL($sqlFile = 'data.sql')
 TaoDatabaseVaTable();
 
 // Gọi hàm chèn dữ liệu từ file sql
-// ChenDuLieuTuFileSQL("../database/insert.sql");
+ChenDuLieuTuFileSQL("../database/insert.sql");

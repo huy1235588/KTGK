@@ -22,6 +22,11 @@ if ($result->num_rows > 0) {
     $price = floatval(htmlspecialchars($product['price']));
     $discount = intval(htmlspecialchars($product['discount']));
     $description = htmlspecialchars($product['description']);
+
+    // 2024-08-20 00:00:00 => 20 August, 2024
+    $releaseDate = date('d F, Y', strtotime($product['releaseDate']));
+    $discountEndDate = date('d F, Y', strtotime($product['discountEndDate']));
+    $detail = $product['detail'];
 } else {
     die("Sản phẩm không tồn tại.");
 }
@@ -83,14 +88,57 @@ DongKetNoi($conn);
         }
     }
 
+    // Lấy danh sách developer
+    $stmt = $conn->prepare("SELECT developer FROM product_developers WHERE product_id = ?");
+    $stmt->bind_param("i", $productId);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    $developers = [];
+    if ($result->num_rows > 0) {
+        while ($row = $result->fetch_assoc()) {
+            $developers[] = $row['developer'];
+        }
+    }
+
+    // Lấy danh sách publisher
+    $stmt = $conn->prepare("SELECT publisher FROM product_publishers WHERE product_id = ?");
+    $stmt->bind_param("i", $productId);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    $publishers = [];
+    if ($result->num_rows > 0) {
+        while ($row = $result->fetch_assoc()) {
+            $publishers[] = $row['publisher'];
+        }
+    }
+
     // Lấy genre của sản phẩm
     $stmt = $conn->prepare("SELECT genre FROM product_genres WHERE product_id = ?");
     $stmt->bind_param("i", $productId);
     $stmt->execute();
     $result = $stmt->get_result();
 
+    $genre = [];
     if ($result->num_rows > 0) {
-        $genre = $result->fetch_assoc();
+        while ($row = $result->fetch_assoc()) {
+            $genre[] = $row;
+        }
+    }
+
+    // Truy vấn tags
+    $stmt = $conn->prepare("SELECT tag FROM product_tags WHERE product_id = ?");
+    $stmt->bind_param("i", $productId);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    // Lấy danh sách tags
+    $tags = [];
+    if ($result->num_rows > 0) {
+        while ($row = $result->fetch_assoc()) {
+            $tags[] = $row['tag'];
+        }
     }
 
     // Truy vấn features
@@ -107,17 +155,49 @@ DongKetNoi($conn);
         }
     }
 
-    // Truy vấn sản phẩm cùng genres
-    // $stmt = $conn->prepare("SELECT * FROM products p JOIN product_genres pg ON p.id = pg.product_id WHERE pg.genre = ? AND p.id != ? LIMIT 4");
-    // $stmt->bind_param("si", $genre, $productId);
-    // $stmt->execute();
-    // $result = $stmt->get_result();
+    // Lấy danh sách system requirements
+    $stmt = $conn->prepare("SELECT * FROM product_system_requirements WHERE product_id = ?");
+    $stmt->bind_param("i", $productId);
+    $stmt->execute();
+    $result = $stmt->get_result();
 
-    // Lấy danh sách sản phẩm cùng genres
-    $sanPhamGenre = [];
+    // Lấy danh sách system requirements
+    $windows = [];
+    $mac = [];
+    $linux = [];
+    $systemRequirements = [];
     if ($result->num_rows > 0) {
         while ($row = $result->fetch_assoc()) {
-            $sanPhamGenre[] = $row;
+            if ($row['platform'] == 'win') {
+                $windows[] = $row;
+            } else if ($row['platform'] == 'mac') {
+                $mac = $row;
+            } else if ($row['platform'] == 'linux') {
+                $linux = $row;
+            }
+        }
+    }
+
+    // Truy vấn sản phẩm cùng genres
+    $stmt = $conn->prepare("SELECT DISTINCT p.*
+        FROM products p
+        JOIN product_genres pg ON p.id = pg.product_id
+        WHERE pg.genre IN (
+            SELECT genre
+            FROM product_genres
+            WHERE product_id = ?
+        )
+        AND p.id != ?
+    ");
+    $stmt->bind_param("ii", $productId, $productId); // Truyền hai giá trị $productId
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    // Lấy danh sách sản phẩm cùng genres
+    $relatedProducts = []; // Đặt tên biến rõ ràng hơn
+    if ($result->num_rows > 0) {
+        while ($row = $result->fetch_assoc()) {
+            $relatedProducts[] = $row; // Thêm sản phẩm vào danh sách
         }
     }
 
@@ -181,7 +261,7 @@ DongKetNoi($conn);
                         <!-- Image -->
                         <?php foreach ($screenshot as $img): ?>
                             <li class="swiper-slide">
-                                <img src="<?= $img ?>" alt="<?= $name ?>">
+                                <img src="<?= $img ?>" alt="<?= $name ?>" loading="lazy">
                             </li>
                         <?php endforeach; ?>
                     </ul>
@@ -195,14 +275,14 @@ DongKetNoi($conn);
                     <ul class="swiper-wrapper">
                         <?php foreach ($videos as $video): ?>
                             <li class="swiper-slide">
-                                <img src="<?= $video['thumbnail'] ?>" alt="<?= $name ?>" class="thumb-img">
+                                <img src="<?= $video['thumbnail'] ?>" alt="<?= $name ?>" class="thumb-img" loading="lazy">
                                 <div class="play-icon"></div>
                             </li>
                         <?php endforeach; ?>
 
                         <?php foreach ($screenshot as $img): ?>
                             <li class="swiper-slide">
-                                <img src="<?= $img ?>" alt="<?= htmlspecialchars($name) ?>" class="thumb-img">
+                                <img src="<?= $img ?>" alt="<?= htmlspecialchars($name) ?>" class="thumb-img" loading="lazy">
                             </li>
                         <?php endforeach; ?>
                     </ul>
@@ -213,71 +293,68 @@ DongKetNoi($conn);
 
             <!-- Thông tin chi tiết -->
             <section class="section product-info">
-                <h2 class="title">
-                    Thông tin sản phẩm
-                </h2>
+                <!-- Description -->
                 <p class="description">
                     <?= $description ?>
                 </p>
 
-            </section>
+                <!-- Tag -->
+                <div class="tag-container">
+                    <?php foreach ($tags as $tag): ?>
+                        <a href="#" class="tag">
+                            <?= htmlspecialchars($tag) ?>
+                        </a>
+                    <?php endforeach; ?>
+                </div>
 
-            <section class="section product-relate-container">
-                <h2 class="title">
-                    Sẩn phẩm liên quan
-                </h2>
+                <!-- Detail -->
+                <div class="detail">
+                    <?= $detail ?>
+                </div>
 
-                <div class="swiper product-relate">
-                    <ul class="swiper-wrapper">
-                        <?php foreach ($sanPhamGenre as $sp): ?>
-                            <li class="swiper-slide">
-                                <a href="product.php?id=<?= htmlspecialchars($sp['id']) ?>">
-                                    <p class="product-img-container">
-                                        <img class="product-img"
-                                            src="<?= htmlspecialchars($sp['headerImage']) ?>/anh_bia.jpg"
-                                            alt="<?= htmlspecialchars($sp['title']) ?>">
-                                    </p>
-                                    <p class="product-name">
-                                        <?= htmlspecialchars(($sp['title'])) ?>
-                                    </p>
-                                    <!-- Price -->
-                                    <div class="price-container">
-                                        <span class="price">
-                                            <?php
-                                            if ($sp['price'] != null) {
-                                                echo "$" . number_format($product['price'], 2);
-                                            } else {
-                                                echo "$" . number_format(htmlspecialchars($product['price']), 2);
-                                            }
-                                            ?>
-                                        </span>
+                <!-- System requirements -->
+                <div class="system-requirements">
+                    <h2 class="title">
+                        System Requirements
+                    </h2>
 
-                                        <!-- Origin price -->
-                                        <?php if ($product['price'] && htmlspecialchars($product['discount']) > 0): ?>
-                                            <p class="origin-price">
-                                                <span class="original-price">
-                                                    <?php
-                                                    // Tình giá gốc
-                                                    $originPrice = $product['price'] / (1 - $product['discount'] / 100);
-                                                    ?>
+                    <!-- Tabs -->
+                    <div class="tabs">
+                        <button class="tab active" data-tab="win">
+                            Windows
+                        </button>
+                        <button class="tab" data-tab="mac">
+                            Mac OS X
+                        </button>
+                        <button class="tab" data-tab="linux">
+                            SteamOS + Linux
+                        </button>
+                    </div>
 
-                                                    <?= number_format($originPrice, 2) ?>
-                                                </span>
-                                                <span class="discount">
-                                                    <?php
-                                                    echo "-" .  number_format(htmlspecialchars($product['discount']), 0) . "%";
-                                                    ?>
-                                                </span>
-                                            </p>
-                                        <?php endif ?>
-                                    </div>
-                                </a>
-                            </li>
-                        <?php endforeach; ?>
-                    </ul>
-                    <!-- Nút điều hướng
-                    <div class="swiper-button product-relate-button-prev"></div>
-                    <div class="swiper-button product-relate-button-next"></div> -->
+                    <!-- Window -->
+                    <div class="tab-content active" id="win">
+                        <h3 class="title">
+                            Windows
+                        </h3>
+                        <div style="display: flex;">
+                            <ul>
+                                <?php foreach ($windows as $win): ?>
+                                    <li>
+                                        <b><?= $win['title'] ?></b>
+                                        <span><?= $win['recommended'] ?></span>
+                                    </li>
+                                <?php endforeach; ?>
+                            </ul>
+                            <ul>
+                                <?php foreach ($windows as $win): ?>
+                                    <li>
+                                        <b><?= $win['title'] ?></b>
+                                        <span><?= $win['minimum'] ?></span>
+                                    </li>
+                                <?php endforeach; ?>
+                            </ul>
+                        </div>
+                    </div>
                 </div>
             </section>
         </main>
@@ -288,7 +365,8 @@ DongKetNoi($conn);
             <p class="product-header-img-container">
                 <img class="product-header-img"
                     src="<?= htmlspecialchars($product['headerImage']) ?>"
-                    alt="<?= htmlspecialchars($product['title']) ?>">
+                    alt="<?= htmlspecialchars($product['title']) ?>"
+                    loading="lazy">
             </p>
 
             <div class="product-info">
@@ -321,6 +399,11 @@ DongKetNoi($conn);
                                 echo "-" .  number_format(htmlspecialchars($product['discount']), 0) . "%";
                                 ?>
                             </span>
+
+                            <!-- Discount end -->
+                        <p class="discount-end">
+                            <?= "Offer ends " . $discountEndDate ?>
+                        </p>
                         </p>
                     <?php endif ?>
                 </div>
@@ -394,7 +477,8 @@ DongKetNoi($conn);
 
 
                                             src="assets/icons/features/<?= $featureIcon ?>"
-                                            alt="<?= htmlspecialchars($feature['feature']) ?>">
+                                            alt="<?= htmlspecialchars($feature['feature']) ?>"
+                                            loading="lazy">
                                     </span>
                                     <span class="feature-title">
                                         <?= htmlspecialchars($feature['feature']) ?>
@@ -405,10 +489,113 @@ DongKetNoi($conn);
                     </ul>
                 </div>
 
+                <!-- Product detail -->
+                <div id="genresAndManufacturer" class="details_block">
+                    <b>Title:</b>
+                    <span>
+                        <?= $name ?>
+                    </span>
+                    <br>
 
+                    <b>Genre:</b>
+                    <span data-panel="{&quot;flow-children&quot;:&quot;row&quot;}">
+                        <?php foreach ($genre as $g): ?>
+                            <a href="https://store.steampowered.com/tags/en/<?= $g['genre'] ?>/">
+                                <?= $g['genre'] ?>
+                            </a>
+                        <?php endforeach; ?>
+                    </span><br>
+
+                    <div class="dev_row">
+                        <b>Developer:</b>
+
+                        <?php foreach ($developers as $dev): ?>
+                            <a href="https://store.steampowered.com/search/?developer=<?= $dev ?>&amp;snr=1_5_9__422">
+                                <?= $dev ?>
+                            </a>
+                        <?php endforeach; ?>
+                    </div>
+
+                    <div class="dev_row">
+                        <b>Publisher:</b>
+
+                        <?php foreach ($publishers as $pub): ?>
+                            <a href="https://store.steampowered.com/search/?publisher=<?= $pub ?>&amp;snr=1_5_9__422">
+                                <?= $pub ?>
+                            </a>
+                        <?php endforeach; ?>
+                    </div>
+
+                    <b>Release Date:</b>
+                    <span>
+                        <?= $releaseDate ?>
+                    </span>
+                    <br>
+                </div>
             </div>
         </aside>
     </article>
+
+    <!-- Sản phẩm liên quan -->
+    <section class="section product-relate-container">
+        <h2 class="title">
+            Sẩn phẩm liên quan
+        </h2>
+
+        <div class="swiper product-relate">
+            <ul class="swiper-wrapper">
+                <?php foreach ($relatedProducts as $sp): ?>
+                    <li class="swiper-slide">
+                        <a href="product.php?id=<?= htmlspecialchars($sp['id']) ?>">
+                            <p class="product-img-container">
+                                <img class="product-img"
+                                    src="<?= htmlspecialchars($sp['headerImage']) ?>/anh_bia.jpg"
+                                    alt="<?= htmlspecialchars($sp['title']) ?>"
+                                    loading="lazy">
+                            </p>
+                            <p class="product-name">
+                                <?= htmlspecialchars(($sp['title'])) ?>
+                            </p>
+                            <!-- Price -->
+                            <div class="price-container">
+                                <span class="price">
+                                    <?php
+                                    if ($sp['price'] != null) {
+                                        echo "$" . number_format($product['price'], 2);
+                                    } else {
+                                        echo "$" . number_format(htmlspecialchars($product['price']), 2);
+                                    }
+                                    ?>
+                                </span>
+
+                                <!-- Origin price -->
+                                <?php if ($product['price'] && htmlspecialchars($product['discount']) > 0): ?>
+                                    <p class="origin-price">
+                                        <span class="original-price">
+                                            <?php
+                                            // Tình giá gốc
+                                            $originPrice = $product['price'] / (1 - $product['discount'] / 100);
+                                            ?>
+
+                                            <?= number_format($originPrice, 2) ?>
+                                        </span>
+                                        <span class="discount">
+                                            <?php
+                                            echo "-" .  number_format(htmlspecialchars($product['discount']), 0) . "%";
+                                            ?>
+                                        </span>
+                                    </p>
+                                <?php endif ?>
+                            </div>
+                        </a>
+                    </li>
+                <?php endforeach; ?>
+            </ul>
+            <!-- Nút điều hướng -->
+            <div class="swiper-button product-relate-button-prev"></div>
+            <div class="swiper-button product-relate-button-next"></div>
+        </div>
+    </section>
 
     <?php
     include 'footer.php';

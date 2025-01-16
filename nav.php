@@ -6,20 +6,21 @@
     .menu ul {
         display: flex;
     }
-
+    
     .menu ul li {
         display: flex;
         align-items: center;
         margin-left: 20px;
     }
-
+    
     .menu ul li:last-child {
         margin-right: 20px;
     }
-
+    
     .menu ul li a {
         display: inline-block;
         padding: 12px 14px;
+        color: white;
     }
 
     .menu ul li a:hover {

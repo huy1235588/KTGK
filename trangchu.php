@@ -67,7 +67,8 @@
                                             <p class="product-img-container">
                                                 <img class="product-img"
                                                     src="<?= htmlspecialchars($product['headerImage']) ?>"
-                                                    alt="<?= htmlspecialchars($product['title']) ?>">
+                                                    alt="<?= htmlspecialchars($product['title']) ?>"
+                                                    loading="lazy" />
                                             </p>
                                             <!-- Product info -->
                                             <div class="product-info">

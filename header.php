@@ -1,6 +1,6 @@
 <header class="header">
     <a href="trangchu.php">
-        <img class="logo" src="assets/logo1.png" alt="">
+        <img class="logo" src="assets/logo1.png" alt="" loading="lazy"/>
         <span>Lê Huy</span>
     </a>
 </header>
