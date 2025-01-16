@@ -1,3 +1,15 @@
+<link rel="stylesheet" href="components/notification.css">
+<script src="components/notification.js"></script>
+<?php
+include_once 'components/notification.php';
+
+$notification = getNotification();
+if ($notification): ?>
+    <div class="notification <?= $notification['type'] ?>">
+        <?= htmlspecialchars($notification['message']) ?>
+    </div>
+<?php endif; ?>
+
 <header class="header">
     <a href="trangchu.php">
         <img class="logo" src="assets/logo1.png" alt="" loading="lazy"/>

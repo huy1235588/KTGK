@@ -1,0 +1,57 @@
+/* Container thông báo */
+.notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+    padding: 15px 20px;
+    border-radius: 5px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    font-size: 16px;
+    color: #fff;
+    cursor: pointer;
+    user-select: none;
+    transition: transform 0.3s ease;
+    animation: slide-in 0.5s ease, fade-out 0.5s ease 3.5s forwards;
+}
+
+.notification:active {
+    transform: scale(0.9);
+}
+
+/* Các kiểu thông báo */
+.notification.success {
+    background-color: #4caf50;
+}
+
+.notification.error {
+    background-color: #f44336;
+}
+
+.notification.warning {
+    background-color: #ff9800;
+}
+
+.notification.info {
+    background-color: #2196f3;
+}
+
+/* Hiệu ứng slide-in */
+@keyframes slide-in {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+/* Hiệu ứng fade-out */
+@keyframes fade-out {
+    to {
+        opacity: 0;
+        transform: translateX(100%);
+    }
+}

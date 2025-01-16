@@ -1,3 +1,93 @@
+<?php
+// Nếu MoKetNoi() đã tồn tại
+if (!function_exists('MoKetNoi')) {
+    include 'utils/db_connect.php';
+}
+
+// Khởi tạo mảng lưu lỗi
+$errors = [
+    'name' => '',
+    'phone' => '',
+    'email' => '',
+    'address' => '',
+    'gender' => '',
+    'username' => '',
+    'password' => '',
+    'confirm_password' => ''
+];
+
+// Xử lý form
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $name = htmlspecialchars($_POST['name']);
+    $phone = htmlspecialchars($_POST['phone']);
+    $email = htmlspecialchars($_POST['email']);
+    $address = htmlspecialchars($_POST['address']);
+    $gender = isset($_POST['gender']) ? htmlspecialchars($_POST['gender']) : '';
+    $username = htmlspecialchars($_POST['username']);
+    $password = $_POST['password'];
+    $confirm_password = $_POST['confirm_password'];
+
+    $conn = MoKetNoi();
+
+    // Kiểm tra email đã tồn tại
+    $result_email = $conn->query("SELECT * FROM users WHERE email = '$email'");
+    if ($result_email->num_rows > 0) {
+        $errors['email'] = "Email đã tồn tại!";
+    }
+
+    // Kiểm tra tên đăng nhập đã tồn tại
+    $result_username = $conn->query("SELECT * FROM users WHERE username = '$username'");
+    if ($result_username->num_rows > 0) {
+        $errors['username'] = "Tên đăng nhập đã tồn tại!";
+    }
+
+    // Kiểm tra các điều kiện khác như mật khẩu, số điện thoại...
+    if (empty($name)) {
+        $errors['name'] = "Họ tên không được để trống";
+    }
+
+    if (!preg_match("/^[0-9]{10}$/", $phone)) {
+        $errors['phone'] = "Số điện thoại không hợp lệ";
+    }
+
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $errors['email'] = "Email không hợp lệ";
+    }
+
+    if (strlen($password) < 3) {
+        $errors['password'] = "Mật khẩu phải có ít nhất 3 ký tự";
+    }
+
+    if ($password !== $confirm_password) {
+        $errors['confirm_password'] = "Mật khẩu nhập lại không khớp";
+    }
+
+    if (empty(array_filter($errors))) {
+
+        // Insert người dùng vào database
+        $stmt = $conn->prepare("INSERT INTO users (name, phone, email, address, gender, username, password) VALUES (?, ?, ?, ?, ?, ?, ?)");
+        $stmt->bind_param("sssssss", $name, $phone, $email, $address, $gender, $username, $password);
+
+        if ($stmt->execute()) {
+            require 'components/notification.php';
+
+            // Tạo thông báo đăng ký thành công
+            setNotification('Đăng ký thành công!', 'success');
+
+            // Đóng kết nói database
+            $stmt->close();
+            $conn->close();
+
+            // Chuyển hướng đến trang đăng nhập
+            header("Location: dangnhap.php");
+            exit();
+        } else {
+            $errors['general'] = "Đã xảy ra lỗi khi đăng ký, vui lòng thử lại.";
+        }
+    }
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -15,94 +105,6 @@
     include 'header.php';
     include 'nav.php';
     include 'aside.php';
-    ?>
-
-    <?php
-    include 'utils/db_connect.php';
-
-    // Khởi tạo mảng lưu lỗi
-    $errors = [
-        'name' => '',
-        'phone' => '',
-        'email' => '',
-        'address' => '',
-        'gender' => '',
-        'username' => '',
-        'password' => '',
-        'confirm_password' => ''
-    ];
-
-    // Xử lý form
-    if ($_SERVER["REQUEST_METHOD"] == "POST") {
-        $name = htmlspecialchars($_POST['name']);
-        $phone = htmlspecialchars($_POST['phone']);
-        $email = htmlspecialchars($_POST['email']);
-        $address = htmlspecialchars($_POST['address']);
-        $gender = isset($_POST['gender']) ? htmlspecialchars($_POST['gender']) : '';
-        $username = htmlspecialchars($_POST['username']);
-        $password = $_POST['password'];
-        $confirm_password = $_POST['confirm_password'];
-
-        $conn = MoKetNoi();
-
-        // Kiểm tra email đã tồn tại
-        $result_email = $conn->query("SELECT * FROM users WHERE email = '$email'");
-        if ($result_email->num_rows > 0) {
-            $errors['email'] = "Email đã tồn tại!";
-        }
-
-        // Kiểm tra tên đăng nhập đã tồn tại
-        $result_username = $conn->query("SELECT * FROM users WHERE username = '$username'");
-        if ($result_username->num_rows > 0) {
-            $errors['username'] = "Tên đăng nhập đã tồn tại!";
-        }
-
-        // Kiểm tra các điều kiện khác như mật khẩu, số điện thoại...
-        if (empty($name)) {
-            $errors['name'] = "Họ tên không được để trống";
-        }
-
-        if (!preg_match("/^[0-9]{10}$/", $phone)) {
-            $errors['phone'] = "Số điện thoại không hợp lệ";
-        }
-
-        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            $errors['email'] = "Email không hợp lệ";
-        }
-
-        if (strlen($password) < 3) {
-            $errors['password'] = "Mật khẩu phải có ít nhất 3 ký tự";
-        }
-
-        if ($password !== $confirm_password) {
-            $errors['confirm_password'] = "Mật khẩu nhập lại không khớp";
-        }
-
-        if (empty(array_filter($errors))) {
-
-            // Insert người dùng vào database
-            $stmt = $conn->prepare("INSERT INTO users (name, phone, email, address, gender, username, password) VALUES (?, ?, ?, ?, ?, ?, ?)");
-            $stmt->bind_param("sssssss", $name, $phone, $email, $address, $gender, $username, $password);
-
-            if ($stmt->execute()) {
-                require 'components/notification.php';
-
-                // Tạo thông báo đăng ký thành công
-                $notification = new Notification();
-                $notification->render('Đăng ký thành công!', 'success');
-
-                // Đóng kết nói database
-                $stmt->close();
-                $conn->close();
-
-                // Chuyển hướng đến trang đăng nhập
-                header("Location: dangnhap.php");
-                exit();
-            } else {
-                $errors['general'] = "Đã xảy ra lỗi khi đăng ký, vui lòng thử lại.";
-            }
-        }
-    }
     ?>
 
     <!-- Content -->
