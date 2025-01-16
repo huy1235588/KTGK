@@ -250,4 +250,4 @@ TaoDatabaseVaTable();
 // ChenDuLieuTuFileSQL("../database/insert.sql");
 
 // Gọi hàm chèn user
-ChenDuLieuTuFileSQL("../database/insert_user.sql");
+ChenDuLieuTuFileSQL("../../database/insert_user.sql");
