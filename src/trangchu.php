@@ -64,12 +64,19 @@
 
                                         <a href="product.php?id=<?= htmlspecialchars($product['product_id']) ?>">
                                             <!-- Image -->
-                                            <p class="product-img-container">
-                                                <img class="product-img"
-                                                    src="<?= htmlspecialchars($product['headerImage']) ?>"
-                                                    alt="<?= htmlspecialchars($product['title']) ?>"
-                                                    loading="lazy" />
-                                            </p>
+                                            <div class="product-img-container">
+                                                <div class="skeleton-wrapper" style="--skeleton-height: 150px;">
+                                                    <!-- Skeleton loader -->
+                                                    <div class="skeleton skeleton-img"></div>
+
+                                                    <!-- Ảnh -->
+                                                    <img class="product-img"
+                                                        src=""
+                                                        data-src="<?= htmlspecialchars($product['headerImage']) ?>"
+                                                        alt="<?= htmlspecialchars($product['title']) ?>"
+                                                        loading="lazy" />
+                                                </div>
+                                            </div>
                                             <!-- Product info -->
                                             <div class="product-info">
                                                 <!-- Title -->

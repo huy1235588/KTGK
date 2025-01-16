@@ -5,17 +5,14 @@
 
     .menu ul {
         display: flex;
+        margin: 0 20px;
     }
 
     .menu ul li {
         display: flex;
         align-items: center;
-        margin-left: 20px;
+        margin-left: 5px;
         color: white;
-    }
-
-    .menu ul li:last-child {
-        margin-right: 20px;
     }
 
     .menu ul li a {

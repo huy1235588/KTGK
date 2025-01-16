@@ -1,0 +1,41 @@
+/* Wrapper chứa ảnh và skeleton */
+.skeleton-wrapper {
+    position: relative;
+    width: 100%;
+    height: var(--skeleton-height, 200px); /* Chiều cao mặc định của skeleton */
+    overflow: hidden;
+    background-color: #e0e0e0; /* Màu nền mặc định khi ảnh chưa tải */
+}
+
+/* Skeleton Loader */
+.skeleton {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background: linear-gradient(90deg, #e0e0e0 25%, #f0f0f0 50%, #e0e0e0 75%);
+    background-size: 200% 100%;
+    animation: skeleton-loading 1.5s infinite;
+}
+
+/* Ẩn ảnh khi chưa tải xong */
+.skeleton-wrapper img {
+    object-fit: cover;
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out;
+}
+
+/* Hiển thị ảnh sau khi tải */
+.skeleton-wrapper img.loaded {
+    opacity: 1;
+}
+
+/* Hiệu ứng skeleton */
+@keyframes skeleton-loading {
+    0% {
+        background-position: 200% 0;
+    }
+    100% {
+        background-position: -200% 0;
+    }
+}

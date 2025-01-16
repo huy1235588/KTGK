@@ -1,6 +1,8 @@
 <?php
 session_start();
 include_once 'utils/db_connect.php';
+require 'components/notification.php';
+
 $conn = MoKetNoi();
 
 $error = "";
@@ -23,6 +25,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         $stmt->close();
         DongKetNoi($conn);
+
+        // Tạo thông báo đăng nhập thành công
+        $notification = new Notification();
+        $notification->render('Đăng nhập thành công!', 'success');
 
         // Chuyển hướng tới trang chủ hoặc trang được chuyển hướng
         if (isset($_SESSION['redirect'])) {
