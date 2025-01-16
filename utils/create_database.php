@@ -247,4 +247,7 @@ function ChenDuLieuTuFileSQL($sqlFile = 'data.sql')
 TaoDatabaseVaTable();
 
 // Gọi hàm chèn dữ liệu từ file sql
-ChenDuLieuTuFileSQL("../database/insert.sql");
+// ChenDuLieuTuFileSQL("../database/insert.sql");
+
+// Gọi hàm chèn user
+ChenDuLieuTuFileSQL("../database/insert_user.sql");

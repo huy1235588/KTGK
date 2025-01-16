@@ -6,17 +6,18 @@
     .menu ul {
         display: flex;
     }
-    
+
     .menu ul li {
         display: flex;
         align-items: center;
         margin-left: 20px;
+        color: white;
     }
-    
+
     .menu ul li:last-child {
         margin-right: 20px;
     }
-    
+
     .menu ul li a {
         display: inline-block;
         padding: 12px 14px;
@@ -31,6 +32,14 @@
         margin-right: auto;
     }
 </style>
+
+<?php
+if (!isset($_SESSION)) {
+    session_start();
+}
+$currentUrl = urlencode($_SERVER['REQUEST_URI']);
+?>
+
 <nav class="menu">
     <ul>
         <li>
@@ -73,13 +82,13 @@
                     Xin chào
                     <?= htmlspecialchars($_SESSION['username']) ?>
                 </p>
-                <a href="dangxuat.php">
+                <a href="dangxuat.php?redirect=<?= $currentUrl ?>">
                     đăng xuất
                 </a>
             </li>
         <?php else: ?>
             <li>
-                <a href="dangnhap.php">
+                <a href="dangnhap.php?redirect=<?= $currentUrl ?>">
                     Đăng nhập
                 </a>
             </li>

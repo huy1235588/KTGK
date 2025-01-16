@@ -5,7 +5,8 @@ session_start();
 session_unset();
 session_destroy();
 
-// Chuyển hướng về trang đăng nhập
-header("Location: trangchu.php");
+$currentUrl = "http://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+
+$redirect = isset($_GET['redirect']) ? $_GET['redirect'] : 'trangchu.php';
+header("Location: {$redirect}");
 exit();
-// <a href="dangxuat.php" class="logout-button">Đăng Xuất</a>
