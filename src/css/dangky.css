@@ -1,3 +1,9 @@
+* {
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+}
+
 a,
 ul,
 li {
@@ -57,7 +63,7 @@ input[type="email"] {
 input[type="radio"] {
     margin-right: 5px;
 }
-button {
+.button-submit {
     display: block;
     width: 100%;
     padding: 10px;
@@ -69,7 +75,7 @@ button {
     font-size: 16px;
     cursor: pointer;
 }
-button:hover {
+.button-submit:hover {
     background-color: #0056b3;
 }
 
@@ -90,4 +96,14 @@ input.input-error {
 
 /* Error */
 .error-login {
+}
+
+.footer .container {
+    display: flex;
+    width: 95%;
+    margin: 0 auto;
+    background-color: transparent;
+    box-shadow: none;
+    padding: 0;
+    border-radius: 0;
 }

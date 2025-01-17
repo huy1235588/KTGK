@@ -11,28 +11,28 @@ $currentUrl = urlencode($_SERVER['REQUEST_URI']);
     <ul class="menu-list">
         <li>
             <a href="trangchu.php">
-                Trang chủ
+                Store
             </a>
         </li>
         <li>
             <a href="trangchu.php">
-                Sản phẩm
+                Product
             </a>
         </li>
         <li>
             <a href="trangchu.php">
-                Danh mục
+                Genre
             </a>
         </li>
         <li class="left-menu">
             <a href="trangchu.php">
-                Giới thiệu
+                About us
             </a>
         </li>
 
         <!-- Search -->
         <li class="search">
-            <form action="timkiem.php" method="get" class="search-form">
+            <form action="search.php" method="get" class="search-form">
                 <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 24 24" class="searchIcon" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
                     <path d="M10 18a7.952 7.952 0 0 0 4.897-1.688l4.396 4.396 1.414-1.414-4.396-4.396A7.952 7.952 0 0 0 18 10c0-4.411-3.589-8-8-8s-8 3.589-8 8 3.589 8 8 8zm0-14c3.309 0 6 2.691 6 6s-2.691 6-6 6-6-2.691-6-6 2.691-6 6-6z"></path>
                 </svg>
@@ -56,35 +56,35 @@ $currentUrl = urlencode($_SERVER['REQUEST_URI']);
             <?php if (isset($_SESSION['role']) && $_SESSION['role'] === 'user'): ?>
                 <li>
                     <a href="cart.php">
-                        Giỏ hàng
+                        Cart
                     </a>
                 </li>
             <?php else: ?>
                 <li>
                     <a href="">
-                        Quản trị website
+                        Website management
                     </a>
                 </li>
 
             <?php endif; ?>
             <li>
                 <p class="username">
-                    Xin chào
+                    Hello
                     <?= htmlspecialchars($_SESSION['username']) ?>
                 </p>
                 <a href="dangxuat.php?redirect=<?= $currentUrl ?>">
-                    đăng xuất
+                    Log out
                 </a>
             </li>
         <?php else: ?>
             <li>
                 <a href="dangnhap.php?redirect=<?= $currentUrl ?>">
-                    Đăng nhập
+                    Log in
                 </a>
             </li>
             <li>
                 <a href="dangky.php">
-                    Đăng ký
+                    Sign up
                 </a>
             </li>
         <?php endif; ?>

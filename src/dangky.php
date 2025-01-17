@@ -190,7 +190,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 </tr>
                 <tr>
                     <td colspan="2">
-                        <button type="submit">Đăng ký</button>
+                        <button class="button-submit" type="submit">Đăng ký</button>
                     </td>
                 </tr>
             </table>
