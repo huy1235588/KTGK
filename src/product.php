@@ -218,7 +218,8 @@ DongKetNoi($conn);
             const productId = cartBtn.dataset.id;
             const sessionCart = <?php echo json_encode($_SESSION['cart']); ?> || [];
             const cartProductIds = sessionCart.map(item => item.productId);
-            const isProductInCart = cartProductIds.includes(productId);
+
+            let isProductInCart = cartProductIds.includes(productId);
 
             // Cập nhật giao diện nút nếu sản phẩm đã trong giỏ hàng
             if (isProductInCart) {
@@ -233,6 +234,7 @@ DongKetNoi($conn);
                     addToCart(productId).then(message => {
                         setNotification(message, 'success');
                         updateCartButton(cartBtn, true);
+                        isProductInCart = true;
                     }).catch(error => {
                         setNotification(error.message, 'error');
                     });

@@ -85,6 +85,7 @@ ul,
 li {
     text-decoration: none;
     list-style: none;
+    color: #fff;
 }
 
 button {
@@ -402,6 +403,7 @@ main.container {
     display: flex;
     justify-content: space-between;
     padding: 10px 0;
+    color: #000;
 }
 
 .sumary-item:nth-child(2) {
