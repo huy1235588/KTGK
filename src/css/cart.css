@@ -218,6 +218,7 @@ main {
 
 main.container {
     margin: 25px auto;
+    margin-bottom: 60px;
 }
 
 .product-cart {
@@ -408,6 +409,12 @@ main.container {
 
 .sumary-item:nth-child(2) {
     border-bottom: #fff dashed 1px;
+}
+
+.sumary-item.sumary-total {
+    font-size: 20px;
+    font-weight: 600;
+    border-top: #4b4b4b dashed 1px;
 }
 
 .sumary-label-taxes {

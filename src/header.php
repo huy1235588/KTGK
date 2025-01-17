@@ -3,6 +3,8 @@
 <?php
 include_once 'components/notification.php';
 
+$_SESSION['cart'] = $_SESSION['cart'] ?? [];
+
 $notification = getNotification();
 if ($notification): ?>
     <div class="notification <?= $notification['type'] ?>">

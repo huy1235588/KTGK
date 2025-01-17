@@ -83,7 +83,18 @@ $total = array_reduce($cart, function ($sum, $item) {
     return $sum + $item['price'];
 }, 0);
 
+// Tính tổng giá gốc trước khi giảm giá
+$baseTotal = array_reduce($cart, function ($sum, $item) {
+    return $sum + $item['basePrice'];
+}, 0);
+
+// Tính % giảm giá
+$discount = $baseTotal - $total;
+
+// Đóng kết nối
+DongKetNoi($conn);
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -137,7 +148,7 @@ $total = array_reduce($cart, function ($sum, $item) {
                                 </p>
                                 <ul class="product-cart-detail">
                                     <li class="product-cart-action">
-                                        <button type="button-remove">
+                                        <button class="button-remove" type="button" name="button-remove" data-id="<?= $item['productId'] ?>">
                                             <span class="button-remove-text">
                                                 Remove
                                             </span>
@@ -181,7 +192,7 @@ $total = array_reduce($cart, function ($sum, $item) {
                         Price
                     </span>
                     <span class="sumary-value">
-                        <?= number_format($total, 2) ?>
+                        $<?= number_format($basePrice, 2) ?>
                     </span>
                 </li>
                 <li class="sumary-item">
@@ -189,10 +200,10 @@ $total = array_reduce($cart, function ($sum, $item) {
                         Sale Discount
                     </span>
                     <span class="sumary-value">
-                        -$30
+                        -$<?= number_format($discount, 2) ?>
                     </span>
                 </li>
-                <li class="sumary-item">
+                <li class="sumary-item sumary-total">
                     <span class="sumary-label">
                         Total
                         <span class="sumary-label-taxes">
@@ -200,7 +211,7 @@ $total = array_reduce($cart, function ($sum, $item) {
                         </span>
                     </span>
                     <span class="sumary-value">
-                        $184.96
+                        $<?= number_format($total, 2) ?>
                     </span>
                 </li>
                 <li class="sumray-button">
@@ -236,6 +247,33 @@ $total = array_reduce($cart, function ($sum, $item) {
         </aside>
     </main>
 
+    <script>
+        // Xoá sản phẩm khỏi giỏ hàng
+        const buttonsRemove = document.querySelectorAll('.button-remove');
+
+        buttonsRemove.forEach(button => {
+            button.addEventListener('click', async () => {
+                const productId = button.dataset.id;
+
+                // Gửi request lên server để xoá sản phẩm khỏi giỏ hàng
+                const response = await fetch(`api/cart.php?productId=${productId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                });
+
+                if (response.ok) {
+                    // Xoá sản phẩm khỏi giao diện
+                    const productItem = button.closest('.product-cart-item');
+                    productItem.remove();
+
+                    // Hiển thị thông báo
+                    setNotification('Product removed from cart successfully.', 'success');
+                }
+            });
+        });
+    </script>
 
     <?php include 'footer.php'; ?>
 </body>
