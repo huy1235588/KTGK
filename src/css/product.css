@@ -58,6 +58,16 @@ h1 {
     background-color: #fff;
 }
 
+/* Name */
+.main .product-name {
+    font-size: 30px;
+    font-weight: 600;
+    text-align: left;
+    color: #000;
+    margin-bottom: 10px;
+    margin-left: 50px;
+}
+
 /* Price */
 .original-price {
     color: #9da7bc;

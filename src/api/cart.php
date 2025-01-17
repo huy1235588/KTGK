@@ -8,34 +8,42 @@ $conn = MoKetNoi();
 // Xử lý yêu cầu
 $method = $_SERVER['REQUEST_METHOD'];
 
+// Set Content-Type
+header('Content-Type: application/json');
+
 // Nếu là POST
 if ($method === 'POST') {
     // Lấy thông tin sản phẩm
     $productId = $_POST['productId'] ?? null;
-    print_r($productId);
 
     if (isset($productId)) {
-        // Kiểm tra sản phẩm đã tồn tại trong giỏ hàng chưa
-        $sqlCheck = "SELECT *
-        FROM cart
-        WHERE product_id = $productId";
-        $result = $conn->query($sqlCheck);
-
-        if ($result->num_rows > 0) {
-            // Cập nhật số lượng
-            $sqlUpdate = "UPDATE cart
-            SET quantity = quantity + $quantity
-            WHERE product_id = $productId";
-            $conn->query($sqlUpdate);
-        } else {
-            // Thêm mới
-            $sqlInsert = "INSERT INTO cart(product_id, quantity)
-            VALUES ($productId, $quantity)";
-            $conn->query($sqlInsert);
+        // Thêm vào productId vào localStorage
+        if (!isset($_SESSION['cart'])) {
+            $_SESSION['cart'] = [];
         }
 
-        // Hiển thị thông báo
-        setNotification("Product $productId added to cart", 'success');
+        // Kiểm tra xem sản phẩm đã tồn tại trong giỏ hàng chưa
+        $isExist = false;
+        foreach ($_SESSION['cart'] as $item) {
+            if ($item['productId'] === $productId) {
+                $isExist = true;
+                break;
+            }
+        }
+
+        // Nếu sản phẩm chưa tồn tại trong giỏ hàng
+        if (!$isExist) {
+            array_push($_SESSION['cart'], [
+                'productId' => $productId,
+            ]);
+        }
+        
+        // Trả về json
+        echo json_encode(array(
+            'message' => 'Product added to cart successfully.',
+            'cart' => $_SESSION['cart']
+        ));
+
     } else {
         echo 'Product ID not provided.';
     }
