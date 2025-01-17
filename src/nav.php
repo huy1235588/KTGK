@@ -62,7 +62,7 @@ $currentUrl = urlencode($_SERVER['REQUEST_URI']);
         <?php if (isset($_SESSION['username'])): ?>
             <?php if (isset($_SESSION['role']) && $_SESSION['role'] === 'user'): ?>
                 <li>
-                    <a href="">
+                    <a href="cart.php">
                         Giỏ hàng
                     </a>
                 </li>

@@ -1,5 +1,9 @@
 * {
     box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    text-decoration: none;
+    list-style: none;
 }
 
 a,
@@ -27,6 +31,7 @@ body {
     background-size: cover;
     margin: 0;
     padding: 0;
+    margin: 0;
 }
 .container {
     display: flex;
@@ -50,6 +55,7 @@ h1 {
     width: 70%;
     border-radius: 10px;
     background-color: #fff;
+    padding: 30px 0;
 }
 
 .section {

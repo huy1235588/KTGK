@@ -12,16 +12,25 @@ if ($notification): ?>
 
 <header class="header">
     <a href="trangchu.php">
-        <img class="logo" src="assets/logo1.png" alt="" loading="lazy"/>
-        <span>Lê Huy</span>
+        <img class="logo" src="assets/logo1.png" alt="" loading="lazy" />
+        <!-- <span>Lê Huy</span> -->
     </a>
 </header>
 
 <style>
+    .header {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 60px;
+        background-color: rgb(24, 24, 24);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
     .header a {
         display: flex;
         align-items: center;
-        margin: 10px 0 0 8px;
+        margin-right: 8px;
     }
 
     .header img {
@@ -31,5 +40,9 @@ if ($notification): ?>
     .header span {
         font-size: 50px;
         color: #333333;
+    }
+
+    .logo {
+        width: 100px;
     }
 </style>
