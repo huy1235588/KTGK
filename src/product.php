@@ -188,13 +188,14 @@ DongKetNoi($conn);
             WHERE product_id = ?
         )
         AND p.id != ?
+        LIMIT 10
     ");
     $stmt->bind_param("ii", $productId, $productId); // Truyền hai giá trị $productId
     $stmt->execute();
     $result = $stmt->get_result();
 
     // Lấy danh sách sản phẩm cùng genres
-    $relatedProducts = []; // Đặt tên biến rõ ràng hơn
+    $relatedProducts = [];
     if ($result->num_rows > 0) {
         while ($row = $result->fetch_assoc()) {
             $relatedProducts[] = $row; // Thêm sản phẩm vào danh sách
@@ -205,6 +206,30 @@ DongKetNoi($conn);
     $stmt->close();
     DongKetNoi($conn);
     ?>
+
+    <!-- Xử lý thêm vào giỏ hàng -->
+    <script>
+        // Thêm sản phẩm vào giỏ hàng
+        document.addEventListener('DOMContentLoaded', function() {
+            // Lấy nút thêm vào giỏ hàng
+            var cartBtn = document.querySelector('.cart-btn');
+
+            // Khi click vào nút thêm vào giỏ hàng
+            cartBtn.addEventListener('click', function() {
+                // Lấy ID sản phẩm
+                var productId = this.getAttribute('data-id');
+
+                // Gửi request POST đến trang cart.php
+                fetch('api/cart.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: 'productId=' + productId
+                })
+            });
+        });
+    </script>
 
     <!-- Content -->
     <article class="container">
@@ -275,7 +300,11 @@ DongKetNoi($conn);
                     <ul class="swiper-wrapper">
                         <?php foreach ($videos as $video): ?>
                             <li class="swiper-slide">
-                                <img src="<?= $video['thumbnail'] ?>" alt="<?= $name ?>" class="thumb-img" loading="lazy">
+                                <img
+                                    class="thumb-img"
+                                    src="<?= $video['thumbnail'] ?>"
+                                    alt="<?= $name ?>"
+                                    loading="lazy">
                                 <div class="play-icon"></div>
                             </li>
                         <?php endforeach; ?>
@@ -414,7 +443,7 @@ DongKetNoi($conn);
                 </button>
 
                 <!-- Nút giỏ hàng -->
-                <button class="cart-btn">
+                <button type="submit" class="cart-btn" data-id="<?= $productId ?>">
                     ADD TO CART
                 </button>
 

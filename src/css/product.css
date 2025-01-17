@@ -305,6 +305,14 @@ aside.right-content .product-info {
     background: linear-gradient(to right, #8ed629 5%, #6aa621 95%);
 }
 
+.buy-btn:active {
+    background: linear-gradient(to right, #47bfff 0%, #1a44c2 60%);
+}
+
+.cart-btn:active {
+    background: linear-gradient(to right, #75b022 5%, #588a1b 95%);
+}
+
 /* Features */
 .features {
     margin-top: 20px;
