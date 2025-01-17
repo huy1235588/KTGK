@@ -54,7 +54,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     })
                     .catch(error => console.error('Fetch error:', error));
             }
-        }, 1000);
+        }, 100);
     };
 
     // Ẩn hover
