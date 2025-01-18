@@ -179,6 +179,44 @@ DongKetNoi($conn);
         }
     }
 
+    // Lấy danh sách languages
+    $stmt = $conn->prepare("SELECT * FROM product_languages WHERE product_id = ?");
+    $stmt->bind_param("i", $productId);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    // Lấy danh sách languages
+    $languages = [];
+    if ($result->num_rows > 0) {
+        while ($row = $result->fetch_assoc()) {
+            $languages[] = $row['language'];
+            $interfaceLanguages[] = $row['interface'];
+            $fullAudioLanguages[] = $row['fullAudio'];
+            $subtitlesLanguages[] = $row['subtitles'];
+        }
+    }
+
+    // Lấy danh sách achievements
+    $stmt = $conn->prepare("SELECT title, image FROM product_achievements WHERE product_id = ? LIMIT 3");
+    $stmt->bind_param("i", $productId);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    // Lấy danh sách achievements
+    $achievements = [];
+    if ($result->num_rows > 0) {
+        while ($row = $result->fetch_assoc()) {
+            $achievements[] = $row;
+        }
+    }
+
+    // Lấy tổng số lượng achievements
+    $stmt = $conn->prepare("SELECT COUNT(*) AS total FROM product_achievements WHERE product_id = ?");
+    $stmt->bind_param("i", $productId);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $totalAchievements = $result->fetch_assoc()['total'];
+
     // Truy vấn sản phẩm cùng genres
     $stmt = $conn->prepare("SELECT DISTINCT p.*
         FROM products p
@@ -578,9 +616,7 @@ DongKetNoi($conn);
                     <b>Genre:</b>
                     <span data-panel="{&quot;flow-children&quot;:&quot;row&quot;}">
                         <?php foreach ($genre as $g): ?>
-                            <a href="https://store.steampowered.com/tags/en/<?= $g['genre'] ?>/">
-                                <?= $g['genre'] ?>
-                            </a>
+                            <a href="https://store.steampowered.com/tags/en/<?= $g['genre'] ?>" class="genre"><?= $g['genre'] ?></a><?php if ($g !== end($genre)) echo ", "; ?>
                         <?php endforeach; ?>
                     </span><br>
 
@@ -588,9 +624,7 @@ DongKetNoi($conn);
                         <b>Developer:</b>
 
                         <?php foreach ($developers as $dev): ?>
-                            <a href="https://store.steampowered.com/search/?developer=<?= $dev ?>&amp;snr=1_5_9__422">
-                                <?= $dev ?>
-                            </a>
+                            <a href="https://store.steampowered.com/search/?developer=<?= $dev ?>&amp;snr=1_5_9__422" class="dev"><?= $dev ?></a><?php if ($dev !== end($developers)) echo ","; ?>
                         <?php endforeach; ?>
                     </div>
 
@@ -598,9 +632,7 @@ DongKetNoi($conn);
                         <b>Publisher:</b>
 
                         <?php foreach ($publishers as $pub): ?>
-                            <a href="https://store.steampowered.com/search/?publisher=<?= $pub ?>&amp;snr=1_5_9__422">
-                                <?= $pub ?>
-                            </a>
+                            <a href="https://store.steampowered.com/search/?publisher=<?= $pub ?>&amp;snr=1_5_9__422" class="dev"> <?= $pub ?></a><?php if ($pub !== end($publishers)) echo ","; ?>
                         <?php endforeach; ?>
                     </div>
 
@@ -609,6 +641,55 @@ DongKetNoi($conn);
                         <?= $releaseDate ?>
                     </span>
                     <br>
+                </div>
+
+                <!-- Language -->
+                <div class="details_block">
+                    <p>
+                        Languages:
+                    </p>
+                    <table>
+                        <tr>
+                            <th></th>
+                            <th>Interface</th>
+                            <th>Full Audio</th>
+                            <th>Subtitles</th>
+                        </tr>
+                        <?php for ($i = 0; $i < count($languages); $i++): ?>
+                            <tr>
+                                <td><?= $languages[$i] ?></td>
+                                <td>
+                                    <?php if ($interfaceLanguages[$i] == 1): ?>
+                                        ✔
+                                    <?php endif; ?>
+                                </td>
+                                <td>
+                                    <?php if ($fullAudioLanguages[$i] == 1): ?>
+                                        ✔
+                                    <?php endif; ?>
+                                </td>
+                                <td>
+                                    <?php if ($subtitlesLanguages[$i] == 1): ?>
+                                        ✔
+                                    <?php endif; ?>
+                                </td>
+                            </tr>
+                        <?php endfor; ?>
+                    </table>
+                </div>
+
+                <!-- Achievements -->
+                <div class="details_block">
+                    <b>Achievements:</b>
+                    <span>
+                        <?= $totalAchievements ?> <?= $totalAchievements > 1 ? 'achievements' : 'achievement' ?>
+                    </span>
+                    <br>
+                    <div class="achievements">
+                        <?php foreach ($achievements as $achievement): ?>
+                            <img src="<?= $achievement['image'] ?>" alt="<?= $achievement['title'] ?>" loading="lazy">
+                        <?php endforeach; ?>
+                    </div>
                 </div>
             </div>
         </aside>

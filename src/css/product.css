@@ -376,6 +376,12 @@ aside.right-content .product-info {
     background: linear-gradient(135deg, #67c1f5 0%, #417a9b 100%);
 }
 
+/* Genre */
+.genre,
+.dev {
+    color: #007bff;
+}
+
 /********************
         ASIDE
 ********************/
