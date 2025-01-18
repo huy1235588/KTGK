@@ -205,6 +205,40 @@ function TaoDatabaseVaTable()
         die("Lỗi khi tạo bảng 'product_reviews': " . $conn->error);
     }
 
+    // Bảng product_achievements
+    $sqlProductAchievements = "CREATE TABLE IF NOT EXISTS product_achievements (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        product_id INT NOT NULL,
+        title VARCHAR(255) NOT NULL,
+        percent DECIMAL(5, 2) NOT NULL,
+        description TEXT,
+        image VARCHAR(255) NOT NULL,
+        FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
+    )";
+
+    if ($conn->query($sqlProductAchievements) === TRUE) {
+        echo "Bảng 'product_achievements' đã được tạo hoặc đã tồn tại.<br>";
+    } else {
+        die("Lỗi khi tạo bảng 'product_achievements': " . $conn->error);
+    }
+
+    // Bảng product_languages
+    $sqlProductLanguages = "CREATE TABLE IF NOT EXISTS product_languages (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        product_id INT NOT NULL,
+        language VARCHAR(100) NOT NULL,
+        interface BOOLEAN,
+        fullAudio BOOLEAN,
+        subtitles BOOLEAN,
+        FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
+    )";
+
+    if ($conn->query($sqlProductLanguages) === TRUE) {
+        echo "Bảng 'product_languages' đã được tạo hoặc đã tồn tại.<br>";
+    } else {
+        die("Lỗi khi tạo bảng 'product_languages': " . $conn->error);
+    }
+
     // Đóng kết nối
     DongKetNoi($conn);
 }
@@ -246,8 +280,16 @@ function ChenDuLieuTuFileSQL($sqlFile = 'data.sql')
 // Gọi hàm tạo database và table
 TaoDatabaseVaTable();
 
-// Gọi hàm chèn dữ liệu từ file sql
-// ChenDuLieuTuFileSQL("../database/insert.sql");
+// Chèn user
+// ChenDuLieuTuFileSQL("../../database/insert_user.sql");
 
-// Gọi hàm chèn user
-ChenDuLieuTuFileSQL("../../database/insert_user.sql");
+// Chèn product
+// ChenDuLieuTuFileSQL("../../database/insert_product.sql");
+
+// Chèn achievements
+// ChenDuLieuTuFileSQL("../../database/insert_achievements.sql");
+
+// Chèn languages
+// ChenDuLieuTuFileSQL("../../database/insert_languages.sql");
+
+echo "Dữ liệu đã được chèn thành công!";

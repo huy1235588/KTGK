@@ -2,10 +2,11 @@ import requests
 from datetime import datetime
 
 # Định nghĩa GraphQL API endpoint và truy vấn
-API_URL = "https://mail.lehuy.id.vn/graphql"
+# API_URL = "https://mail.lehuy.id.vn/graphql"
+API_URL = "http://192.168.1.13:3001/graphql"
 QUERY = """
 query {
-    products {
+    filterProducts (limit: 5){
         _id
         title
         type
@@ -16,9 +17,6 @@ query {
         discountStartDate
         discountEndDate
         releaseDate
-        developer
-        publisher
-        platform
         rating
         isActive
         headerImage
@@ -28,6 +26,9 @@ query {
             webm
             thumbnail
         }
+        developer
+        publisher
+        platform
         genres
         tags
         features
@@ -49,7 +50,36 @@ query {
             }
         }
         createdAt
-        updatedAt
+        updatedAt,
+    }
+}
+"""
+
+QUERY_ACHIEVEMENTS = """
+query {
+    getAchievementList {
+        productId
+        achievements {
+            title
+            percent
+            description
+            image
+        }
+    }
+}
+"""
+
+QUERY_LANGUAGES = """
+query {
+    getLanguagesList {
+        productId
+        languages {
+            language
+            interface
+            fullAudio
+            subtitles
+        }
+        createdAt
     }
 }
 """
@@ -69,13 +99,17 @@ def fetch_graphql_data(api_url, query):
 def json_to_sql(data, output_file):
     with open(output_file, "w", encoding="utf-8") as file:
         # Process products
-        for product in data["data"]["products"]:
+        for product in data["data"]["filterProducts"]:
             product_id = product["_id"]
             title = product["title"].replace("'", "''")
             ptype = product["type"].replace("'", "''")
             description = product["description"].replace("'", "''")
             # Thêm dấu nháy đơn vào đầu và cuối chuỗi nếu có
-            detail = f"'{product['detail'].replace('\'', '\'\'')}'" if product["detail"] else "NULL"
+            detail = (
+                f"'{product['detail'].replace('\'', '\'\'')}'"
+                if product["detail"]
+                else "NULL"
+            )
             price = product["price"]
             discount = product["discount"]
             discountStartDate = (
@@ -209,6 +243,55 @@ def json_to_sql(data, output_file):
                 )
 
 
+# Hàm chuyển đổi dữ liệu achievements thành các câu lệnh SQL
+def achievements_to_sql(data, output_file):
+    with open(output_file, "w", encoding="utf-8") as file:
+        file.write(
+            f"INSERT INTO product_achievements (product_id, title, percent, description, image) VALUES"
+        )
+        for achievement in data["data"]["getAchievementList"]:
+            product_id = achievement["productId"]
+            for ach in achievement["achievements"]:
+                title = ach["title"].replace("'", "''")
+                percent = ach["percent"]
+                description = ach["description"].replace("'", "''")
+                image = ach["image"].replace("'", "''")
+                # Xoá , nếu là phần tử cuối cùng
+                if achievement == data["data"]["getAchievementList"][-1] and ach == achievement["achievements"][-1]:
+                    file.write(
+                        f"({product_id}, '{title}', {percent}, '{description}', '{image}');\n"
+                    )
+                else:
+                    file.write(
+                        f"({product_id}, '{title}', {percent}, '{description}', '{image}'),\n"
+                    )
+
+
+# Hàm chuyển đổi dữ liệu languages thành các câu lệnh SQL
+def languages_to_sql(data, output_file):
+    with open(output_file, "w", encoding="utf-8") as file:
+        file.write(
+            f"INSERT INTO product_languages (product_id, language, interface, fullAudio, subtitles) VALUES"
+        )
+        for language in data["data"]["getLanguagesList"]:
+            product_id = language["productId"]
+            for lang in language["languages"]:
+                language = lang["language"].replace("'", "''")
+                # "True" => 1, "False" => 0
+                interface = 1 if lang["interface"] else 0
+                fullAudio = 1 if lang["fullAudio"] else 0
+                subtitles = 1 if lang["subtitles"] else 0
+                # Xoá , nếu là phần tử cuối cùng
+                if language == data["data"]["getLanguagesList"][-1] and lang == language["languages"][-1]:
+                    file.write(
+                        f"({product_id}, '{language}', {interface}, {fullAudio}, {subtitles});\n"
+                    )
+                else:
+                    file.write(
+                        f"({product_id}, '{language}', {interface}, {fullAudio}, {subtitles}),\n"
+                    )
+
+
 # Ghi câu lệnh SQL vào file
 def write_sql_to_file(sql_statements, filename):
     with open(filename, "w", encoding="utf-8") as file:
@@ -220,11 +303,25 @@ if __name__ == "__main__":
     try:
         # Lấy dữ liệu từ GraphQL API
         graphql_data = fetch_graphql_data(API_URL, QUERY)
+        # Lấy dữ liệu achievements từ GraphQL API
+        achievements_data = fetch_graphql_data(API_URL, QUERY_ACHIEVEMENTS)
+        # Lấy dữ liệu languages từ GraphQL API
+        languages_data = fetch_graphql_data(API_URL, QUERY_LANGUAGES)
 
         # Chuyển đổi JSON thành các câu lệnh SQL
-        sql_statements = json_to_sql(graphql_data, "database/insert.sql")
-
+        sql_statements = json_to_sql(graphql_data, "database/insert_product.sql")
         print("Đã ghi câu lệnh SQL vào tệp 'insert.sql'")
+
+        # Chuyển đổi JSON thành các câu lệnh SQL
+        sql_statements = achievements_to_sql(
+            achievements_data, "database/insert_achievements.sql"
+        )
+        print("Đã ghi câu lệnh SQL vào tệp 'insert_achievements.sql'")
+        # Chuyển đổi JSON thành các câu lệnh SQL
+        sql_statements = languages_to_sql(
+            languages_data, "database/insert_languages.sql"
+        )
+        print("Đã ghi câu lệnh SQL vào tệp 'insert_languages.sql'")
 
     except Exception as e:
         print(f"Có lỗi xảy ra: {e}")
