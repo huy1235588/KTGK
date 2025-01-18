@@ -65,7 +65,7 @@ $currentUrl = urlencode($_SERVER['REQUEST_URI']);
                 </li>
             <?php else: ?>
                 <li class="menu-item">
-                    <a href="">
+                    <a href="/admin">
                         Website management
                     </a>
                 </li>

@@ -1,0 +1,10 @@
+RewriteEngine On
+# Nếu yêu cầu đường dẫn /admin/ mà không có .php, chuyển hướng tới index.php
+RewriteRule ^$ index.php [L]
+
+# Bỏ qua các file tĩnh như .css, .js, .jpg, .png, v.v.
+RewriteCond %{REQUEST_URI} !\.(css|js|jpg|jpeg|png|gif|ico|woff|woff2|ttf|svg)$ [NC]
+RewriteCond %{REQUEST_URI} !\.php$ [NC]
+
+# Chuyển hướng tới cùng đường dẫn + index.php
+RewriteRule ^(.*)$ $1/index.php [L]

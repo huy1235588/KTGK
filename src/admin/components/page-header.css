@@ -1,0 +1,153 @@
+/*=========================================================
+Author       : LeThienHuy.
+==============================================================*/
+
+/*=============================================================
+    CSS INDEX
+  =============================
+    01.GENERAL STYLE
+    02.HEADER STYLE
+    03.NAVBAR
+    03.NAVBAR DROPDOWN
+    05.ASIDE
+    06.SIDEBAR CONTENT
+    07.SIDEBAR SUBMENU
+    08.SIDEBAR MINI MODE
+    09.MOBILE HEADER ASIDE
+
+    10.MAIN CONTENT
+    20.TOOLTIP
+    20.RESPONSIVE
+
+*=============================================================*/
+/*===================================*
+    01.GENERAL STYLE
+*===================================*/
+* {
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+}
+
+:root {
+    --brown: #8d6e63;
+    --white-cream: #f5f5dc;
+    --white: #fff;
+    --gray: #e0e0e0;
+    --yellow: #020202;
+
+    /* Page header */
+    --page-header-text: #fff;
+    --page-header-title: #1e2022;
+    --page-header-bg: #377dff;
+    --page-header-bg-hover: #045cff;
+
+    /* Breadcrumb */
+    --breadcrumb-text: #8c98a4;
+    --breadcrumb-text-active: #1e2022;
+    --breadcrumb-link-hover: #0052ea;
+
+    /* Step */
+    --step-icon-text: #132144;
+    --step-icon-bg: #1321441a;
+    --step-title: #1e2022;
+    --step-icon-text-active: #fff;
+    --step-icon-bg-active: #377dff;
+    --step-title-active: #1e2022;
+}
+
+/*===================================*
+    01.END GENERAL STYLE
+*===================================*/
+/*
+
+
+
+
+
+
+
+
+
+
+*/
+/*===================================*
+    11.PAGE HEADER
+*===================================*/
+.page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 2.25rem;
+}
+
+.add-user-link {
+    display: flex;
+    margin: 0 15px;
+    padding: 0.75rem 1rem;
+    border-radius: 7px;
+    background-color: var(--page-header-bg);
+    color: var(--page-header-text);
+}
+
+.add-user-link:hover {
+    background-color: var(--page-header-bg-hover);
+}
+
+.add-user-link svg {
+    margin-right: 4px;
+}
+
+.page-header-title {
+    margin-top: 10px;
+    color: var(--page-header-title);
+}
+/*===================================*
+    01.END PAGE HEADER
+*===================================*/
+/*
+
+
+
+
+
+
+
+
+
+
+*/
+/*===================================*
+    11.START BREADCRUMB
+*===================================*/
+.breadcrumb,
+.breadcrumb-item,
+.breadcrumb-link {
+    color: var(--breadcrumb-text);
+}
+
+.breadcrumb-list {
+    display: flex;
+}
+
+.breadcrumb-item.active {
+    color: var(--breadcrumb-text-active);
+}
+
+.breadcrumb-item + .breadcrumb-item {
+    padding-left: 0.5rem;
+}
+
+.breadcrumb-item + .breadcrumb-item::before {
+    display: inline-block;
+    padding-right: 0.5rem;
+    color: var(--breadcrumb-text);
+    content: "/";
+}
+
+.breadcrumb .breadcrumb-link:hover {
+    color: var(--breadcrumb-link-hover);
+}
+/*===================================*
+    11.END BREADCRUMB
+*===================================*/

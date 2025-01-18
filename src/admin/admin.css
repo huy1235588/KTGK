@@ -1,0 +1,93 @@
+/*=========================================================
+Author       : LeThienHuy.
+==============================================================*/
+
+/*=============================================================
+    CSS INDEX
+  =============================
+    01.GENERAL STYLE
+    02.HEADER STYLE
+    03.NAVBAR
+    03.NAVBAR DROPDOWN
+    05.ASIDE
+    06.SIDEBAR CONTENT
+    07.SIDEBAR SUBMENU
+    08.SIDEBAR MINI MODE
+    09.MOBILE HEADER ASIDE
+
+    10.MAIN CONTENT
+    20.TOOLTIP
+    20.RESPONSIVE
+
+*=============================================================*/
+/*===================================*
+    01.GENERAL STYLE
+*===================================*/
+* {
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+}
+
+:root {
+    --brown: #8d6e63;
+    --white-cream: #f5f5dc;
+    --white: #fff;
+    --gray: #e0e0e0;
+    --yellow: #020202;
+
+    /* Page header */
+    --page-header-text: #fff;
+    --page-header-title: #1e2022;
+    --page-header-bg: #377dff;
+    --page-header-bg-hover: #045cff;
+
+    /* Breadcrumb */
+    --breadcrumb-text: #8c98a4;
+    --breadcrumb-text-active: #1e2022;
+    --breadcrumb-link-hover: #0052ea;
+}
+
+/*===================================*
+    01.END GENERAL STYLE
+*===================================*/
+/*
+
+
+
+
+
+
+
+
+
+
+*/
+/*===================================*
+    10.START MAIN CONTENT
+*===================================*/
+.main {
+    padding: 3.75rem 0 3.5rem 16.25rem;
+    transition: padding 0.3s ease-in-out;
+}
+
+.content {
+    width: 100%;
+    padding: 1.65rem 2rem 1.75rem;
+}
+/*===================================*
+    10.END MAIN CONTENT
+*===================================*/
+
+/*
+
+
+
+
+
+
+
+
+
+
+*/
