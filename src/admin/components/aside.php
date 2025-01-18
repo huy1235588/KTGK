@@ -87,7 +87,7 @@
                                 <ul class="sidebar-submenu-list nav">
                                     <!-- OVERVIEW -->
                                     <li class="sidebar-item">
-                                        <a class="sidebar-submenu-item-link sidebar-link" href="/admin/view/ecommerce/users">
+                                        <a class="sidebar-submenu-item-link sidebar-link" href="/admin/view/users">
                                             <span class="sidebar-submenu-item-icon">
                                                 <img src="/admin/assets/icon/circle-north.svg" alt="">
                                             </span>
@@ -109,7 +109,7 @@
                                     </li>
                                     <!-- ADD USER -->
                                     <li class="sidebar-item">
-                                        <a class="sidebar-submenu-item-link sidebar-link" href="/admin/view/ecommerce/users/add-user">
+                                        <a class="sidebar-submenu-item-link sidebar-link" href="/admin/view/users/add-user">
                                             <span class="sidebar-submenu-item-icon">
                                                 <img src="/admin/assets/icon/circle-north.svg" alt="">
                                             </span>
