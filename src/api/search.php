@@ -19,12 +19,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 
     // Đóng kết nối
     DongKetNoi($conn);
+
+    $tabIndex = 0;
 }
 ?>
 <ul class="search-results">
     <?php foreach ($products as $product): ?>
         <li class="search-result-item">
-            <a href="product.php?id=<?= htmlspecialchars($product['id']) ?>" class="search-result-link">
+            <a tabindex="<?= $tabIndex++ ?>"
+            href="product.php?id=<?= htmlspecialchars($product['id']) ?>" 
+            class="search-result-link">
                 <img src="<?= htmlspecialchars($product['headerImage']) ?>" alt="<?= htmlspecialchars($product['title']) ?>" />
                 <p class="search-title">
                     <?= htmlspecialchars($product['title']) ?>
