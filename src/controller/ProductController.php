@@ -40,6 +40,22 @@ class ProductController
         return $result;
     }
 
+    // Hàm lấy các thông tin khác của sản phẩm theo ID
+    public function getProductDetailsById($id, $tables)
+    {
+        $results = [];
+        foreach ($tables as $table) {
+            $stmt = $this->conn->prepare("SELECT * FROM $table WHERE product_id = ?");
+            $stmt->bind_param("i", $id);
+            $stmt->execute();
+            $result = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+
+            $results[$table] = $result;
+        }
+
+        return $results;
+    }
+
     // Hàm lấy tổng số sản phẩm
     public function getTotalProducts($query)
     {
