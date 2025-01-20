@@ -12,8 +12,23 @@ $method = $_SERVER['REQUEST_METHOD'];
 // Set Content-Type
 header('Content-Type: application/json');
 
+// Nếu là GET và có id
+if ($method === 'GET' && isset($_GET['id'])) {
+    // Lấy id
+    $id = $_GET['id'];
+
+    // Khởi tạo ProductController
+    $productController = new ProductController($conn);
+
+    // Lấy sản phẩm theo id
+    $product = $productController->getProductById($id);
+
+    // Trả về JSON
+    echo json_encode($product);
+}
+
 // Nếu là GET
-if ($method === 'GET') {
+else if ($method === 'GET') {
     // Lấy offset và limit
     $offset = $_GET['offset'];
     $limit = $_GET['limit'];

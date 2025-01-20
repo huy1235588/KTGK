@@ -6,6 +6,7 @@
     border-radius: 8px;
     overflow: hidden;
     font-family: Arial, sans-serif;
+    user-select: none;
 }
 
 .data-grid-table {
@@ -49,6 +50,15 @@
 .data-grid-pagination span {
     display: flex;
     align-items: center;
+}
+
+.data-grid-row {
+    cursor: pointer;
+}
+
+.data-grid-row:hover {
+    background-color: #ececec;
+    color: #007bff;
 }
 
 .search {
@@ -143,7 +153,7 @@
     background-color: rgba(0, 0, 0, 0.65);
 }
 
-.search-icon {
+.data-grid-container .search-icon {
     position: absolute;
     left: -1rem;
     color: #000;

@@ -1,0 +1,76 @@
+/*=========================================================
+Author       : LeThienHuy.
+==============================================================*/
+
+/*=============================================================
+    CSS INDEX
+  =============================
+    01.GENERAL STYLE
+
+    10.MAIN CONTENT
+
+*=============================================================*/
+/*===================================*
+    01.GENERAL STYLE
+*===================================*/
+* {
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+}
+
+:root {
+    --brown: #8d6e63;
+    --white-cream: #f5f5dc;
+    --white: #fff;
+    --gray: #e0e0e0;
+    --yellow: #020202;
+
+    --product-navigation-link-color: #377dff1a;
+}
+/*===================================*
+    01.END GENERAL STYLE
+*===================================*/
+/*
+
+
+
+
+
+
+
+
+
+
+*/
+/*===================================*
+    10.START MAIN CONTENT
+*===================================*/
+.product-navigation {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100px;
+    padding: 0 10px;
+}
+
+.product-navigation-link {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 2.1875rem;
+    height: 2.1875rem;
+    border-radius: 50%;
+}
+
+.product-navigation-link:hover {
+    background-color: var(--product-navigation-link-color);
+}
+
+.product-navigation-link:hover img {
+    filter: invert(38%) sepia(50%) saturate(931%) hue-rotate(173deg)
+        brightness(106%) contrast(95%);
+}
+/*===================================*
+    10.END MAIN CONTENT
+*===================================*/

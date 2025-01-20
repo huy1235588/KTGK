@@ -300,7 +300,8 @@
                                             </li>
                                             <!-- PRODUCT DETAILS -->
                                             <li class="sidebar-item">
-                                                <a class="sidebar-submenu-item-link sidebar-link" href="">
+                                                <a class="sidebar-submenu-item-link sidebar-link"
+                                                    href="/admin/view/ecommerce/products/product-details?id=1">
                                                     <span class="sidebar-submenu-item-icon">
                                                         <img src="/admin/assets/icon/circle.svg" alt="">
                                                     </span>

@@ -6,11 +6,16 @@ function getBreadCrumbLink($breadcrumb, $element)
         if ($value == 'Pages') {
             continue;
         }
-        
-        $link .= $value . '/';
+
         if ($value == $element) {
+            $value = strtolower(str_replace('-', '', $value));
+            $link .= $value . '/';
             break;
         }
+        
+        // Xoá - và chuyển thành chữ thường
+        $value = strtolower(str_replace('-', '', $value));
+        $link .= $value . '/';
     }
     return $link;
 }

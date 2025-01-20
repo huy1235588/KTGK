@@ -12,6 +12,7 @@ class DataGrid {
         this.totalPage = 0; // Tổng số trang
         this.searchQuery = ''; // Từ khóa tìm kiếm
         this.loading = false;
+        this.onRowClick = options.onRowClick || function () { };
 
         this.init();
     }
@@ -172,7 +173,10 @@ class DataGrid {
                     </tr>
                 </thead>
                 <tbody>
-                    ${rows.map(row => `<tr>${this.renderTd(row)}</tr>`).join('')}
+                    ${rows.map(row => `
+                        <tr class="data-grid-row" data-id="${row.id}">
+                            ${this.renderTd(row)}
+                        </tr>`).join('')}
                 </tbody>
             </table>
         `;
@@ -235,6 +239,17 @@ class DataGrid {
             clearButton.style.display = 'none';
         });
 
+        // Thêm sự kiện click vào hàng
+        this.container
+            .querySelectorAll('.data-grid-row')
+            .forEach(row => {
+                row.addEventListener('click', e => {
+                    const id = e.currentTarget.getAttribute('data-id');
+                    this.onRowClick(id);
+                });
+            });
+
+        // Thêm sự kiện click vào nút phân trang
         this.container
             .querySelectorAll('.data-grid-pagination button')
             .forEach(button => {

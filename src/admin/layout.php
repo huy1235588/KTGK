@@ -44,6 +44,7 @@ $user = $userController->getUserById($_SESSION['username']);
     <link rel="stylesheet" href="/admin/assets/css/copper.css">
     <link rel="stylesheet" href="/css/data-grid.css" />
     <link rel="stylesheet" href="/components/skeleton-loader.css" />
+    <link rel="stylesheet" href="/components/tooltip.css" />
 
     <!-- JQuery -->
     <script src="/admin/assets/js/jquery-3.7.1.min.js"></script>

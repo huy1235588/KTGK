@@ -75,6 +75,10 @@ ob_start();
             new DataGrid('data-grid', columns, apiEndpoint, {
                 rowsPerPage: 5,
                 batchSizes: [5, 10, 20],
+                onRowClick: (rowId) => {
+                    // Chuyển hướng đến trang chi tiết sản phẩm
+                    window.location.href = `product-details?id=${rowId}`;
+                }
             });
         });
     </script>
