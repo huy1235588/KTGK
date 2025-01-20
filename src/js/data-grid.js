@@ -2,14 +2,18 @@ class DataGrid {
     constructor(containerId, columns, apiEndpoint, options = {}) {
         this.container = document.getElementById(containerId);
         this.columns = columns;
+        this.orderBy = options.orderBy || columns[0].key;
+        this.sortDirection = options.sortDirection || 'asc';
         this.apiEndpoint = apiEndpoint;
         this.data = [];
         this.filteredData = []; // Dữ liệu đã được lọc
         this.page = 1;
         this.rowsPerPage = options.rowsPerPage || 5;
+        this.rowsPerPageOptions = options.rowsPerPageOptions || [5, 10, 25, 50];
         this.batchSize = options.batchSize || 25;
         this.totalLoaded = 0; // Số lượng sản phẩm đã tải
         this.totalPage = 0; // Tổng số trang
+        this.total = 0; // Tổng số sản phẩm
         this.searchQuery = ''; // Từ khóa tìm kiếm
         this.loading = false;
         this.onRowClick = options.onRowClick || function () { };
@@ -27,23 +31,45 @@ class DataGrid {
     }
 
     // Tải dữ liệu từ API
-    async loadData(offset = 0) {
+    async loadData(offset = 0, sort = this.orderBy, order = this.sortDirection) {
         if (this.loading) return; // Ngăn việc gọi API khi đang tải dữ liệu
         this.loading = true;
 
         try {
+            // Nếu không có từ khóa tìm kiếm thì reset lại dữ liệu
+            if (this.searchQuery.trim() === "") {
+                this.data = [];
+                this.totalLoaded = 0;
+            }
+
+            // Nếu sort theo cột khác thì reset lại dữ liệu
+            if (this.orderBy !== sort) {
+                this.data = [];
+                this.totalLoaded = 0;
+            }
+
+            // Gọi API để lấy dữ liệu
             const response = await fetch(
-                `${this.apiEndpoint}?limit=${this.batchSize}&offset=${offset}&q=${this.searchQuery}`
+                `${this.apiEndpoint}?limit=${this.batchSize}&offset=${offset}&q=${this.searchQuery}&sort=${sort}&order=${order}`
             );
 
+            // Kiểm tra xem có lỗi không
             if (!response.ok) {
                 throw new Error('Không thể tải dữ liệu');
             }
 
+            // Lấy dữ liệu từ API
             const { data: products, total } = await response.json();
+            // Thêm dữ liệu vào mảng data
             this.data.push(...products);
+
+            // Tăng số lượng sản phẩm đã tải
             this.totalLoaded += products.length;
+            // Lọc dữ liệu
             this.filteredData = this.data.slice();
+
+            // Tính toán tổng số trang
+            this.total = total;
             this.totalPage = Math.ceil(total / this.rowsPerPage);
 
         } catch (error) {
@@ -71,6 +97,31 @@ class DataGrid {
         this.render();
     }
 
+    // Thêm sự kiện sort
+    async attachSortHandlers() {
+        const headers = this.container.querySelectorAll('th[data-sort]');
+        headers.forEach(header => {
+            header.addEventListener('click', async () => {
+                const column = header.dataset.sort;
+                if (this.orderBy === column) {
+                    this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
+                } else {
+                    this.orderBy = column;
+                    this.sortDirection = 'asc';
+                }
+
+                // Thêm ?sort=column&order=asc vào URL
+                const url = new URL(window.location.href);
+                url.searchParams.set('sort', this.orderBy);
+                url.searchParams.set('order', this.sortDirection);
+                window.history.pushState({}, '', url);
+
+                await this.loadData(0, this.orderBy, this.sortDirection)
+                this.render();
+            });
+        });
+    }
+
     // Xử lý tìm kiếm
     async handleSearch(query) {
         this.searchQuery = query.target.value;
@@ -85,7 +136,7 @@ class DataGrid {
         const totalNeeded = page * this.rowsPerPage;
         if (totalNeeded > this.totalLoaded) {
             // Nếu cần thêm dữ liệu
-            const offset = this.totalLoaded + 1;
+            const offset = this.totalLoaded;
             await this.loadData(offset);
         }
 
@@ -97,11 +148,15 @@ class DataGrid {
     render() {
         this.container.querySelector('.data-grid-table-container').innerHTML = `
             ${this.renderTable()}
+            <div class="data-grid-footer">
+            ${this.renderRowsPerPage()}
             ${this.renderPagination()}
+            </div>
         `;
         this.addEventListeners();
     }
 
+    // Hiển thị ô tìm kiếm
     renderSearch() {
         return `
             <div class="search-container">
@@ -134,10 +189,15 @@ class DataGrid {
     renderTh() {
         return this.columns.map(col => `
             <th
-                style="${col.style || ''}${col.width ? `width: ${col.width}` : ''}"
+                ${col.sortAble !== false ? `data-sort="${col.key}"` : ''}
+                style="${col.style || ''};${col.width ? `width: ${col.width}` : ''}"
             >
-                ${col.label}
-            </th>
+                ${col.label ? col.label : ''}
+                ${col.sortAble !== false ? `
+                    <span class="sort-icon ${this.orderBy === col.key ? this.sortDirection : ''}">
+                    </span>
+                ` : ''}
+                </th>
         `).join('');
     }
 
@@ -148,12 +208,16 @@ class DataGrid {
                 // Kiểm tra xem có renderCell không
                 if (col.renderCell) {
                     return `<td style="${col.width ? `width: ${col.width}` : ''}; ${col.style || ''}">
-                        ${col.renderCell(row[col.key], row)}
+                        <div class="data-grid-cell" style="${col.width ? `width: ${col.width}` : ''}; ${col.style || ''}">
+                            ${col.renderCell(row[col.key], row)}
+                        </div>
                     </td>`;
                 }
                 // Mặc định hiển thị dữ liệu
                 return `<td style="${col.width ? `width: ${col.width}` : ''}; ${col.style || ''}">
-                    ${row[col.key] || ''}
+                    <div class="data-grid-cell" style="${col.width ? `width: ${col.width}` : ''}; ${col.style || ''}">
+                        ${row[col.key] || ''}
+                    </div>
                 </td>`;
             })
             .join('');
@@ -182,9 +246,26 @@ class DataGrid {
         `;
     }
 
+    // Hiển chọn số dòng trên mỗi trang
+    renderRowsPerPage() {
+        return `
+            <div class="data-grid-rows-per-page">
+                <label for="rowsPerPage">Rows per page:</label>
+                <select id="rowsPerPage" value="${this.rowsPerPage}">
+                    ${this.rowsPerPageOptions.map(option => `
+                        <option value="${option}" ${option === this.rowsPerPage ? 'selected' : ''}>
+                            ${option}
+                        </option>
+                    `).join('')}
+
+                </select>
+            </div>
+        `;
+    }
+
     // Hiển thị phân trang
     renderPagination() {
-        const totalPages = this.totalPage;
+        const totalPages = Math.ceil(this.total / this.rowsPerPage);
         return `
             <div class="data-grid-pagination">
                 <button ${this.page === 1 ? 'disabled' : ''} data-action="prev">Previous</button>
@@ -264,5 +345,17 @@ class DataGrid {
                     this.render();
                 });
             });
+
+        // Thêm sự kiện khi chọn số dòng trên mỗi trang
+        this.container
+            .querySelector('#rowsPerPage')
+            .addEventListener('change', e => {
+                this.rowsPerPage = parseInt(e.target.value);
+                this.page = 1; // Reset về trang đầu tiên
+                this.render();
+            });
+
+        // Thêm sự kiện sort
+        this.attachSortHandlers();
     }
 }

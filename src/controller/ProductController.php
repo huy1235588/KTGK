@@ -20,11 +20,11 @@ class ProductController
     }
 
     // Hàm để lấy sản phẩm theo trang
-    public function getProductsByPage($offset, $limit, $query)
+    public function getProductsByPage($offset, $limit, $query, $sort = 'id', $order = 'ASC')
     {
         $query = '%' . $query . '%';
-        $stmt = $this->conn->prepare("SELECT * FROM products WHERE title LIKE ? LIMIT ?, ?");
-        $stmt->bind_param("sii", $query, $offset, $limit);
+        $stmt = $this->conn->prepare("SELECT * FROM products WHERE title LIKE ? ORDER BY $sort $order LIMIT ?, ?");
+        $stmt->bind_param("sii", $query, $offset, $limit);        
         $stmt->execute();
         $result = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
         return $result;
