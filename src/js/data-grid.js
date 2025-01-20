@@ -4,6 +4,7 @@ class DataGrid {
         this.columns = columns;
         this.orderBy = options.orderBy || columns[0].key;
         this.sortDirection = options.sortDirection || 'asc';
+        this.currentSort = { column: this.orderBy, direction: this.sortDirection };
         this.apiEndpoint = apiEndpoint;
         this.data = [];
         this.filteredData = []; // Dữ liệu đã được lọc
@@ -36,16 +37,13 @@ class DataGrid {
         this.loading = true;
 
         try {
-            // Nếu không có từ khóa tìm kiếm thì reset lại dữ liệu
-            if (this.searchQuery.trim() === "") {
+            // Nếu cột hoặc hướng sort thay đổi thì reset dữ liệu
+            if (this.currentSort.column !== sort || this.currentSort.direction !== order) {
                 this.data = [];
                 this.totalLoaded = 0;
-            }
-
-            // Nếu sort theo cột khác thì reset lại dữ liệu
-            if (this.orderBy !== sort) {
-                this.data = [];
-                this.totalLoaded = 0;
+                this.page = 1;
+                this.currentSort.column = sort;
+                this.currentSort.direction = order;
             }
 
             // Gọi API để lấy dữ liệu
@@ -63,10 +61,10 @@ class DataGrid {
             // Thêm dữ liệu vào mảng data
             this.data.push(...products);
 
+            console.log('Dữ liệu:', this.data);
+
             // Tăng số lượng sản phẩm đã tải
             this.totalLoaded += products.length;
-            // Lọc dữ liệu
-            this.filteredData = this.data.slice();
 
             // Tính toán tổng số trang
             this.total = total;
@@ -116,6 +114,7 @@ class DataGrid {
                 url.searchParams.set('order', this.sortDirection);
                 window.history.pushState({}, '', url);
 
+                // Reset lại dữ liệu
                 await this.loadData(0, this.orderBy, this.sortDirection)
                 this.render();
             });
@@ -127,17 +126,21 @@ class DataGrid {
         this.searchQuery = query.target.value;
         this.data = []; // Xóa dữ liệu hiện tại
         this.totalLoaded = 0;
-        await this.loadData(); // Gọi lại API để tìm kiếm
+        this.page = 1;
+        // Gọi lại API để tìm kiếm
+        await this.loadData(0, this.orderBy, this.sortDirection); 
         this.render();
     }
 
     // Đi đến trang cụ thể
     async goToPage(page) {
         const totalNeeded = page * this.rowsPerPage;
-        if (totalNeeded > this.totalLoaded) {
-            // Nếu cần thêm dữ liệu
+
+        // Nếu số lượng sản phẩm cần tải lớn hơn số lượng sản phẩm đã tải 
+        // và số lượng sản phẩm đã tải nhỏ hơn tổng số sản phẩm
+        if (totalNeeded > this.totalLoaded && this.totalLoaded < this.total) {
             const offset = this.totalLoaded;
-            await this.loadData(offset);
+            await this.loadData(offset, this.orderBy, this.sortDirection);
         }
 
         this.page = page;
