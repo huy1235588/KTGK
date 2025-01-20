@@ -140,7 +140,7 @@
     include 'footer.php';
     ?>
 
-    <script src="js/trangchu.js"></script>
+    <script src="js/gameHover.js"></script>
 </body>
 
 </html>
