@@ -48,7 +48,18 @@ class DataGrid {
 
             // Gọi API để lấy dữ liệu
             const response = await fetch(
-                `${this.apiEndpoint}?limit=${this.batchSize}&offset=${offset}&q=${this.searchQuery}&sort=${sort}&order=${order}`
+                `${this.apiEndpoint}`,
+                {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        offset,
+                        limit: this.batchSize,
+                        sort,
+                        order,
+                        q: this.searchQuery,
+                        columns: this.columns.map(col => col.key),
+                    }),
+                }
             );
 
             // Kiểm tra xem có lỗi không
@@ -60,8 +71,6 @@ class DataGrid {
             const { data: products, total } = await response.json();
             // Thêm dữ liệu vào mảng data
             this.data.push(...products);
-
-            console.log('Dữ liệu:', this.data);
 
             // Tăng số lượng sản phẩm đã tải
             this.totalLoaded += products.length;
@@ -128,7 +137,7 @@ class DataGrid {
         this.totalLoaded = 0;
         this.page = 1;
         // Gọi lại API để tìm kiếm
-        await this.loadData(0, this.orderBy, this.sortDirection); 
+        await this.loadData(0, this.orderBy, this.sortDirection);
         this.render();
     }
 

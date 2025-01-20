@@ -11,6 +11,16 @@ class ProductController
         $this->conn = $conn;
     }
 
+    // Hàm để lấy kiểu dữ liệu của cột 
+    public function getColumnTypes($table, $column)
+    {
+        $stmt = $this->conn->prepare("SELECT DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = ? AND COLUMN_NAME = ?");
+        $stmt->bind_param("ss", $table, $column);
+        $stmt->execute();
+        $result = $stmt->get_result()->fetch_assoc();
+        return $result['DATA_TYPE'];
+    }
+
     // Hàm để lấy toàn bộ sản phẩm
     public function getAllProducts()
     {
@@ -20,12 +30,34 @@ class ProductController
     }
 
     // Hàm để lấy sản phẩm theo trang
-    public function getProductsByPage($offset, $limit, $query, $sort = 'id', $order = 'ASC')
+    public function getProductsByPage($offset, $limit, $columns, $query, $sort = 'id', $order = 'ASC')
     {
+        // Thêm ký tự % vào trước và sau query
         $query = '%' . $query . '%';
-        $stmt = $this->conn->prepare("SELECT * FROM products WHERE title LIKE ? ORDER BY $sort $order LIMIT ?, ?");
-        $stmt->bind_param("sii", $query, $offset, $limit);        
+
+        // Xây dựng điều kiện WHERE
+        $whereClause = [];
+        foreach ($columns as $column) {
+            $whereClause[] = "$column LIKE '$query'";
+        }
+        $whereClause = implode(' OR ', $whereClause);
+
+        // Xây dựng câu lệnh SQLs
+        $sql = "SELECT * 
+            FROM products
+            WHERE $whereClause
+            ORDER BY $sort $order 
+            LIMIT ?, ?
+        ";
+
+        // Chuẩn bị và gán tham số
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param("ii", $offset, $limit);
+
+        // Thực thi câu lệnh
         $stmt->execute();
+
+        // Lấy kết quả
         $result = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
         return $result;
     }
