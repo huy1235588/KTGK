@@ -105,9 +105,11 @@ class DataGrid {
         return `
             <div class="search-container">
                 <div class="search-input-container">
-                    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 24 24" class="searchIcon" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M10 18a7.952 7.952 0 0 0 4.897-1.688l4.396 4.396 1.414-1.414-4.396-4.396A7.952 7.952 0 0 0 18 10c0-4.411-3.589-8-8-8s-8 3.589-8 8 3.589 8 8 8zm0-14c3.309 0 6 2.691 6 6s-2.691 6-6 6-6-2.691-6-6 2.691-6 6-6z"></path>
-                    </svg>
+                    <span class="search-icon">
+                        <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 24 24" class="searchIcon" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M10 18a7.952 7.952 0 0 0 4.897-1.688l4.396 4.396 1.414-1.414-4.396-4.396A7.952 7.952 0 0 0 18 10c0-4.411-3.589-8-8-8s-8 3.589-8 8 3.589 8 8 8zm0-14c3.309 0 6 2.691 6 6s-2.691 6-6 6-6-2.691-6-6 2.691-6 6-6z"></path>
+                        </svg>
+                    </span>
                     <input
                         class="data-grid-search"
                         type="text"
@@ -191,8 +193,10 @@ class DataGrid {
 
     // Thêm sự kiện click vào nút phân trang
     addEventListeners() {
-        // Thêm sự kiện click vào nút tìm kiếm
+        // Lấy ra input tìm kiếm và nút xóa nội dung tìm kiếm
         const searchInput = this.container.querySelector('.data-grid-search');
+        const clearButton = this.container.querySelector('.button-clear');
+
         // Hàm debounce để giảm số lần gọi API khi người dùng nhập nhanh
         function debounce(func, timeout = 300) {
             let timer;
@@ -203,7 +207,33 @@ class DataGrid {
         }
         // Gọi hàm debounce
         const debouncedHandleSearch = debounce(this.handleSearch.bind(this), 500);
-        searchInput.addEventListener('input', debouncedHandleSearch);
+        searchInput.addEventListener('input', (e) => {
+            // Hiện nút xóa nội dung tìm kiếm khi có nội dung
+            clearButton.style.display = e.target.value ? 'flex' : 'none';
+
+            debouncedHandleSearch(e);
+        });
+
+        // Thêm class khi focus vào input tìm kiếm
+        searchInput.addEventListener('focus', () => {
+            searchInput.parentElement.parentElement.classList.add('focus');
+        });
+
+        // Xóa class khi blur khỏi input tìm kiếm
+        searchInput.addEventListener('blur', () => {
+            searchInput.parentElement.parentElement.classList.remove('focus');
+        });
+
+        // Thêm sự kiện click vào nút xóa nội dung tìm kiếm
+        clearButton.addEventListener('click', () => {
+            searchInput.value = '';
+            this.handleSearch({ target: searchInput });
+
+            // Focus vào input tìm kiếm
+            searchInput.focus();
+            // Ẩn nút xóa nội dung tìm kiếm
+            clearButton.style.display = 'none';
+        });
 
         this.container
             .querySelectorAll('.data-grid-pagination button')
