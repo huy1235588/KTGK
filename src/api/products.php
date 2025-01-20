@@ -17,15 +17,16 @@ if ($method === 'GET') {
     // Lấy offset và limit
     $offset = $_GET['offset'];
     $limit = $_GET['limit'];
+    $query = $_GET['q'];
 
     // Khởi tạo ProductController
     $productController = new ProductController($conn);
 
     // Lấy 10 sản phẩm
-    $products = $productController->getProductsByPage($offset, $limit);
+    $products = $productController->getProductsByPage($offset, $limit, $query);
 
     // Lấy tổng số sản phẩm
-    $totalProducts = $productController->getTotalProducts();
+    $totalProducts = $productController->getTotalProducts($query);
 
     // Trả về JSON
     echo json_encode([

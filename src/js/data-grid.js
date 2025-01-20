@@ -4,11 +4,13 @@ class DataGrid {
         this.columns = columns;
         this.apiEndpoint = apiEndpoint;
         this.data = [];
+        this.filteredData = []; // Dữ liệu đã được lọc
         this.page = 1;
         this.rowsPerPage = options.rowsPerPage || 5;
         this.batchSize = options.batchSize || 25;
         this.totalLoaded = 0; // Số lượng sản phẩm đã tải
         this.totalPage = 0; // Tổng số trang
+        this.searchQuery = ''; // Từ khóa tìm kiếm
         this.loading = false;
 
         this.init();
@@ -16,29 +18,32 @@ class DataGrid {
 
     async init() {
         await this.loadData(0); // Tải dữ liệu ban đầu
+        this.container.innerHTML = `
+            ${this.renderSearch()}
+            <div id="data-grid-table-container" class="data-grid-table-container"></div>        
+        `;
         this.render();
     }
 
-    async loadData(offset) {
+    // Tải dữ liệu từ API
+    async loadData(offset = 0) {
         if (this.loading) return; // Ngăn việc gọi API khi đang tải dữ liệu
         this.loading = true;
 
         try {
             const response = await fetch(
-                `${this.apiEndpoint}?limit=${this.batchSize}&offset=${offset}`
+                `${this.apiEndpoint}?limit=${this.batchSize}&offset=${offset}&q=${this.searchQuery}`
             );
 
             if (!response.ok) {
                 throw new Error('Không thể tải dữ liệu');
             }
 
-            const newData = await response.json();
-            const products = newData.data;
-            const totalPage = Math.ceil(newData.total / this.rowsPerPage);
-
-            this.data = [...this.data, ...products]; // Thêm dữ liệu mới vào danh sách hiện tại
+            const { data: products, total } = await response.json();
+            this.data.push(...products);
             this.totalLoaded += products.length;
-            this.totalPage = totalPage;
+            this.filteredData = this.data.slice();
+            this.totalPage = Math.ceil(total / this.rowsPerPage);
 
         } catch (error) {
             console.error("Lỗi khi tải dữ liệu:", error);
@@ -47,6 +52,34 @@ class DataGrid {
         }
     }
 
+    // Lọc dữ liệu
+    filterData() {
+        if (this.searchQuery.trim() === "") {
+            this.filteredData = [...this.data];
+        } else {
+            const lowerCaseQuery = this.searchQuery.toLowerCase();
+            this.filteredData = this.data.filter(row =>
+                this.columns.some(col =>
+                    String(row[col.key] || "")
+                        .toLowerCase()
+                        .includes(lowerCaseQuery)
+                )
+            );
+        }
+        this.page = 1; // Reset về trang đầu tiên
+        this.render();
+    }
+
+    // Xử lý tìm kiếm
+    async handleSearch(query) {
+        this.searchQuery = query.target.value;
+        this.data = []; // Xóa dữ liệu hiện tại
+        this.totalLoaded = 0;
+        await this.loadData(); // Gọi lại API để tìm kiếm
+        this.render();
+    }
+
+    // Đi đến trang cụ thể
     async goToPage(page) {
         const totalNeeded = page * this.rowsPerPage;
         if (totalNeeded > this.totalLoaded) {
@@ -61,11 +94,37 @@ class DataGrid {
 
     // Hiển thị dữ liệu
     render() {
-        this.container.innerHTML = `
+        this.container.querySelector('.data-grid-table-container').innerHTML = `
             ${this.renderTable()}
             ${this.renderPagination()}
         `;
         this.addEventListeners();
+    }
+
+    renderSearch() {
+        return `
+            <div class="search-container">
+                <div class="search-input-container">
+                    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 24 24" class="searchIcon" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M10 18a7.952 7.952 0 0 0 4.897-1.688l4.396 4.396 1.414-1.414-4.396-4.396A7.952 7.952 0 0 0 18 10c0-4.411-3.589-8-8-8s-8 3.589-8 8 3.589 8 8 8zm0-14c3.309 0 6 2.691 6 6s-2.691 6-6 6-6-2.691-6-6 2.691-6 6-6z"></path>
+                    </svg>
+                    <input
+                        class="data-grid-search"
+                        type="text"
+                        placeholder="Search..."
+                        value="${this.searchQuery}"
+                    />
+                </div>
+
+                <button class="button-clear"
+                    type="button"
+                    tabindex="0" type="button">
+                    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 512 512" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M405 136.798L375.202 107 256 226.202 136.798 107 107 136.798 226.202 256 107 375.202 136.798 405 256 285.798 375.202 405 405 375.202 285.798 256z"></path>
+                    </svg>
+                </button>
+            </div>
+        `;
     }
 
     // Hiển thị tiêu đề cột
@@ -132,6 +191,20 @@ class DataGrid {
 
     // Thêm sự kiện click vào nút phân trang
     addEventListeners() {
+        // Thêm sự kiện click vào nút tìm kiếm
+        const searchInput = this.container.querySelector('.data-grid-search');
+        // Hàm debounce để giảm số lần gọi API khi người dùng nhập nhanh
+        function debounce(func, timeout = 300) {
+            let timer;
+            return (...args) => {
+                clearTimeout(timer);
+                timer = setTimeout(() => func.apply(this, args), timeout);
+            };
+        }
+        // Gọi hàm debounce
+        const debouncedHandleSearch = debounce(this.handleSearch.bind(this), 500);
+        searchInput.addEventListener('input', debouncedHandleSearch);
+
         this.container
             .querySelectorAll('.data-grid-pagination button')
             .forEach(button => {

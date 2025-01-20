@@ -20,11 +20,11 @@ class ProductController
     }
 
     // Hàm để lấy sản phẩm theo trang
-    public function getProductsByPage($offset, $limit)
+    public function getProductsByPage($offset, $limit, $query)
     {
-        // $offset = ($page - 1) * $limit;
-        $stmt = $this->conn->prepare("SELECT * FROM products LIMIT ?, ?");
-        $stmt->bind_param("ii", $offset, $limit);
+        $query = '%' . $query . '%';
+        $stmt = $this->conn->prepare("SELECT * FROM products WHERE title LIKE ? LIMIT ?, ?");
+        $stmt->bind_param("sii", $query, $offset, $limit);
         $stmt->execute();
         $result = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
         return $result;
@@ -41,9 +41,11 @@ class ProductController
     }
 
     // Hàm lấy tổng số sản phẩm
-    public function getTotalProducts()
+    public function getTotalProducts($query)
     {
-        $stmt = $this->conn->prepare("SELECT COUNT(*) as total FROM products");
+        $query = '%' . $query . '%';
+        $stmt = $this->conn->prepare("SELECT COUNT(*) as total FROM products WHERE title LIKE ?");
+        $stmt->bind_param("s", $query);
         $stmt->execute();
         $result = $stmt->get_result()->fetch_assoc();
         return $result['total'];
