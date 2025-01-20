@@ -12,12 +12,6 @@ Author       : LeThienHuy.
 /*===================================*
     01.GENERAL STYLE
 *===================================*/
-* {
-    box-sizing: border-box;
-    padding: 0;
-    margin: 0;
-}
-
 :root {
     --brown: #8d6e63;
     --white-cream: #f5f5dc;

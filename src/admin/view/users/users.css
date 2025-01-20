@@ -44,16 +44,6 @@ Author       : LeThienHuy.
 /*===================================*
     10.START MAIN CONTENT
 *===================================*/
-.main {
-    padding-left: 16.25rem;
-    padding-top: 3.75rem;
-    transition: padding 0.3s ease-in-out;
-}
-
-.content {
-    width: 100%;
-    padding: 1.65rem 2rem 1.75rem;
-}
 /*===================================*
     10.END MAIN CONTENT
 *===================================*/

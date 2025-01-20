@@ -3,7 +3,9 @@
 // Hàm kiểm tra đăng nhập
 function authMiddleware()
 {
-    session_start();
+    if (session_status() == PHP_SESSION_NONE) {
+        session_start();
+    }
 
     // Kiểm  tra người dùng có đăng nhập hay chưa
     if (!isset($_SESSION['username'])) {

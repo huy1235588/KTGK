@@ -1,21 +1,22 @@
 <?php
-include 'middleware/authMiddleware.php';
+require_once 'middleware/authMiddleware.php';
 authMiddleware();
 
 // Khai báo thư viện
 require_once 'config/env.php';
-require_once 'config/db.php';
-require_once 'controller/UserController.php';
+require_once __DIR__ . '../../controller/UserController.php';
+require_once __DIR__ . '../../controller/ProductController.php';
 
 // Tạo kết nối đến CSDL
 $conn = MoKetNoi();
 
 // Tạo đối tượng truy vấn
 $userController = new UserController($conn);
+$productController = new ProductController($conn);
+$products = $productController->getAllProducts();
 
 // Lấy thông tin của người dùng
 $user = $userController->getUserById($_SESSION['username']);
-
 ?>
 
 <!DOCTYPE html>
@@ -32,18 +33,21 @@ $user = $userController->getUserById($_SESSION['username']);
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
 
     <!-- Favicon -->
+    <link rel="stylesheet" href="/admin/layout.css">
     <link rel="stylesheet" href="/admin/components/header.css">
     <link rel="stylesheet" href="/admin/components/aside.css">
     <link rel="stylesheet" href="/admin/components/footer.css">
     <link rel="stylesheet" href="/admin/components/page-header.css">
-    <link rel="icon" href="/assets/icon/logo.ico">
+    <link rel="icon" href="/assets/logo.ico">
 
     <!-- CSS -->
     <link rel="stylesheet" href="/admin/assets/css/copper.css">
+    <link rel="stylesheet" href="/css/data-grid.css" />
+    <link rel="stylesheet" href="/components/skeleton-loader.css" />
 
     <!-- JQuery -->
     <script src="/admin/assets/js/jquery-3.7.1.min.js"></script>
-
+    <script src="/js/data-grid.js"></script>
 </head>
 
 <body class="">
@@ -117,6 +121,7 @@ $user = $userController->getUserById($_SESSION['username']);
 
     <?php
     include 'components/error/error-pop.php';
+
     ?>
 
     <script src="/admin/assets/js/index.js"></script>
