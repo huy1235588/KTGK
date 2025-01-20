@@ -313,7 +313,7 @@
                                             <!-- ADD PRODUCT -->
                                             <li class="sidebar-item">
                                                 <a class="sidebar-submenu-item-link sidebar-link"
-                                                    href="javascript:;">
+                                                    href="/admin/view/ecommerce/products/add">
                                                     <span class="sidebar-submenu-item-icon">
                                                         <img src="/admin/assets/icon/circle.svg" alt="">
                                                     </span>
