@@ -8,19 +8,30 @@ class GameHover {
         this.hoverTimeout = null;
         this.id = null;
 
+        // Map lưu trữ các event handlers
+        this.eventHandlers = new Map();
+
         this.init();
     }
 
     init() {
-        // Hiển thị hover khi rê chuột vào sản phẩm
         this.productItems.forEach(item => {
-            item.addEventListener('mouseenter', () => this.showHover(item));
-            item.addEventListener('mouseleave', () => this.hideHover());
-        });
+            // Nếu chưa có event handler thì thêm mới
+            if (!this.eventHandlers.has(item)) {
+                const mouseEnterHandler = () => this.showHover(item);
+                const mouseLeaveHandler = this.hideHover.bind(this);
 
-        // Xử lý sự kiện khi chuyển đổi chế độ hiển thị
-        this.hoverElement.addEventListener('mouseenter', () => clearTimeout(this.hoverTimeout));
-        this.hoverElement.addEventListener('mouseleave', () => this.hideHover());
+                // Lưu event handler vào map
+                this.eventHandlers.set(item, {
+                    mouseEnter: mouseEnterHandler,
+                    mouseLeave: mouseLeaveHandler
+                });
+
+                // Thêm sự kiện cho sản phẩm
+                item.addEventListener('mouseenter', mouseEnterHandler);
+                item.addEventListener('mouseleave', mouseLeaveHandler);
+            }
+        });
     }
 
     // Hàm hiển thị hover khi rê chuột vào sản
@@ -90,5 +101,16 @@ class GameHover {
         clearTimeout(this.hoverTimeout);
         this.hoverElement.classList.remove('active');
         this.hoverContentContainer.querySelector(`#hover-product-${this.id}`).style.display = 'none';
+    }
+
+    remove() {
+        this.productItems.forEach(item => {
+            const handlers = this.eventHandlers.get(item);
+            if (handlers) {
+                item.removeEventListener('mouseenter', handlers.mouseEnter);
+                item.removeEventListener('mouseleave', handlers.mouseLeave);
+                this.eventHandlers.delete(item);
+            }
+        });
     }
 }

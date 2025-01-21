@@ -64,35 +64,43 @@ function switchDisplayMode() {
     const listBtn = document.getElementById('listBtn');
     const products = document.querySelector('.product');
 
-    // Chuyển sang chế độ hiển thị dạng lưới
+    var gameHover = new GameHover('.product-item', '.product-hover');
+
+    // Chuyển sang Grid
     gridBtn.addEventListener('click', () => {
         products.classList.remove('list');
         products.classList.add('grid');
 
+        // Hiển thị hover khi chuyển sang chế độ Grid
+        gameHover.init();
+
+        // Thêm class active cho nút Grid và xoá class active của nút List
         gridBtn.classList.add('active');
         listBtn.classList.remove('active');
+
+        // Lưu chế độ hiển thị vào localStorage
+        localStorage.setItem('displayMode', 'grid');
     });
 
-    // Chuyển sang chế độ hiển thị dạng danh sách
+    // Chuyển sang List
     listBtn.addEventListener('click', () => {
+        // Thêm class active cho nút List và xoá class active của nút Grid
         products.classList.remove('grid');
         products.classList.add('list');
 
+        // Ẩn hover khi chuyển sang chế độ List
+        gameHover.remove();
+
+        // Thêm class active cho nút List và xoá class active của nút Grid
         listBtn.classList.add('active');
         gridBtn.classList.remove('active');
+
+        // Lưu chế độ hiển thị vào localStorage
+        localStorage.setItem('displayMode', 'list');
     });
 
     // Mặc định chế độ hiển thị là lưới
     gridBtn.click();
-
-    // Lưu chế độ hiển thị vào localStorage
-    gridBtn.addEventListener('click', () => {
-        localStorage.setItem('displayMode', 'grid');
-    });
-    
-    listBtn.addEventListener('click', () => {
-        localStorage.setItem('displayMode', 'list');
-    });
 
     // Lấy chế độ hiển thị từ localStorage
     const displayMode = localStorage.getItem('displayMode');

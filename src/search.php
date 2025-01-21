@@ -284,12 +284,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     </div>
     <script src="js/gameHover.js"></script>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            new GameHover('.product-item', '.product-hover');
-        });
-    </script>
-
     <?php
     include 'footer.php';
     ?>
