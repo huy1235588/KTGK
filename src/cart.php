@@ -273,6 +273,23 @@ DongKetNoi($conn);
         // Xoá sản phẩm khỏi giỏ hàng
         const buttonsRemove = document.querySelectorAll('.button-remove');
 
+        /**
+         * Cập nhật số lượng sản phẩm trong giỏ hàng
+         * @param {number} count - Số lượng sản phẩm cần cập nhật
+         * @returns {void}
+         * @description Cập nhật số lượng sản phẩm trong giỏ hàng trên icon giỏ hàng
+         * bằng cách cộng thêm số lượng sản phẩm mới thêm vào
+         * hoặc trừ đi số lượng sản phẩm đã xóa khỏi giỏ hàng
+         * @example updateCartQuantity(1) // Thêm 1 sản phẩm vào giỏ hàng
+         * @example updateCartQuantity(-1) // Xóa 1 sản phẩm khỏi giỏ hàng
+         * @example updateCartQuantity(0) // Xóa tất cả sản phẩm khỏi giỏ hàng
+         * @example updateCartQuantity(5) // Thêm 5 sản phẩm vào giỏ hàng
+         */
+        function updateCartQuantity(count) {
+            const cartquantity = document.querySelector('.cart-quantity');
+            cartquantity.textContent = parseInt(cartquantity.textContent) + count;
+        }
+
         buttonsRemove.forEach(button => {
             button.addEventListener('click', async () => {
                 const productId = button.dataset.id;
@@ -292,6 +309,9 @@ DongKetNoi($conn);
 
                     // Hiển thị thông báo
                     setNotification('Product removed from cart successfully.', 'success');
+
+                    // Cập nhật số lượng sản phẩm trong giỏ hàng
+                    updateCartQuantity(-1);
 
                     // Nếu giỏ hàng trống, reload trang
                     if (document.querySelectorAll('.product-cart-item').length === 0) {

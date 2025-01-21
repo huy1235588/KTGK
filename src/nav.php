@@ -59,8 +59,42 @@ $currentUrl = urlencode($_SERVER['REQUEST_URI']);
         <?php if (isset($_SESSION['username'])): ?>
             <?php if (isset($_SESSION['role']) && $_SESSION['role'] === 'user'): ?>
                 <li class="menu-item">
-                    <a href="cart.php">
+                    <a href="cart.php" class="cart-link">
                         Cart
+                        <span class="cart-quantity"> </span>
+
+                        <script>
+                            // Lấy số lượng sản phẩm trong giỏ hàng
+                            const cartQuantity = document.querySelector('.cart-quantity');
+                            const cartLink = document.querySelector('.cart-link');
+
+                            // Hiển thị số lượng sản phẩm trong giỏ hàng
+                            cartQuantity.textContent = <?= isset($_SESSION['cart']) ? count($_SESSION['cart']) : 0 ?>;
+
+                            // Cập nhật hiển thị số lượng sản phẩm
+                            function updateDisplay() {
+                                if (cartQuantity.textContent === '0') {
+                                    cartQuantity.style.display = 'none';
+                                } else {
+                                    cartQuantity.style.display = 'block';
+                                }
+                            }
+
+                            // Cập nhật hiển thị số lượng sản phẩm
+                            updateDisplay();
+
+                            // Cập nhật số lượng sản phẩm khi giỏ hàng thay đổi
+                            const observer = new MutationObserver(() => {
+                                updateDisplay();
+                            });
+
+                            // Theo dõi sự thay đổi của nút giỏ hàng
+                            observer.observe(cartQuantity, {
+                                childList: true,
+                                characterData: true,
+                                subtree: true
+                            });
+                        </script>
                     </a>
                 </li>
             <?php else: ?>

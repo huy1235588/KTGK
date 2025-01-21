@@ -82,6 +82,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     include 'aside.php';
     ?>
 
+    <script>
+        var sessionCart = <?= json_encode($_SESSION['cart'] ?? []) ?>;
+    </script>
+
     <!-- Content -->
     <article class="container">
         <!-- Content chính -->
@@ -258,12 +262,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
                                                 <!-- Price -->
                                                 <div class="price-container">
                                                     <!-- Cart -->
-                                                    <button class="cart-btn" type="button">
-                                                        <svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="16px" width="16px" xmlns="http://www.w3.org/2000/svg">
-                                                            <circle cx="9" cy="21" r="1"></circle>
-                                                            <circle cx="20" cy="21" r="1"></circle>
-                                                            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
-                                                        </svg>
+                                                    <button class="cart-btn" type="button" data-id="<?= htmlspecialchars($product['id']) ?>">
+                                                        <span class="cart-icon"></span>
                                                     </button>
 
                                                     <!-- Price -->
