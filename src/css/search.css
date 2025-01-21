@@ -78,6 +78,11 @@ h1 {
     font-size: 40px;
     text-align: start;
 }
+/* Logo */
+.logo {
+    width: 100px;
+}
+
 /*===================================*
     01.END GENERAL STYLE
 *===================================*/
@@ -96,11 +101,6 @@ h1 {
 /*===================================*
     02.START PRODUCT
 *===================================*/
-/* Logo */
-.logo {
-    width: 100px;
-}
-
 /* PRODUCT */
 .product {
     display: flex;
@@ -256,7 +256,36 @@ h1 {
 
 */
 /*===================================*
-    03.START PRODUCT HOVER
+    03.START PRODUCT LIST
+*===================================*/
+/* Product list */
+.product.list {
+    flex-direction: column;
+    width: 100%;
+}
+
+.product.list .product-item {
+    width: 100%;
+    margin: 0;
+    border: 0;
+}
+/*===================================*
+    03.END PRODUCT LIST
+*===================================*/
+/*
+
+
+
+
+
+
+
+
+
+
+*/
+/*===================================*
+    04.START PRODUCT HOVER
 *===================================*/
 /* Game hover */
 .product-hover {
@@ -411,7 +440,7 @@ h1 {
     }
 }
 /*===================================*
-    03.END PRODUCT HOVER
+    04.END PRODUCT HOVER
 *===================================*/
 /*
 
@@ -426,7 +455,7 @@ h1 {
 
 */
 /*===================================*
-    04.START PAGINATION
+    05.START PAGINATION
 *===================================*/
 /* pagination */
 .pagination {
@@ -471,7 +500,7 @@ h1 {
     background-color: #007bff;
 }
 /*===================================*
-    04.END PAGINATION
+    05.END PAGINATION
 *===================================*/
 /*
 
@@ -486,7 +515,7 @@ h1 {
 
 */
 /*===================================*
-    05.START SEARCH TAG
+    06.START SEARCH TAG
 *===================================*/
 .search-tag-container {
     display: flex;
@@ -552,7 +581,7 @@ h1 {
     color: #d63384;
 }
 /*===================================*
-    05.END SEARCH TAG
+    06.END SEARCH TAG
 *===================================*/
 /*
 
@@ -567,7 +596,7 @@ h1 {
 
 */
 /*===================================*
-    05.START SEARCHBAR
+    07.START SEARCHBAR
 *===================================*/
 .searchbar {
     display: flex;
@@ -669,7 +698,7 @@ h1 {
 }
 
 /*===================================*
-    05.END SEARCHBAR
+    07.END SEARCHBAR
 *===================================*/
 /*
 
@@ -684,7 +713,7 @@ h1 {
 
 */
 /*===================================*
-    06.START SEARCHBAR CONTROLS
+    08.START SEARCHBAR CONTROLS
 *===================================*/
 .searchbar-controls {
     display: flex;
@@ -717,9 +746,13 @@ h1 {
 }
 
 .switch-display-btn:hover .switch-display-icon {
+    color: #d6338484;
+}
+
+.switch-display-btn.active .switch-display-icon {
     color: #d63384;
 }
 
 /*===================================*
-    06.END SEARCHBAR CONTROLS
+    08.END SEARCHBAR CONTROLS
 *===================================*/

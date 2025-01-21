@@ -102,7 +102,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 
                     <div class="switch-display">
                         <!-- Grid -->
-                        <button class="switch-display-btn" id="grid">
+                        <button class="switch-display-btn active" id="gridBtn">
                             <span class="switch-display-icon grid-icon">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" id="grid" fill="currentColor">
                                     <path d="M11 10h2a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1v-2a1 1 0 0 1 1-1zm-5 0h2a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1v-2a1 1 0 0 1 1-1zm-5 0h2a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1H1a1 1 0 0 1-1-1v-2a1 1 0 0 1 1-1zm10-5h2a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1zM6 5h2a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1zM1 5h2a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1H1a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1zm10-5h2a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1V1a1 1 0 0 1 1-1zM6 0h2a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V1a1 1 0 0 1 1-1zM1 0h2a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1H1a1 1 0 0 1-1-1V1a1 1 0 0 1 1-1z" />
@@ -111,7 +111,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
                         </button>
 
                         <!-- List -->
-                        <button class="switch-display-btn" id="list">
+                        <button class="switch-display-btn" id="listBtn">
                             <span class="switch-display-icon list-icon">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" id="list" fill="currentColor">
                                     <path d="M5 11h9v2H5v-2zm-4-1h2a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1H1a1 1 0 0 1-1-1v-2a1 1 0 0 1 1-1zm4-4h9v2H5V6zM1 5h2a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1H1a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1zm4-4h9v2H5V1zM1 0h2a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1H1a1 1 0 0 1-1-1V1a1 1 0 0 1 1-1z" />
@@ -160,7 +160,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
                     </div>
 
                     <!-- List of products -->
-                    <ul class="product">
+                    <ul class="product grid">
                         <?php if (!empty($products)): ?>
                             <?php foreach ($products as $product): ?>
                                 <li class="product-item" data-id="<?= htmlspecialchars($product['id']) ?>">
@@ -283,6 +283,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         <div class="arrow-right"></div>
     </div>
     <script src="js/gameHover.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            new GameHover('.product-item', '.product-hover');
+        });
+    </script>
 
     <?php
     include 'footer.php';

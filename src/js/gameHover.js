@@ -1,74 +1,94 @@
-document.addEventListener('DOMContentLoaded', () => {
-    const productItems = document.querySelectorAll('.product-item');
-    const hoverElement = document.querySelector('.product-hover');
-    const hoverArrowLeft = hoverElement.querySelector('.arrow-left');
-    const hoverArrowRight = hoverElement.querySelector('.arrow-right');
-    const hoverContentContainer = hoverElement.querySelector('.product-hover-content');
+class GameHover {
+    constructor(productItemSelector, hoverElementSelector) {
+        this.productItems = document.querySelectorAll(productItemSelector);
+        this.hoverElement = document.querySelector(hoverElementSelector);
+        this.hoverArrowLeft = this.hoverElement.querySelector('.arrow-left');
+        this.hoverArrowRight = this.hoverElement.querySelector('.arrow-right');
+        this.hoverContentContainer = this.hoverElement.querySelector('.product-hover-content');
+        this.hoverTimeout = null;
+        this.id = null;
 
-    // Timeout để hover không bị nhấp nháy
-    let hoverTimeout;
+        this.init();
+    }
 
-    // Hiển thị hover
-    const showHover = (item) => {
-        clearTimeout(hoverTimeout);
+    init() {
+        // Hiển thị hover khi rê chuột vào sản phẩm
+        this.productItems.forEach(item => {
+            item.addEventListener('mouseenter', () => this.showHover(item));
+            item.addEventListener('mouseleave', () => this.hideHover());
+        });
 
-        // Nếu hover đang hiển thị thì không hiển thị nữa
-        hoverTimeout = setTimeout(() => {
-            hoverElement.classList.add('active');
+        // Xử lý sự kiện khi chuyển đổi chế độ hiển thị
+        this.hoverElement.addEventListener('mouseenter', () => clearTimeout(this.hoverTimeout));
+        this.hoverElement.addEventListener('mouseleave', () => this.hideHover());
+    }
 
-            // Tính vị trí hiển thị
+    // Hàm hiển thị hover khi rê chuột vào sản
+    showHover(item) {
+        // Nếu đang hiển thị hover của sản phẩm khác thì ẩn đi
+        clearTimeout(this.hoverTimeout);
+
+        this.hoverTimeout = setTimeout(() => {
+            this.hoverElement.classList.add('active');
+
+            // Lấy thông tin sản phẩm
             const itemRect = item.getBoundingClientRect();
-            const hoverElementRect = hoverElement.getBoundingClientRect();
+            const hoverElementRect = this.hoverElement.getBoundingClientRect();
+            // const top = itemRect.top + window.scrollY + itemRect.height / 2 - hoverElementRect.height / 2;
             const top = itemRect.top + window.scrollY;
+            // const left = itemRect.right + window.scrollX + 10;
             let left = itemRect.right + window.scrollX + 10;
 
-            // Kiểm tra vị trí hiển thị
+            // Nếu hover bị tràn ra khỏi viewport thì đặt lại vị trí
             if (left + hoverElementRect.width > window.innerWidth) {
                 left = itemRect.left - hoverElementRect.width - 10;
-                hoverArrowLeft.style.display = 'none';
-                hoverArrowRight.style.display = 'block';
+                this.hoverArrowLeft.style.display = 'none';
+                this.hoverArrowRight.style.display = 'block';
             } else {
-                hoverArrowLeft.style.display = 'block';
-                hoverArrowRight.style.display = 'none';
+                this.hoverArrowLeft.style.display = 'block';
+                this.hoverArrowRight.style.display = 'none';
             }
 
-            // Cập nhật vị trí
-            hoverElement.style.top = `${top}px`;
-            hoverElement.style.left = `${left}px`;
+            // Cập nhật vị trí của hover
+            this.hoverElement.style.top = `${top}px`;
+            this.hoverElement.style.left = `${left}px`;
 
             // Hiển thị nội dung
-            const id = item.getAttribute('data-id');
-            const content = hoverContentContainer.querySelector(`#hover-product-${id}`);
+            this.id = item.dataset.id;
+            const content = this.hoverContentContainer.querySelector(`#hover-product-${this.id}`);
 
+            // Nếu đã có nội dung thì hiển thị lên
             if (content) {
                 content.style.display = 'block';
-            } else {
-                // Fetch nội dung nếu chưa có
-                fetch(`/api/product_hover.php?id=${id}`)
-                    .then(response => {
-                        if (!response.ok) throw new Error('Network response was not ok.');
-                        return response.text();
-                    })
+            }
+            // Nếu chưa có nội dung thì tải dữ liệu từ server
+            else {
+                this.hoverContentContainer.innerHTML += `<div class="product-hover-content-loading">Loading...</div>`;
+
+                fetch(`/api/product_hover.php?id=${this.id}`)
+                    .then(response => response.text())
                     .then(data => {
-                        hoverContentContainer.innerHTML += data;
+                        this.hoverContentContainer.innerHTML += data;
                     })
-                    .catch(error => console.error('Fetch error:', error));
+                    .catch(error => {
+                        console.error('Error:', error);
+                        this.hoverContentContainer.innerHTML = `<div id="hover-product-${this.id}" class="product-hover-content-item">Error loading data</div>`;
+                    })
+                    .finally(() => {
+                        // Xoá nội dung loading
+                        const loading = this.hoverContentContainer.querySelector('.product-hover-content-loading');
+                        if (loading) {
+                            loading.remove();
+                        }
+                    });
             }
         }, 100);
-    };
+    }
 
-    // Ẩn hover
-    const hideHover = () => {
-        clearTimeout(hoverTimeout);
-        hoverElement.classList.remove('active');
-        for (const content of hoverContentContainer.children) {
-            content.style.display = 'none';
-        }
-    };
-
-    // Thêm sự kiện vào từng item
-    productItems.forEach(item => {
-        item.addEventListener('mouseenter', () => showHover(item));
-        item.addEventListener('mouseleave', hideHover);
-    });
-});
+    // Hàm ẩn hover khi rời chuột khỏi sản phẩm
+    hideHover() {
+        clearTimeout(this.hoverTimeout);
+        this.hoverElement.classList.remove('active');
+        this.hoverContentContainer.querySelector(`#hover-product-${this.id}`).style.display = 'none';
+    }
+}
