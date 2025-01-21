@@ -100,7 +100,7 @@ function switchDisplayMode() {
     });
 
     // Mặc định chế độ hiển thị là lưới
-    gridBtn.click();
+    // gridBtn.click();
 
     // Lấy chế độ hiển thị từ localStorage
     const displayMode = localStorage.getItem('displayMode');
