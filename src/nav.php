@@ -105,6 +105,9 @@ $currentUrl = urlencode($_SERVER['REQUEST_URI']);
     buttonClear.addEventListener('click', () => {
         searchInput.value = '';
         dropdown.style.display = 'none';
+
+        // Focus vào ô search
+        searchInput.focus();
     });
 
     // Hiển thị gợi ý sản phẩm
@@ -154,16 +157,25 @@ $currentUrl = urlencode($_SERVER['REQUEST_URI']);
     searchInput.addEventListener('keydown', (event) => {
         const items = dropdown.querySelectorAll('.search-result-item .search-result-link');
 
-        // Không làm gì nếu không có item nào
-        if (items.length === 0) {
-            return;
-        }
-
         // Tìm index của item đang có class hover
         let index = Array.from(items).findIndex(item => item.classList.contains('hover'));
 
+        // Khi nhấn enter
+        if (event.key === 'Enter') {
+            event.preventDefault();
+
+            // Chưa hover mục nào -> chuyển hướng đến trang tìm kiếm
+            if (index === -1) {
+                window.location.href = `search.php?q=${encodeURIComponent(searchInput.value)}`;
+            }
+            // Hover mục nào đó -> chuyển hướng tới liên kết của mục đó
+            else {
+                items[index].click();
+            }
+        }
+
         // Đặt focus vào item đầu tiên nếu chưa hover
-        if (index === -1 && event.key === 'ArrowDown') {
+        else if (index === -1 && event.key === 'ArrowDown') {
             event.preventDefault();
             items[0].classList.add('hover');
             return;
@@ -180,18 +192,6 @@ $currentUrl = urlencode($_SERVER['REQUEST_URI']);
             items[index].classList.remove('hover');
             index = (index - 1 + items.length) % items.length;
             items[index].classList.add('hover');
-        }
-
-        // Chọn sản phẩm khi nhấn enter
-        else if (event.key === 'Enter') {
-            event.preventDefault();
-            if (index === -1) {
-                // Chưa hover mục nào -> chuyển hướng đến trang tìm kiếm
-                window.location.href = `search.php?q=${encodeURIComponent(searchInput.value)}`;
-            } else {
-                // Hover mục nào đó -> chuyển hướng tới liên kết của mục đó
-                items[index].click();
-            }
         }
 
         // Khi nhấn tab thì focus vào nút search

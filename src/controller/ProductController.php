@@ -32,17 +32,20 @@ class ProductController
     // Hàm để lấy sản phẩm theo trang
     public function getProductsByPage($offset, $limit, $columns, $query, $sort = 'id', $order = 'ASC')
     {
+        // Xử lý query
+        $query = $this->conn->real_escape_string($query);
+
         // Thêm ký tự % vào trước và sau query
         $query = '%' . $query . '%';
 
         // Xây dựng điều kiện WHERE
         $whereClause = [];
         foreach ($columns as $column) {
-            $whereClause[] = "$column LIKE '$query'";
+            $whereClause[] = "$column LIKE ?";
         }
         $whereClause = implode(' OR ', $whereClause);
 
-        // Xây dựng câu lệnh SQLs
+        // Xây dựng câu lệnh SQL
         $sql = "SELECT * 
             FROM products
             WHERE $whereClause
@@ -52,7 +55,13 @@ class ProductController
 
         // Chuẩn bị và gán tham số
         $stmt = $this->conn->prepare($sql);
-        $stmt->bind_param("ii", $offset, $limit);
+        
+        // Tạo mảng các tham số
+        $types = str_repeat('s', count($columns)) . 'ii';
+        $params = array_merge(array_fill(0, count($columns), $query), [$offset, $limit]);
+        
+        // Gọi hàm bind_param với các tham số động
+        $stmt->bind_param($types, ...$params);
 
         // Thực thi câu lệnh
         $stmt->execute();

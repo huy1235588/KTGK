@@ -8,15 +8,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     // Lấy dữ liệu từ form
     $search = $_GET['q'];
 
+    // Xử lý ký tự đặc biệt và thêm ký tự % vào trước và sau query
+    $search = '%' . $search . '%';
+
     // Truy vấn sản phẩm
     $sql = "SELECT id, title, price, discount, headerImage
             FROM products
-            WHERE title LIKE '%$search%' AND isActive = 1
+            WHERE title LIKE ? AND isActive = 1
             LIMIT 5";
 
     // Thực thi truy vấn
-    $products = $conn->query($sql);
-
+    $products = $conn->prepare($sql);
+    $products->bind_param("s", $search);
+    $products->execute();
+    $products = $products->get_result()->fetch_all(MYSQLI_ASSOC);
+    
     // Đóng kết nối
     DongKetNoi($conn);
 
