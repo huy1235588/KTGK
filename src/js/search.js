@@ -4,6 +4,14 @@ function searchbar() {
     const buttonSearchbar = document.querySelector('.button-searchbar');
     const searchbarClearBtn = document.querySelector('.searchbar-clear-btn');
 
+    // Lấy query từ URL
+    const url = new URL(window.location.href);
+    const query = url.searchParams.get('q') || '';
+
+    // Điền nội dung search từ query vào ô search
+    searchbarInput.value = query;
+
+
     // Xoá nội dung trong ô search
     searchbarClearBtn.addEventListener('click', () => {
         searchbarInput.value = '';
@@ -25,8 +33,7 @@ function searchbar() {
         if (query.length > 0) {
             searchbarClearBtn.style.opacity = 1;
 
-            // Gọi API để lấy danh sách sản phẩm
-            // const response = await fetch(`api/search.php?q=${encodeURIComponent(query)}`);
+            url.searchParams.set('q', query);
 
         } else {
             searchbarClearBtn.style.opacity = 0;
@@ -39,20 +46,13 @@ function searchbar() {
         if (event.key === 'Enter') {
             event.preventDefault();
 
-            // Chưa hover mục nào -> chuyển hướng đến trang tìm kiếm
-            if (index === -1) {
-                window.location.href = `search.php?q=${encodeURIComponent(searchbarInput.value)}`;
-            }
-            // Hover mục nào đó -> chuyển hướng tới liên kết của mục đó
-            else {
-                items[index].click();
-            }
+            // Chuyển hướng đến trang search
+            window.location.href = `search.php?q=${encodeURIComponent(searchbarInput.value)}`;
         }
 
         // Khi nhấn tab thì focus vào nút search
         else if (event.key === 'Tab') {
             event.preventDefault();
-            dropdown.style.display = 'none';
             buttonSearchbar.focus();
         }
     });
@@ -376,7 +376,8 @@ function sortProducts() {
     }
 }
 
-function t() {
+// Hàm xử lý sự kiện khi chuyển trang
+function changePage() {
     new Pagination({
         container: '#pagination',
         totalPages: totalPages,
@@ -405,5 +406,5 @@ document.addEventListener('DOMContentLoaded', () => {
     calculateRating();
     addToCart();
     sortProducts();
-    t();
+    changePage();
 });
