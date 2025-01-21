@@ -9,16 +9,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     // Lấy dữ liệu từ form
     $search = $_GET['q'];
 
-    // Thêm phân trang
+    // Lấy trang hiện tại
     $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
     $limit = 8;
     $offset = ($page - 1) * $limit;
+
+    // Lấy sort từ URL
+    $sort = $_GET['sort'] ?? 'releaseDate';
+    $order = $_GET['order'] ?? 'DESC';
 
     // Tạo câu truy vấn
     $sql = "SELECT * 
     FROM products 
     WHERE isActive = 1 AND (title LIKE '%$search%' OR description LIKE '%$search%')
-    LIMIT $limit OFFSET $offset";
+    ORDER BY $sort $order
+    LIMIT $limit OFFSET $offset
+    ";
 
     // Tính tổng số trang
     $countSql = "SELECT COUNT(*) as total 
@@ -68,11 +74,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     <title>Search</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- CSS -->
     <link rel="stylesheet" href="css/search.css">
     <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
+    <link rel="stylesheet" href="components/select.css">
+
+    <!-- JS -->
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
     <script src="https://www.youtube.com/iframe_api"></script>
     <script src="components/notification.js"></script>
+    <script src="components/select.js"></script>
 </head>
 
 <body>
@@ -85,8 +97,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     <script>
         var sessionCart = <?= json_encode($_SESSION['cart'] ?? []) ?>;
         var sessionUsername = <?= json_encode($_SESSION['username'] ?? '') ?>;
-
-        console.log(sessionUsername === '');
+        var sessionRole = <?= json_encode($_SESSION['role'] ?? '') ?>;
     </script>
 
     <!-- Content -->
@@ -122,12 +133,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
                         <span class="sort-text">
                             Sort by
                         </span>
-                        <select class="sort-select">
-                            <option value="newest">Newest</option>
-                            <option value="oldest">Oldest</option>
-                            <option value="price-asc">Price: Low to High</option>
-                            <option value="price-desc">Price: High to Low</option>
-                        </select>
+
+                        <!-- Select -->
+                        <div id="sortSelect"></div>
                     </div>
 
                     <div class="switch-display">

@@ -243,7 +243,7 @@ function addToCart() {
         const addToCartBtn = productItem.querySelector('.cart-btn');
 
         // Kiểm tra xem người dùng đã đăng nhập chưa
-        const isUser = sessionUsername !== '';
+        const isUser = sessionUsername !== '' && sessionRole === 'user';
         if (!isUser) {
             addToCartBtn.classList.remove('hidden');
             return;
@@ -290,9 +290,95 @@ function addToCart() {
     });
 }
 
+// Hàm xử lý sự kiện khi sắp xếp sản phẩm
+function sortProducts() {
+    // Tạo dropdown chọn sắp xếp
+    const sortSelect = document.getElementById("sortSelect");
+    const sortOptions = [
+        {
+            value: {
+                key: "releaseDate",
+                order: "desc"
+            }, label: "Newest"
+        },
+        {
+            value: {
+                key: "releaseDate",
+                order: "asc"
+            }, label: "Oldest"
+        },
+        {
+            value: {
+                key: "price",
+                order: "desc"
+            }, label: "Price: High to Low"
+        },
+        {
+            value: {
+                key: "price",
+                order: "asc"
+            }, label: "Price: Low to High"
+        },
+        {
+            value: {
+                key: "rating",
+                order: "desc"
+            }, label: "Rating: High to Low"
+        },
+        {
+            value: {
+                key: "rating",
+                order: "asc"
+            }, label: "Rating: Low to High"
+        },
+        {
+            value: {
+                key: "title",
+                order: "asc"
+            }, label: "Title: A to Z"
+        },
+        {
+            value: {
+                key: "title",
+                order: "desc"
+            }, label: "Title: Z to A"
+        },
+    ];
+
+    // Lấy tham số `sort` và `order` từ URL
+    const url = new URL(window.location.href);
+    const sort = url.searchParams.get('sort') || 'releaseDate';
+    const order = url.searchParams.get('order') || 'desc';
+
+    // Tìm tùy chọn sắp xếp tương ứng với tham số `sort` và `order`
+    const selectedOption = sortOptions.find(option => option.value.key === sort && option.value.order === order);
+
+    // Tạo dropdown chọn sắp xếp
+    const select = new Select(sortSelect, sortOptions, selectedOption.label, {
+        value: selectedOption.value,
+        width: "200px",
+        onChange: function (value) {
+            sortProducts(value.key, value.order);
+        }
+    });
+
+    function sortProducts(key, order) {
+        // Tạo một URL mới từ đường dẫn hiện tại
+        const url = new URL(window.location.href);
+
+        // Cập nhật tham số `sort` và `order` trên URL
+        url.searchParams.set('sort', key);
+        url.searchParams.set('order', order);
+
+        // Điều hướng đến URL mới
+        window.location.href = url.toString(); // Sử dụng `toString` để chuyển đổi URL thành chuỗi
+    }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     searchbar();
     switchDisplayMode();
     calculateRating();
     addToCart();
+    sortProducts();
 });

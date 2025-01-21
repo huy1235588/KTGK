@@ -415,6 +415,7 @@ h1 {
     height: 16px;
     background: url("/assets/icons/stars.svg") 0 0 repeat-x;
     background-size: 17px 16px;
+    margin-right: 5px;
 }
 
 .product.list
@@ -526,6 +527,14 @@ h1 {
 
 .product.list .product-item > .product-link:hover .cart-btn.hidden {
     display: flex;
+}
+
+/* Hình ảnh di chuyển */
+.product-img.image-fly {
+    position: fixed;
+    opacity: 0.5;
+    z-index: 1000;
+    transition: all 0.5s ease;
 }
 /*===================================*
     03.END PRODUCT LIST
@@ -980,6 +989,35 @@ h1 {
     margin: 20px 0;
 }
 
+/* Sort */
+.sort {
+    display: flex;
+    align-items: center;
+}
+
+.sort .sort-text {
+    color: #e0e0e0;
+    margin-right: 10px;
+}
+
+.sort .sort-select {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.sort .sort-select:focus {
+    border-color: #51a7e8;
+    outline: none;
+}
+
+.sort .sort-select option {
+    padding: 10px;
+    cursor: pointer;
+}
+
+/* Switch display */
 .switch-display {
     display: flex;
     justify-content: flex-end;
@@ -1009,14 +1047,6 @@ h1 {
 
 .switch-display-btn.active .switch-display-icon {
     color: #d63384;
-}
-
-/* Hình ảnh di chuyển */
-.product-img.image-fly {
-    position: fixed;
-    opacity: 0.5;
-    z-index: 1000;
-    transition: all 0.5s ease;
 }
 /*===================================*
     08.END SEARCHBAR CONTROLS

@@ -1,0 +1,41 @@
+.custom-select {
+    position: relative;
+}
+
+.custom-select__selected {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    cursor: pointer;
+    background-color: #fff;
+}
+
+.custom-select__options {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    max-height: 320px;
+    overflow-y: auto;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #fff;
+    display: none;
+    z-index: 100;
+}
+
+.custom-select__option {
+    padding: 10px;
+    cursor: pointer;
+}
+
+.custom-select__option:hover {
+    background-color: #f0f0f0;
+}
+
+.custom-select.open .custom-select__options {
+    display: block;
+}
