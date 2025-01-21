@@ -1,6 +1,3 @@
-<!DOCTYPE html>
-<html lang="en">
-
 <?php
 include 'utils/db_connect.php';
 
@@ -8,6 +5,19 @@ $conn = MoKetNoi();
 
 // Lấy ID sản phẩm từ URL
 $productId = isset($_GET['id']) ? intval($_GET['id']) : 0;
+
+// Kiểm tra sản phẩm có isAcitve = 1 không
+$stmt = $conn->prepare("SELECT isActive FROM products WHERE id = ?");
+$stmt->bind_param("i", $productId);
+$stmt->execute();
+$result = $stmt->get_result();
+
+// Nếu sản phẩm không active thì chuyển hướng về trang chủ
+$isActive = $result->fetch_assoc()['isActive'];
+if ($isActive == 0) {
+    header('Location: trangchu.php');
+    exit();
+}
 
 // Truy vấn sản phẩm 
 $stmt = $conn->prepare("SELECT * FROM products WHERE id = ?");
@@ -35,6 +45,9 @@ if ($result->num_rows > 0) {
 $stmt->close();
 DongKetNoi($conn);
 ?>
+
+<!DOCTYPE html>
+<html lang="en">
 
 <head>
     <meta charset="UTF-8">

@@ -48,7 +48,8 @@
                     // Truy vấn sản phẩm theo thể loại
                     $sqlProducts = "SELECT * 
                             FROM products p JOIN product_genres pg ON p.id = pg.product_id
-                            WHERE pg.genre = '" . $genre['genre'] . "' LIMIT 8";
+                            WHERE pg.genre = '" . $genre['genre'] . "' AND isActive = 1
+                            LIMIT 8";
                     // Thực thi truy vấn
                     $products = $conn->query($sqlProducts);
                     ?>

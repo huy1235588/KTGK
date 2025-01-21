@@ -11,7 +11,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     // Truy vấn sản phẩm
     $sql = "SELECT id, title, price, discount, headerImage
             FROM products
-            WHERE title LIKE '%$search%'
+            WHERE title LIKE '%$search%' AND isActive = 1
             LIMIT 5";
 
     // Thực thi truy vấn

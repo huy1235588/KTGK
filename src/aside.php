@@ -58,6 +58,7 @@ $conn = MoKetNoi();
 // Truy vấn headerImage
 $sqlHeaderImage = "SELECT headerImage
 FROM products
+WHERE isActive = 1
 ORDER BY RAND()
 LIMIT 8";
 
@@ -108,7 +109,8 @@ DongKetNoi($conn);
             slidesPerView: 'auto',
             spaceBetween: 0, // Khoảng cách giữa các slide
             speed: 5000,
-            freeMode: false,
+            freeMode: true,
+            freeModeMomentum: false,
         });
     });
 </script>
