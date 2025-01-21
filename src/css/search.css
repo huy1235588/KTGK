@@ -114,6 +114,7 @@ h1 {
     margin-left: 0;
 }
 
+/* Image */
 .product-item {
     width: calc(25% - 12px);
     margin: 0 15px 30px 0;
@@ -126,6 +127,7 @@ h1 {
     margin-right: 0;
 }
 
+/* Info */
 .product-info {
     padding: 2px 10px 5px;
 }
@@ -162,6 +164,14 @@ h1 {
     overflow: hidden;
 }
 
+.product-release-date {
+    display: none;
+}
+
+.product-more-info {
+    display: none;
+}
+
 .product-img {
     width: 100%;
     height: 150px;
@@ -184,16 +194,20 @@ h1 {
 }
 
 .price {
-    /* display: flex; */
-    flex-direction: column;
+    display: flex;
+    flex-direction: row;
     text-align: start;
     color: #000000;
     font-size: 18px;
     font-weight: bolder;
+    column-gap: 5px;
 }
 
 .original-price {
+    display: flex;
+    align-items: center;
     color: #9da7bc;
+    font-size: 14px;
     text-decoration-line: line-through;
 }
 
@@ -203,6 +217,7 @@ h1 {
     padding: 3px 5px;
     border-radius: 5px;
     background-color: #ff0101b3;
+    color: #fff;
 }
 
 .view-more {
@@ -268,6 +283,176 @@ h1 {
     width: 100%;
     margin: 0;
     border: 0;
+    margin-bottom: 10px;
+}
+
+.product.list .product-item > .product-link {
+    display: flex;
+    align-items: center;
+}
+
+.product.list .product-item > .product-link:hover {
+    background-color: #f5f5f5;
+}
+
+/* Product list image */
+.product.list .product-img-container {
+    width: auto;
+    height: 150px;
+    margin-right: 10px;
+}
+
+/* Product info */
+.product.list .product-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 150px;
+    flex: 1;
+    padding: 10px 0;
+    color: #000000;
+}
+
+.product.list .product-title {
+    height: 40px;
+    margin: 0;
+    color: #000000;
+    text-align: start;
+    display: -webkit-box;
+    font-size: 20px;
+    line-height: 40px;
+    line-clamp: 2;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.product.list .product-release-date {
+    display: inline;
+    font-size: 14px;
+    color: #9da7bc;
+}
+
+/* Product more info */
+.product.list .product-more-info {
+    display: flex;
+    align-items: center;
+    margin-bottom: auto;
+    column-gap: 4px;
+}
+
+.separator-dot {
+    display: inline-block;
+    border-radius: 50%;
+    width: 12px;
+    height: 12px;
+    color: #9da7bc;
+}
+
+/* Rating */
+.product.list .product-rating {
+    display: flex;
+    align-items: center;
+    margin-top: 5px;
+}
+
+.product.list .product-rating .product-rating-stars {
+    width: 85px;
+    height: 16px;
+    background: url("/assets/icons/stars.svg") 0 0 repeat-x;
+    background-size: 17px 16px;
+}
+
+.product.list
+    .product-rating
+    .product-rating-stars
+    .product-rating-stars-cover {
+    display: block;
+    width: 0;
+    height: 100%;
+    background: url("/assets/icons/stars-color.svg");
+    background-position: 0 0;
+    background-size: 17px 16px;
+}
+
+/* Platform */
+.product.list .product-platform {
+    display: flex;
+    align-items: center;
+}
+
+.product.list .product-platform .product-platform-icon {
+    width: 20px;
+    height: 20px;
+}
+
+/* Product Footer */
+.product.list .product-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 45px;
+}
+
+/* Wishlist */
+.product.list .product-footer .product-wishlist {
+    display: flex;
+    column-gap: 5px;
+}
+
+.product.list .product-footer .product-wishlist .wishlist-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 25px;
+    height: 25px;
+    margin-top: auto;
+    border-radius: 50%;
+    color: #222d3d;
+    transition: color 0.3s ease;
+}
+
+.product.list .product-footer .product-wishlist .wishlist-btn:hover {
+    color: #d63384;
+}
+
+/* Price */
+.product.list .price-container {
+    margin-left: auto;
+    margin-right: 1rem;
+    flex-direction: row-reverse;
+}
+
+.product.list .price-container .price {
+    flex-direction: column-reverse;
+    margin-left: 8px;
+}
+
+.product.list .discount {
+    height: 100%;
+    padding: 12px 8px;
+}
+
+/* Cart */
+.product.list .product-footer .cart-btn {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    margin-left: 8px;
+    color: #222d3d;
+    background: linear-gradient(180deg, rgb(197, 237, 73), rgb(124, 193, 20));
+    transition: all 0.3s ease;
+}
+
+.product.list .product-footer .cart-btn:hover {
+    filter: brightness(1.05);
+}
+
+.product.list .product-item > .product-link:hover .cart-btn {
+    display: flex;
 }
 /*===================================*
     03.END PRODUCT LIST

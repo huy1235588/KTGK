@@ -109,7 +109,24 @@ function switchDisplayMode() {
     }
 }
 
+// Hàm xử lý sự kiện khi tính toán rating
+function calculateRating() {
+    const productRating = document.querySelectorAll('.product-rating');
+
+    productRating.forEach(productRating => {
+        const productRatingStar = productRating.querySelector('.product-rating-stars-cover');
+        const productRatingText = productRating.querySelector('.product-rating-text').textContent;
+
+        // Tính toán width cho rating
+        const rating = parseFloat(productRatingText) / 5 * 100;
+
+        // Đặt width cho rating
+        productRatingStar.style.width = `${rating}%`;
+    });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     searchbar();
     switchDisplayMode();
+    calculateRating();
 });
