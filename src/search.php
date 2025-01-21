@@ -79,12 +79,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     <link rel="stylesheet" href="css/search.css">
     <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
     <link rel="stylesheet" href="components/select.css">
+    <link rel="stylesheet" href="components/pagination.css">
 
     <!-- JS -->
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
     <script src="https://www.youtube.com/iframe_api"></script>
     <script src="components/notification.js"></script>
     <script src="components/select.js"></script>
+    <script src="components/pagination.js"></script>
 </head>
 
 <body>
@@ -98,6 +100,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         var sessionCart = <?= json_encode($_SESSION['cart'] ?? []) ?>;
         var sessionUsername = <?= json_encode($_SESSION['username'] ?? '') ?>;
         var sessionRole = <?= json_encode($_SESSION['role'] ?? '') ?>;
+
+        // Pagination
+        var totalPages = <?= $totalPages ?>;
+        var currentPage = <?= $page ?>;
+        var sort = <?= json_encode($sort) ?>;
+        var order = <?= json_encode($order) ?>;
+        var search = <?= json_encode($search) ?>;
+        
     </script>
 
     <!-- Content -->
@@ -320,55 +330,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
                 <?php endif; ?>
 
                 <!-- Pagination controls -->
-                <div class="pagination">
-                    <?php
-                    $range = 2;
-                    if ($totalPages > 1) {
-                        // Previous button
-                        if ($page > 1) {
-                            echo '<a href="?q=' . urlencode($search) . '&page=' . ($page - 1) . '" class="prev">
-                                <
-                            </a>';
-                        } else {
-                            echo '<span class="disabled" class="prev">
-                                <
-                            </span>';
-                        }
-
-                        // First page
-                        if ($page > ($range + 1)) {
-                            echo '<a href="?q=' . urlencode($search) . '&page=1">1</a>';
-                            echo '<span>...</span>';
-                        }
-
-                        // Page range
-                        for ($i = max(1, $page - $range); $i <= min($totalPages, $page + $range); $i++) {
-                            if ($i == $page) {
-                                echo '<a class="active" href="#">' . $i . '</a>';
-                            } else {
-                                echo '<a href="?q=' . urlencode($search) . '&page=' . $i . '">' . $i . '</a>';
-                            }
-                        }
-
-                        // Last page
-                        if ($page < ($totalPages - $range)) {
-                            echo '<span>...</span>';
-                            echo '<a href="?q=' . urlencode($search) . '&page=' . $totalPages . '">' . $totalPages . '</a>';
-                        }
-
-                        // Next button
-                        if ($page < $totalPages) {
-                            echo '<a href="?q=' . urlencode($search) . '&page=' . ($page + 1) . '" class="next">
-                                >
-                            </a>';
-                        } else {
-                            echo '<span class="disabled" class="next">
-                                >
-                            </span>';
-                        }
-                    }
-                    ?>
-                </div>
+                <div class="pagination" id="pagination"></div>
             </section>
         </main>
 

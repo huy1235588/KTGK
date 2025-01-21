@@ -722,67 +722,7 @@ h1 {
 
 */
 /*===================================*
-    05.START PAGINATION
-*===================================*/
-/* pagination */
-.pagination {
-    display: flex;
-    justify-content: center;
-    margin-top: 20px;
-    user-select: none;
-}
-
-.pagination a {
-    display: inline-block;
-    padding: 10px 15px;
-    margin-right: 5px;
-    color: #fff;
-    text-decoration: none;
-    border-radius: 5px;
-    font-size: 16px;
-    font-weight: bold;
-    transition: background-color 0.3s ease;
-}
-
-.pagination a:hover {
-    background-color: #0056b3;
-}
-
-.pagination .active {
-    background-color: #0056b3;
-}
-
-.pagination span {
-    display: inline-block;
-    padding: 10px 15px;
-    margin-right: 5px;
-    color: #fff;
-    border-radius: 5px;
-    font-size: 16px;
-    font-weight: bold;
-}
-
-.pagination .prev,
-.pagination .next {
-    background-color: #007bff;
-}
-/*===================================*
-    05.END PAGINATION
-*===================================*/
-/*
-
-
-
-
-
-
-
-
-
-
-*/
-/*===================================*
-    06.START SEARCH TAG
+    05.START SEARCH TAG
 *===================================*/
 .search-tag-container {
     display: flex;
@@ -848,7 +788,7 @@ h1 {
     color: #d63384;
 }
 /*===================================*
-    06.END SEARCH TAG
+    05.END SEARCH TAG
 *===================================*/
 /*
 
@@ -863,7 +803,7 @@ h1 {
 
 */
 /*===================================*
-    07.START SEARCHBAR
+    06.START SEARCHBAR
 *===================================*/
 .searchbar {
     display: flex;
@@ -965,7 +905,7 @@ h1 {
 }
 
 /*===================================*
-    07.END SEARCHBAR
+    06.END SEARCHBAR
 *===================================*/
 /*
 
@@ -980,7 +920,7 @@ h1 {
 
 */
 /*===================================*
-    08.START SEARCHBAR CONTROLS
+    07.START SEARCHBAR CONTROLS
 *===================================*/
 .searchbar-controls {
     display: flex;
@@ -1049,5 +989,5 @@ h1 {
     color: #d63384;
 }
 /*===================================*
-    08.END SEARCHBAR CONTROLS
+    07. END SEARCHBAR CONTROLS
 *===================================*/

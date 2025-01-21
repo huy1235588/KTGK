@@ -354,7 +354,7 @@ function sortProducts() {
     const selectedOption = sortOptions.find(option => option.value.key === sort && option.value.order === order);
 
     // Tạo dropdown chọn sắp xếp
-    const select = new Select(sortSelect, sortOptions, selectedOption.label, {
+    new Select(sortSelect, sortOptions, selectedOption.label, {
         value: selectedOption.value,
         width: "200px",
         onChange: function (value) {
@@ -362,6 +362,7 @@ function sortProducts() {
         }
     });
 
+    // Hàm sắp xếp sản phẩm
     function sortProducts(key, order) {
         // Tạo một URL mới từ đường dẫn hiện tại
         const url = new URL(window.location.href);
@@ -375,10 +376,34 @@ function sortProducts() {
     }
 }
 
+function t() {
+    new Pagination({
+        container: '#pagination',
+        totalPages: totalPages,
+        currentPage: currentPage,
+        onPageChange: (page) => {
+            goToPage(page);
+        }
+    });
+
+    // Hàm xử lý khi chuyển trang
+    function goToPage(page) {
+        // Tạo một URL mới từ đường dẫn hiện tại
+        const url = new URL(window.location.href);
+
+        // Cập nhật tham số `page` trên URL
+        url.searchParams.set('page', page);
+
+        // Điều hướng đến URL mới
+        window.location.href = url.toString(); // Sử dụng `toString` để chuyển đổi URL thành chuỗi
+    }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     searchbar();
     switchDisplayMode();
     calculateRating();
     addToCart();
     sortProducts();
+    t();
 });
