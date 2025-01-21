@@ -11,7 +11,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 
     // Lấy trang hiện tại
     $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
-    $limit = 8;
+    $limit = 12;
     $offset = ($page - 1) * $limit;
 
     // Lấy sort từ URL

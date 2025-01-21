@@ -161,14 +161,17 @@ h1 {
 
 /* Image */
 .product-item {
-    width: calc(25% - 12px);
+    --items-per-row: 3;
+    --width-product-img: calc(1200px / var(--items-per-row) - 10px);
+    --height-product-img: calc(var(--width-product-img) * 215 / 460);
+    width: var(--width-product-img);
     margin: 0 15px 30px 0;
     border: 2px solid #acacac;
     background-color: #ffffff;
     transition: all 0.3s ease-in-out;
 }
 
-.product-item:nth-child(4n) {
+.product-item:nth-child(3n) {
     margin-right: 0;
 }
 
@@ -227,7 +230,9 @@ h1 {
 
 .product-img {
     width: 100%;
-    height: 150px;
+    height: var(--height-product-img);
+    object-fit: cover;
+    transition: 0.3s ease;
 }
 
 .section-header {
