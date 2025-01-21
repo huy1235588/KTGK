@@ -84,6 +84,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 
     <script>
         var sessionCart = <?= json_encode($_SESSION['cart'] ?? []) ?>;
+        var sessionUsername = <?= json_encode($_SESSION['username'] ?? '') ?>;
+
+        console.log(sessionUsername === '');
     </script>
 
     <!-- Content -->
@@ -262,7 +265,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
                                                 <!-- Price -->
                                                 <div class="price-container">
                                                     <!-- Cart -->
-                                                    <button class="cart-btn" type="button" data-id="<?= htmlspecialchars($product['id']) ?>">
+                                                    <button class="cart-btn hidden" type="button" data-id="<?= htmlspecialchars($product['id']) ?>">
                                                         <span class="cart-icon"></span>
                                                     </button>
 

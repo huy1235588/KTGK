@@ -241,6 +241,15 @@ function addToCart() {
     // Lặp qua từng sản phẩm
     productItems.forEach(productItem => {
         const addToCartBtn = productItem.querySelector('.cart-btn');
+
+        // Kiểm tra xem người dùng đã đăng nhập chưa
+        const isUser = sessionUsername !== '';
+        if (!isUser) {
+            addToCartBtn.classList.remove('hidden');
+            return;
+        }
+
+        // Lấy ID của sản phẩm
         const productId = productItem.dataset.id;
 
         // Kiểm tra xem sản phẩm đã có trong giỏ hàng chưa

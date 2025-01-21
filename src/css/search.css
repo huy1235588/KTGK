@@ -352,7 +352,7 @@ h1 {
 .product.list .product-img-container {
     width: auto;
     height: 150px;
-    margin-right: 10px;
+    margin-right: 20px;
 }
 
 /* Product info */
@@ -524,7 +524,7 @@ h1 {
     filter: brightness(0.95);
 }
 
-.product.list .product-item > .product-link:hover .cart-btn {
+.product.list .product-item > .product-link:hover .cart-btn.hidden {
     display: flex;
 }
 /*===================================*
