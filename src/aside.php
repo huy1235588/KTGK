@@ -9,20 +9,21 @@
 
 <style>
     .aside {
-        margin: 20px 0;
+        margin: 0 0 20px;
         cursor: grab;
     }
 
     .aside .swiper {
         width: 100%;
-        height: 215px;
+        height: 100%;
         overflow: hidden;
     }
 
     .aside .skeleton-wrapper {
+        --scale-factor: 1.5;
         position: relative;
-        width: 100%;
-        height: 215px;
+        width: calc(460px * var(--scale-factor));
+        height: calc(215px * var(--scale-factor));
         overflow: hidden;
     }
 
@@ -36,6 +37,12 @@
         -webkit-transition-timing-function: linear !important;
         -o-transition-timing-function: linear !important;
         transition-timing-function: linear !important;
+    }
+
+    .aside-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
     }
 </style>
 
@@ -95,14 +102,13 @@ DongKetNoi($conn);
             // Thêm các tùy chọn sau
             loop: true, // Nối tiếp các slide
             autoplay: {
-                delay: 0, // Thời gian chuyển đổi giữa các slide (3 giây)
+                delay: 0,
                 disableOnInteraction: false, // Không dừng autoplay khi người dùng tương tác
             },
-            slidesPerView: 'auto', // Hiển thị 1 slide mỗi lần
+            slidesPerView: 'auto',
             spaceBetween: 0, // Khoảng cách giữa các slide
-            speed: 3000,
-            freeMode: true, // Tự động cuộn
-            freeModeMomentum: false, // Tắt momentum để cuộn liền
+            speed: 5000,
+            freeMode: false,
         });
     });
 </script>
