@@ -403,11 +403,13 @@ function changePage() {
 // Hàm xử lý sự kiện khi lọc sản phẩm
 function filter() {
     const filterContainer = document.querySelector('.filters-container');
-    const filterItems = document.querySelectorAll('.filter-item');
+    const filterItems = document.querySelectorAll('.filter-select');
 
     filterItems.forEach(filterItem => {
         const filterHeader = filterItem.querySelector('.filter-header');
         const filterBody = filterItem.querySelector('.filter-body');
+        
+        filterItem.querySelector
 
         // Khởi tạo trạng thái mặc định
         filterBody.style.overflow = 'hidden';

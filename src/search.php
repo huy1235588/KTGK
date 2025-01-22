@@ -339,7 +339,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 
                 <div class="filters">
                     <!-- Price -->
-                    <div class="filter-item">
+                    <div class="filter-select">
                         <!-- Header -->
                         <div class="filter-header">
                             <div class="filter-header-title">
@@ -361,25 +361,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 
                             <div class="block_rule"></div>
 
-                            <label for="" class="filter-checkbox">
+                            <label class="filter-checkbox">
                                 <input type="checkbox" name="category" value="<?= htmlspecialchars($genre['genre']) ?>">
                                 <span class="filter-checkbox-text">
                                     Special Offers
                                 </span>
-                                <span class="filter-exclude-checkbox filter-exclude-checkbox-on"></span>
+                                <span class="filter-exclude-checkbox"></span>
                             </label>
-                            <label for="" class="filter-checkbox">
+                            <label class="filter-checkbox">
                                 <input type="checkbox" name="category" value="<?= htmlspecialchars($genre['genre']) ?>">
                                 <span class="filter-checkbox-text">
                                     Hide free to play items
                                 </span>
-                                <span class="filter-exclude-checkbox filter-exclude-checkbox-on"></span>
+                                <span class="filter-exclude-checkbox"></span>
                             </label>
                         </div>
                     </div>
 
                     <!-- Platform -->
-                    <div class="filter-item">
+                    <div class="filter-select">
                         <!-- header -->
                         <div class="filter-header">
                             <div class="filter-icon-wrapper">
@@ -394,19 +394,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
                         <!-- Body -->
                         <div class="filter-body">
                             <?php foreach ($productController->getPlatforms() as $platform): ?>
-                                <label for="" class="filter-checkbox">
+                                <label class="filter-checkbox">
                                     <input type="checkbox" name="platform" value="<?= htmlspecialchars($platform['platform']) ?>">
                                     <span>
                                         <?= htmlspecialchars($platform['platform']) ?>
                                     </span>
-                                    <span class="filter-exclude-checkbox filter-exclude-checkbox-on"></span>
+                                    <span class="filter-exclude-checkbox"></span>
                                 </label>
                             <?php endforeach; ?>
                         </div>
                     </div>
 
                     <!-- Genre -->
-                    <div class="filter-item">
+                    <div class="filter-select">
                         <!-- Header -->
                         <div class="filter-header">
                             <div class="filter-icon-wrapper">
@@ -433,12 +433,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
                             <!-- Scrollable -->
                             <div class="filter-scrollable">
                                 <?php foreach ($productController->getGenres() as $genre): ?>
-                                    <label for="" class="filter-checkbox">
+                                    <label class="filter-checkbox">
                                         <input type="checkbox" name="category" value="<?= htmlspecialchars($genre['genre']) ?>">
                                         <span class="filter-checkbox-text">
                                             <?= htmlspecialchars($genre['genre']) ?>
                                         </span>
-                                        <span class="filter-exclude-checkbox filter-exclude-checkbox-on"></span>
+                                        <span class="filter-exclude-checkbox"></span>
                                     </label>
                                 <?php endforeach; ?>
                             </div>

@@ -1046,7 +1046,7 @@ h1 {
     margin-bottom: 20px;
 }
 
-.filter-item {
+.filter-select {
     display: flex;
     flex-direction: column;
     margin-bottom: 20px;
