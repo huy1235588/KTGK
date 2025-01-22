@@ -97,6 +97,22 @@ class ProductController
         return $results;
     }
 
+    // Hàm lấy tất cả các thể loại
+    public function getGenres(){
+        $stmt = $this->conn->prepare("SELECT DISTINCT genre FROM product_genres");
+        $stmt->execute();
+        $result = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+        return $result;
+    }
+
+    // Hàm lấy tất cả platform
+    public function getPlatforms(){
+        $stmt = $this->conn->prepare("SELECT DISTINCT platform FROM product_platforms");
+        $stmt->execute();
+        $result = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+        return $result;
+    }
+
     // Hàm lấy tổng số sản phẩm
     public function getTotalProducts($query)
     {

@@ -28,6 +28,11 @@ Author       : LeThienHuy.
     --secondary-color: #acacac;
     --white-color: #ffffff;
     --black-color: #000000;
+
+    --body-color: #ddd;
+    --body-bg-color: #161920;
+    --border-color: #394960;
+    --link-color: #00aff4;
 }
 
 a,
@@ -60,11 +65,6 @@ body {
     display: flex;
     width: 95%;
     margin: 0 auto;
-}
-
-.main {
-    flex: 1;
-    margin-bottom: 2rem;
 }
 
 h1 {
@@ -128,6 +128,29 @@ h1 {
     -webkit-animation-iteration-count: infinite;
     animation-iteration-count: infinite;
 }
+
+.main {
+    display: grid;
+    grid-template-columns: 1fr 240px;
+    grid-template-rows: 70px 1fr;
+    row-gap: 20px;
+    column-gap: 10px;
+    flex: 1;
+    margin-bottom: 2rem;
+}
+
+.searchbar {
+    grid-area: 1 / 1 / 2 / 3;
+}
+
+.product-container {
+    grid-area: 2 / 1 / 3 / 2;
+}
+
+.filter-container {
+    grid-area: 2 / 2 / 3 / 3;
+}
+
 /*===================================*
     01.END GENERAL STYLE
 *===================================*/
@@ -162,7 +185,7 @@ h1 {
 /* Image */
 .product-item {
     --items-per-row: 3;
-    --width-product-img: calc(1200px / var(--items-per-row) - 10px);
+    --width-product-img: calc(950px / var(--items-per-row) - 10px);
     --height-product-img: calc(var(--width-product-img) * 215 / 460);
     width: var(--width-product-img);
     margin: 0 15px 30px 0;
@@ -814,7 +837,6 @@ h1 {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 20px;
     border-bottom: 1px solid #333333;
 }
 
@@ -995,4 +1017,199 @@ h1 {
 }
 /*===================================*
     07. END SEARCHBAR CONTROLS
+*===================================*/
+/*
+
+
+
+
+
+
+
+
+
+
+*/
+/*===================================*
+    07. START FILTER
+*===================================*/
+.filter-container {
+    display: flex;
+    flex-direction: column;
+    /* background: rgba(0, 0, 0, 0.1); */
+    border-radius: 5px;
+}
+
+.filter-title {
+    color: #ffffff;
+    font-size: 20px;
+    margin-bottom: 20px;
+}
+
+.filter-item {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px;
+}
+
+/* Header */
+.filter-header {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    box-sizing: border-box;
+    width: 100%;
+    color: #fff;
+    padding: 10px;
+    border: 0;
+    border-radius: 6px;
+    background: #2d476c url(/assets/icons/filter.svg) no-repeat right 0.75rem
+        center / 8px 10px;
+    cursor: default;
+    user-select: none;
+}
+
+/* Body */
+.filter-body {
+    overflow: hidden;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+    color: #9fbbcb;
+    background: #1b2838;
+    /* color: #1b2838;
+    background: #9fbbcb; */
+    border: 1px solid #2d476c;
+    border-top: 0;
+    border-bottom-left-radius: 6px;
+    border-bottom-right-radius: 6px;
+    contain: paint;
+}
+
+.block_rule {
+    background: rgba(255, 255, 255, 0.2);
+    height: 1px;
+    margin: 8px;
+}
+
+/* Search */
+.filter-select-search {
+    display: inline-block;
+    margin: 0;
+    min-height: 26px;
+    padding: 4px;
+    position: relative;
+    white-space: nowrap;
+    width: 100%;
+    z-index: 10000;
+}
+
+.filter-select-search input {
+    width: 100%;
+    min-height: 34px;
+    padding: 7px 8px;
+    font-size: 14px;
+    color: var(--body-color);
+    vertical-align: middle;
+    background-color: var(--body-bg-color);
+    background-repeat: no-repeat;
+    background-position: right center;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    outline: none;
+    -webkit-appearance: textfield;
+    appearance: textfield;
+    outline-offset: -2px;
+    accent-color: var(--link-color);
+    transition: box-shadow 0.2s;
+}
+
+.filter-select-search input:focus {
+    border-color: #51a7e8;
+    box-shadow: 0 0 0 2px #66c0f4;
+    outline: none;
+}
+
+.filter-scrollable {
+    max-height: max(400px, 20vh);
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #2d476c #1b2838;
+
+    display: flex;
+    flex-direction: column;
+    padding: 10px 0;
+}
+
+/* Range */
+.range_container {
+    padding: 0 12px;
+    margin-top: 8px;
+    text-align: center;
+}
+
+.range_displayontrol {
+    line-height: 28px;
+    padding: 0 8px;
+    font-size: 13px;
+    color: #9fbbcb;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.range_container_inner {
+    display: flex;
+}
+
+.range_input {
+    /* -webkit-appearance: none; */
+    /* appearance: none; */
+    width: 100%;
+    margin: 4.45px 0;
+    background-color: rgba(0, 0, 0, 0);
+    max-height: 5px;
+}
+
+.tab_filter_control,
+.range_display {
+    line-height: 28px;
+    padding: 0 8px;
+    font-size: 13px;
+    font-weight: normal;
+    color: #c6deec;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Checkbox */
+.filter-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 10px;
+    white-space: nowrap;
+    cursor: pointer;
+    font-weight: 400;
+}
+
+.filter-checkbox:hover{
+    background-color: #2a363c;
+}
+
+.filter-exclude-checkbox {
+    margin-left: auto;
+    flex-shrink: 0;
+    width: 16px;
+    height: 16px;
+    background: url(/assets/icons/exclude-checkbox.svg);
+    opacity: .3;
+}
+
+.filter-checkbox-text{
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+/*===================================*
+    07. END FILTER
 *===================================*/

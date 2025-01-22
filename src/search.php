@@ -59,9 +59,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     foreach ($products as $product) {
         $productDetails[$product['id']] = $productController->getProductDetailsById($product['id'], $tables);
     }
-
-    // Đóng kết nối
-    DongKetNoi($conn);
 }
 ?>
 
@@ -87,6 +84,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     <script src="components/notification.js"></script>
     <script src="components/select.js"></script>
     <script src="components/pagination.js"></script>
+    <script src="utils/js/jquery.js"></script>
+    <script src="utils/js/dataTable.js"></script>
 </head>
 
 <body>
@@ -107,7 +106,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         var sort = <?= json_encode($sort) ?>;
         var order = <?= json_encode($order) ?>;
         var search = <?= json_encode($search) ?>;
-        
     </script>
 
     <!-- Content -->
@@ -332,9 +330,127 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
                 <!-- Pagination controls -->
                 <div class="pagination" id="pagination"></div>
             </section>
+
+            <!-- Filter -->
+            <aside class="filter-container" id="js-filters">
+                <h2 class="filter-title">
+                    Filter
+                </h2>
+
+                <div class="filters">
+                    <!-- Price -->
+                    <div class="filter-item">
+                        <!-- Header -->
+                        <div class="filter-header">
+                            <div class="filter-header-title">
+                                Price
+                            </div>
+                        </div>
+
+                        <!-- Body -->
+                        <div class="filter-body">
+                            <div class="range_container">
+                                <div class="range_container_inner">
+                                    <input class="range_input" type="range" id="price_range" min="0" max="13" step="1" value="13">
+                                    <div></div>
+                                </div>
+                                <div class="range_display">
+                                    Any Price
+                                </div>
+                            </div>
+
+                            <div class="block_rule"></div>
+
+                            <label for="" class="filter-checkbox">
+                                <input type="checkbox" name="category" value="<?= htmlspecialchars($genre['genre']) ?>">
+                                <span class="filter-checkbox-text">
+                                    Special Offers
+                                </span>
+                                <span class="filter-exclude-checkbox filter-exclude-checkbox-on"></span>
+                            </label>
+                            <label for="" class="filter-checkbox">
+                                <input type="checkbox" name="category" value="<?= htmlspecialchars($genre['genre']) ?>">
+                                <span class="filter-checkbox-text">
+                                    Hide free to play items
+                                </span>
+                                <span class="filter-exclude-checkbox filter-exclude-checkbox-on"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Platform -->
+                    <div class="filter-item">
+                        <!-- header -->
+                        <div class="filter-header">
+                            <div class="filter-icon-wrapper">
+                                <span class="filter-icon"></span>
+                            </div>
+
+                            <div class="filter-header-title">
+                                Platform
+                            </div>
+                        </div>
+
+                        <!-- Body -->
+                        <div class="filter-body">
+                            <?php foreach ($productController->getPlatforms() as $platform): ?>
+                                <label for="" class="filter-checkbox">
+                                    <input type="checkbox" name="platform" value="<?= htmlspecialchars($platform['platform']) ?>">
+                                    <span>
+                                        <?= htmlspecialchars($platform['platform']) ?>
+                                    </span>
+                                    <span class="filter-exclude-checkbox filter-exclude-checkbox-on"></span>
+                                </label>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
+
+                    <!-- Genre -->
+                    <div class="filter-item">
+                        <!-- Header -->
+                        <div class="filter-header">
+                            <div class="filter-icon-wrapper">
+                                <span class="filter-icon"></span>
+                            </div>
+
+                            <div class="filter-header-title">
+                                Genre
+                            </div>
+                        </div>
+
+                        <!-- Body -->
+                        <div class="filter-body">
+                            <!-- Search -->
+                            <div class="filter-select-search">
+                                <input type="search"
+                                    autocomplete="off"
+                                    autocorrect="off"
+                                    autocapitilize="off"
+                                    spellcheck="false"
+                                    placeholder="Search">
+                            </div>
+
+                            <!-- Scrollable -->
+                            <div class="filter-scrollable">
+                                <?php foreach ($productController->getGenres() as $genre): ?>
+                                    <label for="" class="filter-checkbox">
+                                        <input type="checkbox" name="category" value="<?= htmlspecialchars($genre['genre']) ?>">
+                                        <span class="filter-checkbox-text">
+                                            <?= htmlspecialchars($genre['genre']) ?>
+                                        </span>
+                                        <span class="filter-exclude-checkbox filter-exclude-checkbox-on"></span>
+                                    </label>
+                                <?php endforeach; ?>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </aside>
         </main>
 
-        <script src="js/search.js"></script>
+        <script src=" js/search.js">
+        </script>
     </article>
 
     <!-- Game hover -->
@@ -347,6 +463,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 
     <?php
     include 'footer.php';
+    // Đóng kết nối
     ?>
 
 </body>

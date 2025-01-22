@@ -400,6 +400,51 @@ function changePage() {
     }
 }
 
+// Hàm xử lý sự kiện khi lọc sản phẩm
+function filter() {
+    const filterContainer = document.querySelector('.filters-container');
+    const filterItems = document.querySelectorAll('.filter-item');
+
+    filterItems.forEach(filterItem => {
+        const filterHeader = filterItem.querySelector('.filter-header');
+        const filterBody = filterItem.querySelector('.filter-body');
+
+        // Khởi tạo trạng thái mặc định
+        filterBody.style.overflow = 'hidden';
+        filterBody.style.height = '0px';
+
+        // Xử lý sự kiện khi click vào header
+        filterHeader.addEventListener('click', () => {
+            const isOpen = filterItem.classList.toggle('open');
+
+            if (isOpen) {
+                filterBody.style.height = `${filterBody.scrollHeight}px`;
+                filterBody.style.overflow = 'hidden'; // Đảm bảo không xuất hiện scroll trong quá trình mở
+            } else {
+                filterBody.style.height = '0px';
+            }
+
+            // Đóng các filter khác khi mở filter mới
+            filterItems.forEach(otherItem => {
+                if (otherItem !== filterItem && otherItem.classList.contains('open')) {
+                    otherItem.classList.remove('open');
+                    const otherBody = otherItem.querySelector('.filter-body');
+                    otherBody.style.height = '0px';
+                }
+            });
+        });
+
+        // Xử lý sự kiện khi kết thúc transition
+        filterBody.addEventListener('transitionend', () => {
+            if (!filterItem.classList.contains('open')) {
+                filterBody.style.overflow = 'hidden';
+            } else {
+                filterBody.style.removeProperty('overflow');
+            }
+        });
+    });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     searchbar();
     switchDisplayMode();
@@ -407,4 +452,5 @@ document.addEventListener('DOMContentLoaded', () => {
     addToCart();
     sortProducts();
     changePage();
+    filter();
 });
