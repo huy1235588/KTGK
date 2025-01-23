@@ -7,7 +7,7 @@ $conn = MoKetNoi();
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     // Lấy dữ liệu từ form
-    $search = $_GET['q'];
+    $search = $_GET['q'] ?? '';
 
     // Lấy trang hiện tại
     $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
@@ -18,13 +18,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     $sort = $_GET['sort'] ?? 'releaseDate';
     $order = $_GET['order'] ?? 'DESC';
 
+    // Lấy giá trị từ URL
+    $min_price = $_GET['min_price'] ?? 0;
+    $max_price = $_GET['max_price'] ?? 999999;
+    $min_rating = $_GET['min_rating'] ?? 0;
+    $min_discount = $_GET['min_discount'] ?? 0;
+    $min_release = $_GET['min_release'] ?? '1970-01-01';
+    $max_release = $_GET['max_release'] ?? '2100-12-31';
+
     // Tạo câu truy vấn
     $sql = "SELECT * 
     FROM products 
-    WHERE isActive = 1 AND (title LIKE '%$search%' OR description LIKE '%$search%')
+    WHERE isActive = 1 AND 
+    (title LIKE '%$search%' OR description LIKE '%$search%')
+    AND price >= $min_price AND price <= $max_price
+    AND rating >= $min_rating
+    AND discount >= $min_discount
+    AND releaseDate >= '$min_release' AND releaseDate <= '$max_release'
     ORDER BY $sort $order
     LIMIT $limit OFFSET $offset
     ";
+
+    echo $_GET['platform'];
 
     // Tính tổng số trang
     $countSql = "SELECT COUNT(*) as total 
@@ -332,19 +347,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             </section>
 
             <!-- Filter -->
-            <aside class="filter-container" id="js-filters">
+            <aside class="filter-container">
                 <h2 class="filter-title">
                     Filter
                 </h2>
 
-                <div class="filters">
+                <form method="GET" class="filters" id="js-filters">
                     <!-- Price -->
                     <div class="filter-body price-filter">
                         <div class="fancy-price" aria-label="Filter by minimum and maximum price in selected currency">
                             Price
-                            <input class="fancy-price-input" type="text" inputmode="numeric" name="min_price" maxlength="8" pattern="[0-9]+(\.[0-9]+)?" title="Only numbers (with or without fractions)" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" value="0" aria-label="Minimum price">
+                            <input class="fancy-price-input" type="text" inputmode="numeric" name="min_price" maxlength="8" pattern="[0-9]+(\.[0-9]+)?" title="Only numbers (with or without fractions)" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" value="<?= htmlspecialchars($_GET['min_price'] ?? 0) ?>" aria-label="Minimum price">
                             to
-                            <input class="fancy-price-input" type="text" inputmode="numeric" name="max_price" maxlength="8" pattern="[0-9]+(\.[0-9]+)?" title="Only numbers (with or without fractions)" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" aria-label="Maximum price" placeholder="∞">
+                            <input class="fancy-price-input" type="text" inputmode="numeric" name="max_price" maxlength="8" pattern="[0-9]+(\.[0-9]+)?" title="Only numbers (with or without fractions)" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" value="<?= htmlspecialchars($_GET['max_price'] ?? '') ?>" aria-label="Maximum price" placeholder="∞">
                         </div>
 
                         <div class="block_rule"></div>
@@ -368,26 +383,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
                     <!-- Rating -->
                     <div class="fancy-range">
                         <label for="js-input-rating">Rating: ≥<span id="js-value-rating">0</span></label>
-                        <input type="range" class="fancy-range-input" id="js-input-rating" name="min_rating" min="0" max="5" step="0.1" value="0">
+                        <input type="range" class="fancy-range-input" id="js-input-rating" name="min_rating" min="0" max="5" step="0.1" value="<?= htmlspecialchars($_GET['min_rating'] ?? 0) ?>">
                     </div>
 
                     <!-- Discount -->
                     <div class="fancy-range">
                         <label for="js-input-discount">Discount: <span id="js-value-discount">>0</span>%</label>
-                        <input type="range" class="fancy-range-input" id="js-input-discount" name="min_discount" min="0" max="95" step="5" value="0">
+                        <input type="range" class="fancy-range-input" id="js-input-discount" name="min_discount" min="0" max="95" step="5" value="<?= htmlspecialchars($_GET['min_discount'] ?? 0) ?>">
                     </div>
 
                     <!-- Release date -->
                     <div class="fancy-date-container">
                         <div class="fancy-date-title">Release date</div>
                         <label for="js-input-release-min">From</label>
-                        <input type="date" name="min_release" value="" min="1970-01-01" max="2100-12-31" class="fancy-date-input" id="js-input-release-min">
+                        <input type="date" name="min_release" value="<?= htmlspecialchars($_GET['min_release'] ?? '') ?>" min="1970-01-01" max="2100-12-31" class="fancy-date-input" id="js-input-release-min">
                         <label for="js-input-release-max">To</label>
-                        <input type="date" name="max_release" value="" min="1970-01-01" max="2100-12-31" class="fancy-date-input" id="js-input-release-max">
+                        <input type="date" name="max_release" value="<?= htmlspecialchars($_GET['max_release'] ?? '') ?>" min="1970-01-01" max="2100-12-31" class="fancy-date-input" id="js-input-release-max">
                     </div>
 
                     <!-- Platform -->
-                    <div class="filter-select">
+                    <div class="filter-select" id="js-select-platform">
                         <!-- header -->
                         <div class="filter-header">
                             <div class="filter-header-title">
@@ -397,9 +412,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 
                         <!-- Body -->
                         <div class="filter-body">
-                            <?php foreach ($productController->getPlatforms() as $platform): ?>
+                            <?php foreach ($productController->getPlatforms() as $platform):
+                                // $isChecked = isset($_GET['platform']) && in_array($platform['platform'], $_GET['platform']);
+                            ?>
                                 <label class="filter-checkbox">
-                                    <input type="checkbox" name="platform" value="<?= htmlspecialchars($platform['platform']) ?>">
+                                    <input type="checkbox" name="platform" value="<?= htmlspecialchars($platform['platform']) ?>" <?= $isChecked ? 'checked' : '' ?>>
                                     <span>
                                         <?= htmlspecialchars($platform['platform']) ?>
                                     </span>
@@ -410,7 +427,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
                     </div>
 
                     <!-- Genre -->
-                    <div class="filter-select">
+                    <div class="filter-select" id="js-select-genre">
                         <!-- Header -->
                         <div class="filter-header">
                             <div class="filter-header-title">
@@ -446,7 +463,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
                     </div>
 
                     <!-- Tags -->
-                    <div class="filter-select">
+                    <div class="filter-select" id="js-select-tag">
                         <!-- Header -->
                         <div class="filter-header">
                             <div class="filter-header-title">
@@ -483,7 +500,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
                     </div>
 
                     <!-- Features -->
-                    <div class="filter-select">
+                    <div class="filter-select" id="js-select-feature">
                         <!-- Header -->
                         <div class="filter-header">
                             <div class="filter-header-title">
@@ -519,7 +536,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
                     </div>
 
                     <!-- Language -->
-                    <div class="filter-select">
+                    <div class="filter-select" id="js-select-language">
                         <!-- Header -->
                         <div class="filter-header">
                             <div class="filter-header-title">
@@ -566,7 +583,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
                         class="btn btn-link hide-small" id="js-filters-reset">
                         Clear filters
                     </a>
-                </div>
+                </form>
 
             </aside>
         </main>

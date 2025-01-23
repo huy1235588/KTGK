@@ -11,7 +11,6 @@ function searchbar() {
     // Điền nội dung search từ query vào ô search
     searchbarInput.value = query;
 
-
     // Xoá nội dung trong ô search
     searchbarClearBtn.addEventListener('click', () => {
         searchbarInput.value = '';
@@ -345,13 +344,8 @@ function sortProducts() {
         },
     ];
 
-    // Lấy tham số `sort` và `order` từ URL
-    const url = new URL(window.location.href);
-    const sort = url.searchParams.get('sort') || 'releaseDate';
-    const order = url.searchParams.get('order') || 'desc';
-
     // Tìm tùy chọn sắp xếp tương ứng với tham số `sort` và `order`
-    const selectedOption = sortOptions.find(option => option.value.key === sort && option.value.order === order);
+    const selectedOption = sortOptions.find(option => option.value.key === sort && option.value.order === order.toLowerCase());
 
     // Tạo dropdown chọn sắp xếp
     new Select(sortSelect, sortOptions, selectedOption.label, {
@@ -471,10 +465,109 @@ function filter() {
         document.querySelector("#js-value-rating").textContent = this.value
     });
     // Tạo dropdown chọn giá sản phẩm
-    document.querySelector("#js-input-discount").addEventListener("input", function() {
+    document.querySelector("#js-input-discount").addEventListener("input", function () {
         const e = this.value
-          , s = document.querySelector("#js-value-discount");
+            , s = document.querySelector("#js-value-discount");
         s.textContent = e > 0 || s.dataset.zero ? `\u2265${e}` : `>${e}`
+    });
+
+    // Lấy input giá trị release tối thiểu
+    const minReleaseInput = document.querySelector('input[name="min_release"]');
+    if (minReleaseInput) {
+        // Lấy input giá trị release tối đa
+        const maxReleaseInput = document.querySelector('input[name="max_release"]');
+        if (minReleaseInput.value) {
+            maxReleaseInput.setAttribute("min", minReleaseInput.value);
+        }
+        // Thêm sự kiện thay đổi cho input release tối thiểu
+        minReleaseInput.addEventListener("change", function () {
+            maxReleaseInput.setAttribute("min", this.value || minReleaseInput.getAttribute("min"));
+        });
+    }
+}
+
+/**
+ * Xử lý sự kiện khi người dùng gửi biểu mẫu lọc.
+ * - Ngăn chặn hành vi mặc định của biểu mẫu.
+ * - Thu thập các giá trị được chọn từ các bộ lọc (nền tảng, thể loại, thẻ, tính năng, ngôn ngữ).
+ * - Tạo các trường ẩn cho các giá trị lọc đã chọn.
+ * - Thêm các trường ẩn cho các giá trị sắp xếp, thứ tự và trang hiện tại.
+ * - Tạo đối tượng FormData từ biểu mẫu và chuyển đổi thành URLSearchParams.
+ * - Xóa tham số 'category' khỏi URL.
+ * - Sắp xếp các tham số trong URL.
+ * - Chuyển hướng đến URL tìm kiếm mới với các tham số đã cập nhật.
+ */
+function handleFilterSubmit() {
+    const filterForm = document.getElementById('js-filters');
+
+    filterForm.addEventListener('submit', (event) => {
+        event.preventDefault();
+
+        const inputSelectors = [
+            ".fancy-price-input",
+            ".fancy-date-input",
+        ];
+        inputSelectors.forEach(function (selector) {
+            filterForm.querySelectorAll(selector).forEach(function (input) {
+                input.value <= 0 && (input.disabled = true);
+            });
+        });
+
+        // Thu thập các giá trị được chọn từ các bộ lọc
+        const filterIds = [
+            'js-select-platform',
+            'js-select-genre',
+            'js-select-tag',
+            'js-select-feature',
+            'js-select-language'
+        ];
+
+        // Thêm các trường ẩn cho các giá trị lọc đã chọn
+        filterIds.forEach((filterId) => {
+            const filterElement = document.getElementById(filterId);
+            const selectedValues = Array.from(filterElement.querySelectorAll('.filter-scrollable input:checked'))
+                .map(input => input.value);
+
+            if (selectedValues.length > 0) {
+                const hiddenInput = document.createElement('input');
+                hiddenInput.type = 'hidden';
+                hiddenInput.name = filterId.replace('js-select-', '');
+                hiddenInput.value = selectedValues.join(',');
+                filterForm.appendChild(hiddenInput);
+            }
+        });
+
+        // Thêm các tham số sắp xếp và phân trang
+        const filterValues = [
+            { name: 'q', value: search },
+            { name: 'sort', value: sort },
+            { name: 'order', value: order },
+            { name: 'page', value: currentPage }
+        ];
+
+        filterValues.forEach(({ name, value }) => {
+            if (value) {
+                const hiddenInput = document.createElement('input');
+                hiddenInput.type = 'hidden';
+                hiddenInput.name = name;
+                hiddenInput.value = value;
+                filterForm.appendChild(hiddenInput);
+            }
+        });
+
+        // Tạo đối tượng FormData từ biểu mẫu và chuyển đổi thành URLSearchParams
+        const formData = new FormData(filterForm);
+        const urlParams = new URLSearchParams(formData);
+
+        // Xóa tham số 'category' khỏi urlParams
+        urlParams.delete('category');
+        // Sắp xếp các tham số trong urlParams
+        urlParams.sort();
+
+        console.log(urlParams.toString());
+
+        // Chuyển hướng đến URL mới với các tham số đã cập nhật
+        window.location.href = `search.php?${urlParams.toString()}`;
     });
 }
 
@@ -486,4 +579,5 @@ document.addEventListener('DOMContentLoaded', () => {
     sortProducts();
     changePage();
     filter();
+    handleFilterSubmit();
 });
