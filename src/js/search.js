@@ -408,8 +408,28 @@ function filter() {
     filterItems.forEach(filterItem => {
         const filterHeader = filterItem.querySelector('.filter-header');
         const filterBody = filterItem.querySelector('.filter-body');
-        
-        filterItem.querySelector
+
+        // Xử lý sự kiện khi click vào option
+        const search = filterBody.querySelector('.filter-select-search input');
+        if (search) {
+            // Xử lý sự kiện khi nhập vào ô search
+            search.addEventListener('input', () => {
+                const value = search.value.trim().toUpperCase();
+
+                // Lặp qua từng option để tìm kiếm
+                filterBody.querySelectorAll('.filter-scrollable label').forEach(option => {
+                    const text = option.textContent || option.innerText;
+                    const match = text.toUpperCase().includes(value);
+
+                    // Hiển thị hoặc ẩn option tùy theo kết quả tìm kiếm
+                    if (match) {
+                        option.style.display = 'block';
+                    } else {
+                        option.style.display = 'none';
+                    }
+                });
+            });
+        }
 
         // Khởi tạo trạng thái mặc định
         filterBody.style.overflow = 'hidden';
@@ -444,6 +464,17 @@ function filter() {
                 filterBody.style.removeProperty('overflow');
             }
         });
+    });
+
+    // Tạo dropdown chọn số lượng sản phẩm
+    document.querySelector("#js-input-rating").addEventListener("input", function () {
+        document.querySelector("#js-value-rating").textContent = this.value
+    });
+    // Tạo dropdown chọn giá sản phẩm
+    document.querySelector("#js-input-discount").addEventListener("input", function() {
+        const e = this.value
+          , s = document.querySelector("#js-value-discount");
+        s.textContent = e > 0 || s.dataset.zero ? `\u2265${e}` : `>${e}`
     });
 }
 

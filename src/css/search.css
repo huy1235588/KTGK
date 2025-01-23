@@ -1034,6 +1034,7 @@ h1 {
     07. START FILTER
 *===================================*/
 .filter-container {
+    position: relative;
     display: flex;
     flex-direction: column;
     /* background: rgba(0, 0, 0, 0.1); */
@@ -1042,7 +1043,6 @@ h1 {
 
 .filter-title {
     color: #ffffff;
-    font-size: 20px;
     margin-bottom: 20px;
 }
 
@@ -1060,7 +1060,7 @@ h1 {
     box-sizing: border-box;
     width: 100%;
     color: #fff;
-    padding: 10px;
+    padding: 7px 20px 7px 8px;
     border: 0;
     border-radius: 6px;
     background: #2d476c url(/assets/icons/filter.svg) no-repeat right 0.75rem
@@ -1140,46 +1140,104 @@ h1 {
     padding: 10px 0;
 }
 
-/* Range */
-.range_container {
-    padding: 0 12px;
-    margin-top: 8px;
-    text-align: center;
-}
-
-.range_displayontrol {
-    line-height: 28px;
-    padding: 0 8px;
-    font-size: 13px;
-    color: #9fbbcb;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.range_container_inner {
+/* fancy-price */
+.fancy-date-container,
+.fancy-price,
+.fancy-range {
     display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: #fff;
+    position: relative;
+    background: #2d476c;
+    background: #1b2838;
+    border-radius: 6px;
+    margin-bottom: 20px;
+    padding: 8px;
+    line-height: 18px;
+    gap: 8px;
 }
 
-.range_input {
-    /* -webkit-appearance: none; */
-    /* appearance: none; */
+.fancy-price {
+    background-color: transparent;
+    margin-bottom: 0;
+}
+
+input.fancy-date-input,
+input.fancy-reviews-input,
+input.fancy-price-input {
+    min-height: auto;
+    height: 18px;
     width: 100%;
-    margin: 4.45px 0;
-    background-color: rgba(0, 0, 0, 0);
-    max-height: 5px;
+    min-width: 0;
+    color: inherit;
+    border: none;
+    background: #586a7499;
+    border-radius: 6px;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+    line-height: 2;
+    vertical-align: 0;
+    flex-grow: 1;
 }
 
-.tab_filter_control,
-.range_display {
-    line-height: 28px;
-    padding: 0 8px;
-    font-size: 13px;
-    font-weight: normal;
-    color: #c6deec;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+input {
+    accent-color: var(--link-color);
+}
+
+.filter-body.price-filter {
+    overflow: visible;
+    margin-bottom: 20px;
+    padding: 10px 6px;
+    /* background-color: #2d476c; */
+}
+
+/* fancy-range */
+.fancy-range {
+    gap: 0;
+}
+
+.fancy-range > label {
+    font-size: inherit;
+    font-weight: inherit;
+}
+
+.fancy-range-input {
+    width: 50%;
+    height: 18px;
+    background: transparent;
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+/* fancy-date */
+.fancy-date-container {
+    display: grid;
+    grid-template-rows: min-content 1fr 1fr;
+    grid-template-columns: min-content 1fr;
+    gap: 0 8px;
+}
+
+.fancy-date-title {
+    grid-column: 1 / 3;
+    margin-bottom: 4px;
+}
+
+input.fancy-date-input {
+    text-align: left;
+    padding: 8px;
+    height: 30px;
+}
+
+input.fancy-date-input[name="min_release"] {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+input.fancy-date-input[name="max_release"] {
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
 }
 
 /* Checkbox */
@@ -1193,7 +1251,7 @@ h1 {
     font-weight: 400;
 }
 
-.filter-checkbox:hover{
+.filter-checkbox:hover {
     background-color: #2a363c;
 }
 
@@ -1203,12 +1261,148 @@ h1 {
     width: 16px;
     height: 16px;
     background: url(/assets/icons/exclude-checkbox.svg);
-    opacity: .3;
+    opacity: 0.3;
 }
 
-.filter-checkbox-text{
+.filter-checkbox-text {
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+/* Button submit */
+.filter-submit-wrap {
+    position: sticky;
+    bottom: 0;
+}
+
+#js-filters-reset,
+#js-filter-submit {
+    width: 100%;
+    margin-top: 8px;
+    padding: 8px;
+    line-height: 1;
+    font-size: 14px;
+    border: 0;
+    color: #fff;
+    background: #338037;
+    box-shadow: none;
+    text-align: center;
+}
+
+.btn {
+    position: relative;
+    display: inline-block;
+    padding: 6px 12px;
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 20px;
+    color: #24292e;
+    white-space: nowrap;
+    vertical-align: middle;
+    cursor: pointer;
+    background-color: #fafbfc;
+    box-shadow: 0 1px #1b1f230a, inset 0 1px #ffffff40;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    user-select: none;
+    appearance: none;
+}
+
+#js-filters-reset:hover,
+#js-filter-submit:hover {
+    color: #fff;
+    background: #4873a7;
+    text-decoration: underline;
+}
+
+.btn:disabled,
+.btn:disabled:hover {
+    color: var(--muted-color);
+    background-color: var(--muted-bg-color);
+    background-image: none;
+    border-color: #1b1f2333;
+    box-shadow: none;
+    cursor: default;
+}
+
+#js-filter-submit:disabled {
+    background: var(--body-bg-color);
+    color: var(--muted-color);
+}
+
+#js-filters-reset {
+    background: transparent;
+    color: #97b8e0;
+    border: 1px solid #4873a7;
+}
+
+/* Tooltip */
+.tooltipped:before {
+    position: absolute;
+    z-index: 1000001;
+    display: none;
+    width: 0;
+    height: 0;
+    color: var(--tooltip-bg);
+    pointer-events: none;
+    content: "";
+    border: 5px solid transparent;
+}
+
+.tooltipped:after {
+    position: absolute;
+    z-index: 1000000;
+    display: none;
+    padding: 5px 8px;
+    font-style: normal;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--body-bg-color);
+    background: var(--tooltip-bg);
+    text-align: center;
+    text-decoration: none;
+    text-shadow: none;
+    text-transform: none;
+    letter-spacing: normal;
+    overflow-wrap: anywhere;
+    white-space: pre;
+    pointer-events: none;
+    content: attr(aria-label);
+    border-radius: 6px;
+    backdrop-filter: blur(2px);
+}
+
+.tooltipped:hover:before,
+.tooltipped:hover:after,
+.tooltipped:active:before,
+.tooltipped:active:after,
+.tooltipped:focus-visible:before,
+.tooltipped:focus-visible:after {
+    display: inline-block;
+    text-decoration: none;
+}
+
+#js-filters .tooltipped {
+    position: relative;
+}
+
+#js-filters .tooltipped:before {
+    border-top-color: #fff;
+    top: -5px;
+    left: 5px;
+    bottom: auto;
+}
+
+#js-filters .tooltipped:after {
+    color: #000;
+    background: #fff;
+    left: 0;
+    right: 0;
+    bottom: 100%;
+    margin-bottom: 5px;
+    text-align: left;
+    white-space: break-spaces;
 }
 /*===================================*
     07. END FILTER

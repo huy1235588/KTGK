@@ -339,53 +339,57 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 
                 <div class="filters">
                     <!-- Price -->
-                    <div class="filter-select">
-                        <!-- Header -->
-                        <div class="filter-header">
-                            <div class="filter-header-title">
-                                Price
-                            </div>
+                    <div class="filter-body price-filter">
+                        <div class="fancy-price" aria-label="Filter by minimum and maximum price in selected currency">
+                            Price
+                            <input class="fancy-price-input" type="text" inputmode="numeric" name="min_price" maxlength="8" pattern="[0-9]+(\.[0-9]+)?" title="Only numbers (with or without fractions)" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" value="0" aria-label="Minimum price">
+                            to
+                            <input class="fancy-price-input" type="text" inputmode="numeric" name="max_price" maxlength="8" pattern="[0-9]+(\.[0-9]+)?" title="Only numbers (with or without fractions)" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" aria-label="Maximum price" placeholder="∞">
                         </div>
 
-                        <!-- Body -->
-                        <div class="filter-body">
-                            <div class="range_container">
-                                <div class="range_container_inner">
-                                    <input class="range_input" type="range" id="price_range" min="0" max="13" step="1" value="13">
-                                    <div></div>
-                                </div>
-                                <div class="range_display">
-                                    Any Price
-                                </div>
-                            </div>
+                        <div class="block_rule"></div>
 
-                            <div class="block_rule"></div>
+                        <label class="filter-checkbox">
+                            <input type="checkbox" name="category" value="<?= htmlspecialchars($genre['genre']) ?>">
+                            <span class="filter-checkbox-text">
+                                Special Offers
+                            </span>
+                            <span class="filter-exclude-checkbox"></span>
+                        </label>
+                        <label class="filter-checkbox">
+                            <input type="checkbox" name="category" value="<?= htmlspecialchars($genre['genre']) ?>">
+                            <span class="filter-checkbox-text">
+                                Hide free to play items
+                            </span>
+                            <span class="filter-exclude-checkbox"></span>
+                        </label>
+                    </div>
 
-                            <label class="filter-checkbox">
-                                <input type="checkbox" name="category" value="<?= htmlspecialchars($genre['genre']) ?>">
-                                <span class="filter-checkbox-text">
-                                    Special Offers
-                                </span>
-                                <span class="filter-exclude-checkbox"></span>
-                            </label>
-                            <label class="filter-checkbox">
-                                <input type="checkbox" name="category" value="<?= htmlspecialchars($genre['genre']) ?>">
-                                <span class="filter-checkbox-text">
-                                    Hide free to play items
-                                </span>
-                                <span class="filter-exclude-checkbox"></span>
-                            </label>
-                        </div>
+                    <!-- Rating -->
+                    <div class="fancy-range">
+                        <label for="js-input-rating">Rating: ≥<span id="js-value-rating">0</span></label>
+                        <input type="range" class="fancy-range-input" id="js-input-rating" name="min_rating" min="0" max="5" step="0.1" value="0">
+                    </div>
+
+                    <!-- Discount -->
+                    <div class="fancy-range">
+                        <label for="js-input-discount">Discount: <span id="js-value-discount">>0</span>%</label>
+                        <input type="range" class="fancy-range-input" id="js-input-discount" name="min_discount" min="0" max="95" step="5" value="0">
+                    </div>
+
+                    <!-- Release date -->
+                    <div class="fancy-date-container">
+                        <div class="fancy-date-title">Release date</div>
+                        <label for="js-input-release-min">From</label>
+                        <input type="date" name="min_release" value="" min="1970-01-01" max="2100-12-31" class="fancy-date-input" id="js-input-release-min">
+                        <label for="js-input-release-max">To</label>
+                        <input type="date" name="max_release" value="" min="1970-01-01" max="2100-12-31" class="fancy-date-input" id="js-input-release-max">
                     </div>
 
                     <!-- Platform -->
                     <div class="filter-select">
                         <!-- header -->
                         <div class="filter-header">
-                            <div class="filter-icon-wrapper">
-                                <span class="filter-icon"></span>
-                            </div>
-
                             <div class="filter-header-title">
                                 Platform
                             </div>
@@ -409,10 +413,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
                     <div class="filter-select">
                         <!-- Header -->
                         <div class="filter-header">
-                            <div class="filter-icon-wrapper">
-                                <span class="filter-icon"></span>
-                            </div>
-
                             <div class="filter-header-title">
                                 Genre
                             </div>
@@ -444,6 +444,128 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
                             </div>
                         </div>
                     </div>
+
+                    <!-- Tags -->
+                    <div class="filter-select">
+                        <!-- Header -->
+                        <div class="filter-header">
+                            <div class="filter-header-title">
+                                Tags
+                            </div>
+                        </div>
+
+                        <!-- Body -->
+                        <div class="filter-body">
+                            <!-- Search -->
+                            <div class="filter-select-search">
+                                <input type="search"
+                                    autocomplete="off"
+                                    autocorrect="off"
+                                    autocapitilize="off"
+                                    spellcheck="false"
+                                    placeholder="Search">
+                            </div>
+
+                            <!-- Scrollable -->
+                            <div class="filter-scrollable">
+                                <?php foreach ($productController->getTags() as $tag): ?>
+                                    <label class="filter-checkbox">
+                                        <input type="checkbox" name="category" value="<?= htmlspecialchars($tag['tag']) ?>">
+                                        <span class="filter-checkbox-text">
+                                            <?= htmlspecialchars($tag['tag']) ?>
+                                            (<?= htmlspecialchars($tag['count']) ?>)
+                                        </span>
+                                        <span class="filter-exclude-checkbox"></span>
+                                    </label>
+                                <?php endforeach; ?>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Features -->
+                    <div class="filter-select">
+                        <!-- Header -->
+                        <div class="filter-header">
+                            <div class="filter-header-title">
+                                Features
+                            </div>
+                        </div>
+
+                        <!-- Body -->
+                        <div class="filter-body">
+                            <!-- Search -->
+                            <div class="filter-select-search">
+                                <input type="search"
+                                    autocomplete="off"
+                                    autocorrect="off"
+                                    autocapitilize="off"
+                                    spellcheck="false"
+                                    placeholder="Search">
+                            </div>
+
+                            <!-- Scrollable -->
+                            <div class="filter-scrollable">
+                                <?php foreach ($productController->getFeatures() as $feature): ?>
+                                    <label class="filter-checkbox">
+                                        <input type="checkbox" name="category" value="<?= htmlspecialchars($feature['feature']) ?>">
+                                        <span class="filter-checkbox-text">
+                                            <?= htmlspecialchars($feature['feature']) ?>
+                                        </span>
+                                        <span class="filter-exclude-checkbox"></span>
+                                    </label>
+                                <?php endforeach; ?>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Language -->
+                    <div class="filter-select">
+                        <!-- Header -->
+                        <div class="filter-header">
+                            <div class="filter-header-title">
+                                Language
+                            </div>
+                        </div>
+
+                        <!-- Body -->
+                        <div class="filter-body">
+                            <!-- Search -->
+                            <div class="filter-select-search">
+                                <input type="search"
+                                    autocomplete="off"
+                                    autocorrect="off"
+                                    autocapitilize="off"
+                                    spellcheck="false"
+                                    placeholder="Search">
+                            </div>
+
+                            <!-- Scrollable -->
+                            <div class="filter-scrollable">
+                                <?php foreach ($productController->getLanguages() as $language): ?>
+                                    <label class="filter-checkbox">
+                                        <input type="checkbox" name="category" value="<?= htmlspecialchars($language['language']) ?>">
+                                        <span class="filter-checkbox-text">
+                                            <?= htmlspecialchars($language['language']) ?>
+                                        </span>
+                                        <span class="filter-exclude-checkbox"></span>
+                                    </label>
+                                <?php endforeach; ?>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Button Submit -->
+                    <div class="filter-submit-wrap">
+                        <button id="js-filter-submit" class="btn" type="submit">
+                            Apply new filters
+                        </button>
+                    </div>
+
+                    <!-- Button Reset -->
+                    <a href="/search.php?q=<?php echo htmlspecialchars($search) ?>"
+                        class="btn btn-link hide-small" id="js-filters-reset">
+                        Clear filters
+                    </a>
                 </div>
 
             </aside>

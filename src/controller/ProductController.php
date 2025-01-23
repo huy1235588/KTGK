@@ -113,6 +113,34 @@ class ProductController
         return $result;
     }
 
+    // Hàm lấy tất cả tags
+    public function getTags(){
+        $sql = "SELECT tag, COUNT(*) as count
+        FROM product_tags
+        GROUP BY tag";
+
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute();
+        $result = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+        return $result;
+    }
+
+    // Hàm lấy tất cả features
+    public function getFeatures(){
+        $stmt = $this->conn->prepare("SELECT DISTINCT feature FROM product_features");
+        $stmt->execute();
+        $result = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+        return $result;
+    }
+
+    // Hàm lấy tất cả ngôn ngữ
+    public function getLanguages(){
+        $stmt = $this->conn->prepare("SELECT DISTINCT language FROM product_languages");
+        $stmt->execute();
+        $result = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+        return $result;
+    }
+
     // Hàm lấy tổng số sản phẩm
     public function getTotalProducts($query)
     {
