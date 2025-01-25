@@ -23,8 +23,7 @@
 
     // Truy vấn danh sách genres
     $sqlGenres = "SELECT * 
-    FROM product_genres
-    GROUP BY genre";
+    FROM genres";
     // Thực thi truy vấn
     $genres = $conn->query($sqlGenres);
 
@@ -48,14 +47,14 @@
                     // Truy vấn sản phẩm theo thể loại
                     $sqlProducts = "SELECT * 
                             FROM products p JOIN product_genres pg ON p.id = pg.product_id
-                            WHERE pg.genre = '" . $genre['genre'] . "' AND isActive = 1
+                            WHERE pg.genre_id = '" . $genre['id'] . "' AND isActive = 1
                             LIMIT 8";
                     // Thực thi truy vấn
                     $products = $conn->query($sqlProducts);
                     ?>
                     <section>
                         <h2 class="section-header">
-                            <?= htmlspecialchars($genre['genre']) ?>
+                            <?= htmlspecialchars($genre['name']) ?>
                         </h2>
                         <ul class="product">
                             <?php if (!empty($products)): ?>
@@ -122,7 +121,7 @@
                             <?php endif; ?>
                         </ul>
                         <div class="view-more">
-                            <a href="genre.php?genre=<?= htmlspecialchars($genre['genre']) ?>">Xem thêm</a>
+                            <a href="genre.php?genre=<?= htmlspecialchars($genre['name']) ?>">Xem thêm</a>
                         </div>
                     </section>
                 <?php endforeach; ?>

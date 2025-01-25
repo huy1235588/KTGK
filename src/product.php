@@ -129,7 +129,10 @@ DongKetNoi($conn);
     }
 
     // Lấy genre của sản phẩm
-    $stmt = $conn->prepare("SELECT genre FROM product_genres WHERE product_id = ?");
+    $sql = "SELECT name AS genre
+    FROM product_genres JOIN genres ON product_genres.genre_id = genres.id
+    WHERE product_id = ?";
+    $stmt = $conn->prepare($sql);
     $stmt->bind_param("i", $productId);
     $stmt->execute();
     $result = $stmt->get_result();
@@ -142,7 +145,10 @@ DongKetNoi($conn);
     }
 
     // Truy vấn tags
-    $stmt = $conn->prepare("SELECT tag FROM product_tags WHERE product_id = ?");
+    $sql = "SELECT name AS tag
+    FROM product_tags JOIN tags ON product_tags.tag_id = tags.id
+    WHERE product_id = ?";
+    $stmt = $conn->prepare($sql);
     $stmt->bind_param("i", $productId);
     $stmt->execute();
     $result = $stmt->get_result();
@@ -234,9 +240,10 @@ DongKetNoi($conn);
     $stmt = $conn->prepare("SELECT DISTINCT p.*
         FROM products p
         JOIN product_genres pg ON p.id = pg.product_id
-        WHERE pg.genre IN (
-            SELECT genre
-            FROM product_genres
+        JOIN genres g ON pg.genre_id = g.id
+        WHERE g.name IN (
+            SELECT name AS genre
+            FROM product_genres JOIN genres ON product_genres.genre_id = genres.id
             WHERE product_id = ?
         )
         AND p.id != ?
@@ -629,7 +636,7 @@ DongKetNoi($conn);
                     <b>Genre:</b>
                     <span data-panel="{&quot;flow-children&quot;:&quot;row&quot;}">
                         <?php foreach ($genre as $g): ?>
-                            <a href="https://store.steampowered.com/tags/en/<?= $g['genre'] ?>" class="genre"><?= $g['genre'] ?></a><?php if ($g !== end($genre)) echo ", "; ?>
+                            <a href="/genres.php/genres=<?= $g['genre'] ?>" class="genre"><?= $g['genre'] ?></a><?php if ($g !== end($genre)) echo ", "; ?>
                         <?php endforeach; ?>
                     </span><br>
 

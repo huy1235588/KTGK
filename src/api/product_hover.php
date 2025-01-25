@@ -30,7 +30,7 @@ if ($method === 'GET') {
 
     // Truy vấn tags 
     $sqlTags = "SELECT *
-    FROM product_tags
+    FROM product_tags JOIN tags ON product_tags.tag_id = tags.id
     WHERE product_id = $id";
 
     // Thực thi truy vấn
@@ -69,7 +69,7 @@ if ($method === 'GET') {
         User tags:
         <div class="hover_tag_row">
             <?php foreach ($tags as $tag): ?>
-                <div class="app_tag"><?php echo $tag['tag']; ?></div>
+                <div class="app_tag"><?php echo $tag['name']; ?></div>
             <?php endforeach; ?>
         </div>
     </div>

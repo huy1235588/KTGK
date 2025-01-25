@@ -55,11 +55,11 @@ class ProductController
 
         // Chuẩn bị và gán tham số
         $stmt = $this->conn->prepare($sql);
-        
+
         // Tạo mảng các tham số
         $types = str_repeat('s', count($columns)) . 'ii';
         $params = array_merge(array_fill(0, count($columns), $query), [$offset, $limit]);
-        
+
         // Gọi hàm bind_param với các tham số động
         $stmt->bind_param($types, ...$params);
 
@@ -86,7 +86,23 @@ class ProductController
     {
         $results = [];
         foreach ($tables as $table) {
-            $stmt = $this->conn->prepare("SELECT * FROM $table WHERE product_id = ?");
+            $sql = "SELECT * FROM $table WHERE product_id = ?";
+
+            if ($table === 'product_genres') {
+                $sql = "SELECT *
+                FROM genres
+                JOIN product_genres ON genres.id = product_genres.genre_id
+                WHERE product_genres.product_id = ?";
+            }
+
+            if ($table === 'product_tags') {
+                $sql = "SELECT * 
+                FROM product_tags
+                JOIN tags ON product_tags.tag_id = tags.id
+                WHERE product_id = ?";
+            }
+
+            $stmt = $this->conn->prepare($sql);
             $stmt->bind_param("i", $id);
             $stmt->execute();
             $result = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
@@ -98,15 +114,18 @@ class ProductController
     }
 
     // Hàm lấy tất cả các thể loại
-    public function getGenres(){
-        $stmt = $this->conn->prepare("SELECT DISTINCT genre FROM product_genres");
+    public function getGenres()
+    {
+        $sql = "SELECT * FROM genres";
+        $stmt = $this->conn->prepare($sql);
         $stmt->execute();
         $result = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
         return $result;
     }
 
     // Hàm lấy tất cả platform
-    public function getPlatforms(){
+    public function getPlatforms()
+    {
         $stmt = $this->conn->prepare("SELECT DISTINCT platform FROM product_platforms");
         $stmt->execute();
         $result = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
@@ -114,7 +133,8 @@ class ProductController
     }
 
     // Hàm lấy tất cả tags
-    public function getTags(){
+    public function getTags()
+    {
         $sql = "SELECT tag, COUNT(*) as count
         FROM product_tags
         GROUP BY tag";
@@ -126,7 +146,8 @@ class ProductController
     }
 
     // Hàm lấy tất cả features
-    public function getFeatures(){
+    public function getFeatures()
+    {
         $stmt = $this->conn->prepare("SELECT DISTINCT feature FROM product_features");
         $stmt->execute();
         $result = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
@@ -134,7 +155,8 @@ class ProductController
     }
 
     // Hàm lấy tất cả ngôn ngữ
-    public function getLanguages(){
+    public function getLanguages()
+    {
         $stmt = $this->conn->prepare("SELECT DISTINCT language FROM product_languages");
         $stmt->execute();
         $result = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);

@@ -27,7 +27,8 @@
     // Truy vấn danh sách sản phẩm theo thể loại
     $sqlProducts = "SELECT *
     FROM products p JOIN product_genres pg ON p.id = pg.product_id
-    WHERE pg.genre = '$genre'";
+                    JOIN genres g ON pg.genre_id = g.id
+    WHERE g.name = '$genre'";
 
     // Thực thi truy vấn
     $products = $conn->query($sqlProducts);
@@ -38,9 +39,6 @@
 
     <!-- Content -->
     <article class="container">
-        <!-- Menu phụ -->
-        <?php include 'sidebar.php' ?>
-
         <!-- Content chính -->
         <main class="main">
             <section>

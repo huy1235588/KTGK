@@ -172,7 +172,7 @@ $productDetails = $productController->getProductDetailsById($productId, $tables)
                 <span>
                     <?php
                     foreach ($productDetails['product_genres'] as $genre) {
-                        echo $genre['genre'] . ', ';
+                        echo $genre['name'] . ', ';
                     }
                     ?>
                 </span>
@@ -184,7 +184,7 @@ $productDetails = $productController->getProductDetailsById($productId, $tables)
                 <span>
                     <?php
                     foreach ($productDetails['product_tags'] as $tag) {
-                        echo $tag['tag'] . ', ';
+                        echo $tag['name'] . ', ';
                     }
                     ?>
                 </span>

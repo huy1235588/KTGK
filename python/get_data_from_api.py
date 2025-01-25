@@ -102,7 +102,7 @@ def json_to_sql(data, output_file):
     tags_list = []
 
     # Process products
-    with open(f"{output_file}_product.sql", "a", encoding="utf-8") as file:
+    with open(f"{output_file}_product.sql", "w", encoding="utf-8") as file:
         insert_statement = f"INSERT INTO products (id, title, type, description, detail, price, discount, discountStartDate, discountEndDate, releaseDate, rating, isActive, headerImage) VALUES\n"
         value_list = []
         for product in data["data"]["products"]:
@@ -144,7 +144,7 @@ def json_to_sql(data, output_file):
         print("Đã ghi câu lệnh SQL vào tệp 'insert_product.sql'")
 
     # Insert developer in a single statement
-    with open(f"{output_file}_developer.sql", "a", encoding="utf-8") as file:
+    with open(f"{output_file}_developer.sql", "w", encoding="utf-8") as file:
         insert_statement = (
             "INSERT INTO product_developers (product_id, developer) VALUES\n"
         )
@@ -165,7 +165,7 @@ def json_to_sql(data, output_file):
         print("Đã ghi câu lệnh SQL vào tệp 'insert_developer.sql'")
 
     # Insert publisher in a single statement
-    with open(f"{output_file}_publisher.sql", "a", encoding="utf-8") as file:
+    with open(f"{output_file}_publisher.sql", "w", encoding="utf-8") as file:
         insert_statement = (
             "INSERT INTO product_publishers (product_id, publisher) VALUES\n"
         )
@@ -186,7 +186,7 @@ def json_to_sql(data, output_file):
         print("Đã ghi câu lệnh SQL vào tệp 'insert_publisher.sql'")
 
     # insert platform in a single statement
-    with open(f"{output_file}_platform.sql", "a", encoding="utf-8") as file:
+    with open(f"{output_file}_platform.sql", "w", encoding="utf-8") as file:
         insert_statement = (
             "INSERT INTO product_platforms (product_id, platform) VALUES\n"
         )
@@ -207,7 +207,7 @@ def json_to_sql(data, output_file):
         print("Đã ghi câu lệnh SQL vào tệp 'insert_platform.sql'")
 
     # Insert genres in a single statement
-    with open(f"{output_file}_product_genres.sql", "a", encoding="utf-8") as file:
+    with open(f"{output_file}_product_genres.sql", "w", encoding="utf-8") as file:
         insert_statement = "INSERT INTO product_genres (product_id, genre_id) VALUES\n"
         genre_id_map = {}  # Map genre_id với genre_name
         value_list = []
@@ -237,7 +237,7 @@ def json_to_sql(data, output_file):
         print("Đã ghi câu lệnh SQL vào tệp 'insert_product_genres.sql'")
 
         # Ghi list genres vào file genres
-        with open(f"{output_file}_genres.sql", "a", encoding="utf-8") as file_genres:
+        with open(f"{output_file}_genres.sql", "w", encoding="utf-8") as file_genres:
             file_genres.write(f"INSERT INTO genres (id, name) VALUES\n")
             genres_values = ",\n".join(
                 [f"({id}, '{name.replace('\'', '\\\'')}')" for id, name in genres_list]
@@ -246,7 +246,7 @@ def json_to_sql(data, output_file):
         print("Đã ghi câu lệnh SQL vào tệp 'insert_genres.sql'")
 
     # Insert tags in a single statement
-    with open(f"{output_file}_product_tags.sql", "a", encoding="utf-8") as file:
+    with open(f"{output_file}_product_tags.sql", "w", encoding="utf-8") as file:
         insert_statement = "INSERT INTO product_tags (product_id, tag_id) VALUES\n"
         value_list = []
         tag_map = {}  # Map tag_id với tag_name
@@ -275,7 +275,7 @@ def json_to_sql(data, output_file):
         print("Đã ghi câu lệnh SQL vào tệp 'insert_tags.sql'")
 
         # Ghi list tags vào file tags
-        with open(f"{output_file}_tags.sql", "a", encoding="utf-8") as file_tags:
+        with open(f"{output_file}_tags.sql", "w", encoding="utf-8") as file_tags:
             file_tags.write(f"INSERT INTO tags (id, name) VALUES\n")
             tags_values = ",\n".join(
                 [f"({id}, '{name.replace('\'', '\\\'')}')" for id, name in tags_list]
@@ -284,7 +284,7 @@ def json_to_sql(data, output_file):
         print("Đã ghi câu lệnh SQL vào tệp 'insert_tags.sql'")
 
     # Insert features in a single statement
-    with open(f"{output_file}_features.sql", "a", encoding="utf-8") as file:
+    with open(f"{output_file}_features.sql", "w", encoding="utf-8") as file:
         insert_statement = (
             "\nINSERT INTO product_features (product_id, feature) VALUES\n"
         )
@@ -302,7 +302,7 @@ def json_to_sql(data, output_file):
         print("Đã ghi câu lệnh SQL vào tệp 'insert_features.sql'")
 
     # Insert systemRequirements in a single statement
-    with open(f"{output_file}_systemRequirements.sql", "a", encoding="utf-8") as file:
+    with open(f"{output_file}_systemRequirements.sql", "w", encoding="utf-8") as file:
         insert_statement = "INSERT INTO product_system_requirements (product_id, platform, title, minimum, recommended) VALUES\n"
         value_list = []
         for product in data["data"]["products"]:
@@ -320,7 +320,7 @@ def json_to_sql(data, output_file):
         print("Đã ghi câu lệnh SQL vào tệp 'insert_systemRequirements.sql'")
 
     # Insert screenshots in a single statement
-    with open(f"{output_file}_screenshots.sql", "a", encoding="utf-8") as file:
+    with open(f"{output_file}_screenshots.sql", "w", encoding="utf-8") as file:
         insert_statement = (
             "INSERT INTO product_screenshots (product_id, screenshot) VALUES\n"
         )
@@ -338,7 +338,7 @@ def json_to_sql(data, output_file):
         print("Đã ghi câu lệnh SQL vào tệp 'insert_screenshots.sql'")
 
     # Insert videos in a single statement
-    with open(f"{output_file}_videos.sql", "a", encoding="utf-8") as file:
+    with open(f"{output_file}_videos.sql", "w", encoding="utf-8") as file:
         insert_statement = (
             "INSERT INTO product_videos (product_id, mp4, webm, thumbnail) VALUES\n"
         )
