@@ -1,12 +1,13 @@
 import requests
 from datetime import datetime
+import os
 
 # Định nghĩa GraphQL API endpoint và truy vấn
 # API_URL = "https://mail.lehuy.id.vn/graphql"
-API_URL = "http://192.168.1.13:3001/graphql"
+API_URL = "http://localhost:3001/graphql"
 QUERY = """
 query {
-    filterProducts (limit: 5){
+    products {
         _id
         title
         type
@@ -97,9 +98,14 @@ def fetch_graphql_data(api_url, query):
 
 # Hàm chuyển đổi dữ liệu JSON thành các câu lệnh SQL
 def json_to_sql(data, output_file):
-    with open(output_file, "w", encoding="utf-8") as file:
-        # Process products
-        for product in data["data"]["filterProducts"]:
+    genres_list = []  # List genres
+    tags_list = []
+
+    # Process products
+    with open(f"{output_file}_product.sql", "a", encoding="utf-8") as file:
+        insert_statement = f"INSERT INTO products (id, title, type, description, detail, price, discount, discountStartDate, discountEndDate, releaseDate, rating, isActive, headerImage) VALUES\n"
+        value_list = []
+        for product in data["data"]["products"]:
             product_id = product["_id"]
             title = product["title"].replace("'", "''")
             ptype = product["type"].replace("'", "''")
@@ -129,118 +135,225 @@ def json_to_sql(data, output_file):
             headerImage = product["headerImage"].replace("'", "''")
 
             # Insert product
-            file.write(
-                f"INSERT INTO products (id, title, type, description, detail, price, discount, discountStartDate, discountEndDate, releaseDate, rating, isActive, headerImage)\n"
-                f"VALUES ({product_id}, '{title}', '{ptype}', '{description}', {detail}, {price}, {discount}, {discountStartDate}, {discountEndDate}, {releaseDate}, {rating}, {isActive}, '{headerImage}');\n\n"
+            value_list.append(
+                f"({product_id}, '{title}', '{ptype}', '{description}', {detail}, {price}, {discount}, {discountStartDate}, {discountEndDate}, {releaseDate}, {rating}, {isActive}, '{headerImage}')"
             )
+        # Ghi câu lệnh insert vào file
+        insert_statement += ",\n".join(value_list) + ";"
+        file.write(insert_statement)
+        print("Đã ghi câu lệnh SQL vào tệp 'insert_product.sql'")
 
-            # Insert developer in a single statement
+    # Insert developer in a single statement
+    with open(f"{output_file}_developer.sql", "a", encoding="utf-8") as file:
+        insert_statement = (
+            "INSERT INTO product_developers (product_id, developer) VALUES\n"
+        )
+        value_list = []
+        # Duyệt qua từng sản phẩm, nếu có developer thì thêm vào list
+        for product in data["data"]["products"]:
             if product["developer"]:
-                developers_values = ",\n".join(
-                    [
-                        f"({product_id}, '{developer.replace('\'', '\'\'')}')"
-                        for developer in product["developer"]
-                    ]
-                )
-                file.write(
-                    f"INSERT INTO product_developers (product_id, developer) VALUES\n{developers_values};\n\n"
-                )
+                product_id = product["_id"]
+                # Duyệt qua từng developer của sản phẩm
+                for developer in product["developer"]:
+                    # Thêm vào list một tuple (product_id, developer)
+                    value_list.append(
+                        f"({product['_id']}, '{developer.replace('\'', '\'\'')}')"
+                    )
+        # Ghi list developers vào file
+        insert_statement += ",\n".join(value_list) + ";\n"
+        file.write(insert_statement)
+        print("Đã ghi câu lệnh SQL vào tệp 'insert_developer.sql'")
 
-            # Insert publisher in a single statement
+    # Insert publisher in a single statement
+    with open(f"{output_file}_publisher.sql", "a", encoding="utf-8") as file:
+        insert_statement = (
+            "INSERT INTO product_publishers (product_id, publisher) VALUES\n"
+        )
+        value_list = []
+        # Duyệt qua từng sản phẩm, nếu có publisher thì thêm vào list
+        for product in data["data"]["products"]:
             if product["publisher"]:
-                publishers_values = ",\n".join(
-                    [
-                        f"({product_id}, '{publisher.replace('\'', '\'\'')}')"
-                        for publisher in product["publisher"]
-                    ]
-                )
-                file.write(
-                    f"INSERT INTO product_publishers (product_id, publisher) VALUES\n{publishers_values};\n\n"
-                )
+                # Duyệt qua từng publisher của sản phẩm
+                for publisher in product["publisher"]:
+                    # Thêm vào list một tuple (product_id, publisher)
+                    value_list.append(
+                        f"({product['_id']}, '{publisher.replace('\'', '\'\'')}')"
+                    )
+        # Ghi list publishers vào file
+        insert_statement += ",\n".join(value_list) + ";\n"
+        # Ghi câu lệnh insert vào file
+        file.write(insert_statement)
+        print("Đã ghi câu lệnh SQL vào tệp 'insert_publisher.sql'")
 
-            # insert platform in a single statement
+    # insert platform in a single statement
+    with open(f"{output_file}_platform.sql", "a", encoding="utf-8") as file:
+        insert_statement = (
+            "INSERT INTO product_platforms (product_id, platform) VALUES\n"
+        )
+        value_list = []
+        # Duyệt qua từng sản phẩm, nếu có platform thì thêm vào list
+        for product in data["data"]["products"]:
             if product["platform"]:
-                platform_values = ",\n".join(
-                    [
-                        f"({product_id}, '{platform.replace('\'', '\'\'')}')"
-                        for platform in product["platform"]
-                    ]
-                )
-                file.write(
-                    f"INSERT INTO product_platforms (product_id, platform) VALUES\n{platform_values};\n\n"
-                )
+                # Duyệt qua từng platform của sản phẩm
+                for platform in product["platform"]:
+                    # Thêm vào list một tuple (product_id, platform)
+                    value_list.append(
+                        f"({product['_id']}, '{platform.replace('\'', '\'\'')}')"
+                    )
+        # Ghi list platforms vào file
+        insert_statement += ",\n".join(value_list) + ";\n"
+        # Ghi câu lệnh insert vào file
+        file.write(insert_statement)
+        print("Đã ghi câu lệnh SQL vào tệp 'insert_platform.sql'")
 
-            # Insert genres in a single statement
+    # Insert genres in a single statement
+    with open(f"{output_file}_product_genres.sql", "a", encoding="utf-8") as file:
+        insert_statement = "INSERT INTO product_genres (product_id, genre_id) VALUES\n"
+        genre_id_map = {}  # Map genre_id với genre_name
+        value_list = []
+        genre_id_counter = 0
+
+        # Duyệt qua từng sản phẩm, nếu có genres thì thêm vào list
+        for product in data["data"]["products"]:
             if product["genres"]:
-                genres_values = ",\n".join(
-                    [
-                        f"({product_id}, '{genre.replace('\'', '\'\'')}')"
-                        for genre in product["genres"]
-                    ]
-                )
-                file.write(
-                    f"INSERT INTO product_genres (product_id, genre) VALUES\n{genres_values};\n\n"
-                )
+                # Lấy id của sản phẩm
+                product_id = product["_id"]
 
-            # Insert tags in a single statement
+                # Duyệt qua từng genre của sản phẩm
+                for genre in product["genres"]:
+                    if genre not in genre_id_map:  # Nếu genre chưa tồn tại trong map
+                        genre_id_counter += 1
+                        genre_id_map[genre] = genre_id_counter
+                        # Thêm vào danh sách thể loại
+                        genres_list.append((genre_id_counter, genre))
+
+                    # Lấy id của genre từ map và thêm giá trị vào danh sách
+                    genre_id = genre_id_map[genre]
+                    value_list.append(f"({product_id}, {genre_id})")
+
+        # Ghi list genres vào file product_genres
+        insert_statement += ",\n".join(value_list) + ";\n"
+        file.write(insert_statement)
+        print("Đã ghi câu lệnh SQL vào tệp 'insert_product_genres.sql'")
+
+        # Ghi list genres vào file genres
+        with open(f"{output_file}_genres.sql", "a", encoding="utf-8") as file_genres:
+            file_genres.write(f"INSERT INTO genres (id, name) VALUES\n")
+            genres_values = ",\n".join(
+                [f"({id}, '{name.replace('\'', '\\\'')}')" for id, name in genres_list]
+            )
+            file_genres.write(genres_values + ";\n")
+        print("Đã ghi câu lệnh SQL vào tệp 'insert_genres.sql'")
+
+    # Insert tags in a single statement
+    with open(f"{output_file}_product_tags.sql", "a", encoding="utf-8") as file:
+        insert_statement = "INSERT INTO product_tags (product_id, tag_id) VALUES\n"
+        value_list = []
+        tag_map = {}  # Map tag_id với tag_name
+        tag_id_counter = 0
+
+        for product in data["data"]["products"]:
             if product["tags"]:
-                tags_values = ",\n".join(
-                    [
-                        f"({product_id}, '{tag.replace('\'', '\'\'')}')"
-                        for tag in product["tags"]
-                    ]
-                )
-                file.write(
-                    f"INSERT INTO product_tags (product_id, tag) VALUES\n{tags_values};\n\n"
-                )
+                # Lấy id của sản phẩm
+                product_id = product["_id"]
 
-            # Insert features in a single statement
+                # Duyệt qua từng tag của sản phẩm
+                for tag in product["tags"]:
+                    if tag not in tag_map:
+                        tag_id_counter += 1
+                        tag_map[tag] = tag_id_counter
+                        # Thêm vào danh sách tag
+                        tags_list.append((tag_id_counter, tag))
+
+                    # Thêm vào danh sách giá trị
+                    tag_id = tag_map[tag]
+                    value_list.append(f"({product_id}, {tag_id})")
+
+        # Ghi list tags vào file product_tags
+        insert_statement += ",\n".join(value_list) + ";\n"
+        file.write(insert_statement)
+        print("Đã ghi câu lệnh SQL vào tệp 'insert_tags.sql'")
+
+        # Ghi list tags vào file tags
+        with open(f"{output_file}_tags.sql", "a", encoding="utf-8") as file_tags:
+            file_tags.write(f"INSERT INTO tags (id, name) VALUES\n")
+            tags_values = ",\n".join(
+                [f"({id}, '{name.replace('\'', '\\\'')}')" for id, name in tags_list]
+            )
+            file_tags.write(tags_values + ";\n")
+        print("Đã ghi câu lệnh SQL vào tệp 'insert_tags.sql'")
+
+    # Insert features in a single statement
+    with open(f"{output_file}_features.sql", "a", encoding="utf-8") as file:
+        insert_statement = (
+            "\nINSERT INTO product_features (product_id, feature) VALUES\n"
+        )
+        value_list = []
+        for product in data["data"]["products"]:
             if product["features"]:
-                features_values = ",\n".join(
+                value_list.extend(
                     [
-                        f"({product_id}, '{feature.replace('\'', '\'\'')}')"
+                        f"({product['_id']}, '{feature.replace('\'', '\'\'')}')"
                         for feature in product["features"]
                     ]
                 )
-                file.write(
-                    f"INSERT INTO product_features (product_id, feature) VALUES\n{features_values};\n\n"
-                )
+        insert_statement += ",\n".join(value_list) + ";\n"
+        file.write(insert_statement)
+        print("Đã ghi câu lệnh SQL vào tệp 'insert_features.sql'")
 
-            # Insert systemRequirements in a single statement
+    # Insert systemRequirements in a single statement
+    with open(f"{output_file}_systemRequirements.sql", "a", encoding="utf-8") as file:
+        insert_statement = "INSERT INTO product_system_requirements (product_id, platform, title, minimum, recommended) VALUES\n"
+        value_list = []
+        for product in data["data"]["products"]:
             if product["systemRequirements"]:
                 for platform, requirements in product["systemRequirements"].items():
                     for requirement in requirements:
                         title = requirement["title"].replace("'", "''")
                         minimum = requirement["minimum"].replace("'", "''")
                         recommended = requirement["recommended"].replace("'", "''")
-                        file.write(
-                            f"INSERT INTO product_system_requirements (product_id, platform, title, minimum, recommended) "
-                            f"VALUES ({product_id}, '{platform}', '{title}', '{minimum}', '{recommended}');\n\n"
+                        value_list.append(
+                            f"({product['_id']}, '{platform}', '{title}', '{minimum}', '{recommended}')"
                         )
+        insert_statement += ",\n".join(value_list) + ";\n"
+        file.write(insert_statement)
+        print("Đã ghi câu lệnh SQL vào tệp 'insert_systemRequirements.sql'")
 
-            # Insert screenshots in a single statement
+    # Insert screenshots in a single statement
+    with open(f"{output_file}_screenshots.sql", "a", encoding="utf-8") as file:
+        insert_statement = (
+            "INSERT INTO product_screenshots (product_id, screenshot) VALUES\n"
+        )
+        value_list = []
+        for product in data["data"]["products"]:
             if product["screenshots"]:
-                screenshots_values = ",\n".join(
+                value_list.extend(
                     [
-                        f"({product_id}, '{screenshot.replace('\'', '\'\'')}')"
+                        f"({product['_id']}, '{screenshot.replace('\'', '\'\'')}')"
                         for screenshot in product["screenshots"]
                     ]
                 )
-                file.write(
-                    f"INSERT INTO product_screenshots (product_id, screenshot) VALUES\n{screenshots_values};\n\n"
-                )
+        insert_statement += ",\n".join(value_list) + ";\n"
+        file.write(insert_statement)
+        print("Đã ghi câu lệnh SQL vào tệp 'insert_screenshots.sql'")
 
-            # Insert videos in a single statement
+    # Insert videos in a single statement
+    with open(f"{output_file}_videos.sql", "a", encoding="utf-8") as file:
+        insert_statement = (
+            "INSERT INTO product_videos (product_id, mp4, webm, thumbnail) VALUES\n"
+        )
+        value_list = []
+        for product in data["data"]["products"]:
             if product["videos"]:
-                videos_values = ",\n".join(
+                value_list.extend(
                     [
-                        f"({product_id}, '{video['mp4'].replace('\'', '\'\'')}', '{video['webm'].replace('\'', '\'\'')}', '{video['thumbnail'].replace('\'', '\'\'')}')"
+                        f"({product['_id']}, '{video['mp4'].replace('\'', '\'\'')}', '{video['webm'].replace('\'', '\'\'')}', '{video['thumbnail'].replace('\'', '\'\'')}')"
                         for video in product["videos"]
                     ]
                 )
-                file.write(
-                    f"INSERT INTO product_videos (product_id, mp4, webm, thumbnail) VALUES\n{videos_values};\n\n"
-                )
+        insert_statement += ",\n".join(value_list) + ";\n"
+        file.write(insert_statement)
+        print("Đã ghi câu lệnh SQL vào tệp 'insert_videos.sql'")
 
 
 # Hàm chuyển đổi dữ liệu achievements thành các câu lệnh SQL
@@ -257,7 +370,10 @@ def achievements_to_sql(data, output_file):
                 description = ach["description"].replace("'", "''")
                 image = ach["image"].replace("'", "''")
                 # Xoá , nếu là phần tử cuối cùng
-                if achievement == data["data"]["getAchievementList"][-1] and ach == achievement["achievements"][-1]:
+                if (
+                    achievement == data["data"]["getAchievementList"][-1]
+                    and ach == achievement["achievements"][-1]
+                ):
                     file.write(
                         f"({product_id}, '{title}', {percent}, '{description}', '{image}');\n"
                     )
@@ -270,9 +386,9 @@ def achievements_to_sql(data, output_file):
 # Hàm chuyển đổi dữ liệu languages thành các câu lệnh SQL
 def languages_to_sql(data, output_file):
     with open(output_file, "w", encoding="utf-8") as file:
-        file.write(
-            f"INSERT INTO product_languages (product_id, language, interface, fullAudio, subtitles) VALUES"
-        )
+        insert_statement = f"INSERT INTO product_languages (product_id, language, interface, fullAudio, subtitles) VALUES"
+        value_list = []
+
         for language in data["data"]["getLanguagesList"]:
             product_id = language["productId"]
             for lang in language["languages"]:
@@ -281,21 +397,31 @@ def languages_to_sql(data, output_file):
                 interface = 1 if lang["interface"] else 0
                 fullAudio = 1 if lang["fullAudio"] else 0
                 subtitles = 1 if lang["subtitles"] else 0
-                # Xoá , nếu là phần tử cuối cùng
-                if language == data["data"]["getLanguagesList"][-1] and lang == language["languages"][-1]:
-                    file.write(
-                        f"({product_id}, '{language}', {interface}, {fullAudio}, {subtitles});\n"
-                    )
-                else:
-                    file.write(
-                        f"({product_id}, '{language}', {interface}, {fullAudio}, {subtitles}),\n"
-                    )
+                value_list.append(
+                    f"({product_id}, '{language}', {interface}, {fullAudio}, {subtitles})"
+                )
+        # Ghi câu lệnh insert vào file
+        insert_statement += ",\n".join(value_list) + ";"
+        file.write(insert_statement)
 
 
 # Ghi câu lệnh SQL vào file
 def write_sql_to_file(sql_statements, filename):
     with open(filename, "w", encoding="utf-8") as file:
         file.write("\n".join(sql_statements))
+
+
+def insert_user(data, output_file):
+    with open(output_file, "w", encoding="utf-8") as file:
+        insert_statement = f"INSERT INTO users (id, name, phone, email, gender, username, password, role) VALUES\n"
+        value_list = [
+            "(1, 'ha', '0123456789', 'ha@ha', 'male', 'ha', 'ha', 'admin')",
+            "(3, 'he', '0123456789', 'he@he', 'female', 'he', 'he', 'user')",
+            "(4, 'ho', '0123456789', 'ho@ho', 'male', 'ho', 'ho', 'user')",
+        ]
+
+        insert_statement += ",\n".join(value_list) + ";"
+        file.write(insert_statement)
 
 
 # Chạy các bước
@@ -308,9 +434,12 @@ if __name__ == "__main__":
         # Lấy dữ liệu languages từ GraphQL API
         languages_data = fetch_graphql_data(API_URL, QUERY_LANGUAGES)
 
+        # Kiểm tra xem có folder database chưa, nếu chưa thì tạo mới
+        if not os.path.exists("database"):
+            os.makedirs("database")
+
         # Chuyển đổi JSON thành các câu lệnh SQL
-        sql_statements = json_to_sql(graphql_data, "database/insert_product.sql")
-        print("Đã ghi câu lệnh SQL vào tệp 'insert.sql'")
+        sql_statements = json_to_sql(graphql_data, "database/insert")
 
         # Chuyển đổi JSON thành các câu lệnh SQL
         sql_statements = achievements_to_sql(
@@ -322,6 +451,9 @@ if __name__ == "__main__":
             languages_data, "database/insert_languages.sql"
         )
         print("Đã ghi câu lệnh SQL vào tệp 'insert_languages.sql'")
+        
+        # insert user
+        insert_user(graphql_data, "database/insert_user.sql")
 
     except Exception as e:
         print(f"Có lỗi xảy ra: {e}")

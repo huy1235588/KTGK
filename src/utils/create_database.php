@@ -125,12 +125,25 @@ function TaoDatabaseVaTable()
         die("Lỗi khi tạo bảng 'product_videos': " . $conn->error);
     }
 
+    // Bảng genres
+    $sqlGenres = "CREATE TABLE IF NOT EXISTS genres (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        name VARCHAR(100) NOT NULL
+    )";
+
+    if ($conn->query($sqlGenres) === TRUE) {
+        echo "Bảng 'genres' đã được tạo hoặc đã tồn tại.<br>";
+    } else {
+        die("Lỗi khi tạo bảng 'genres': " . $conn->error);
+    }
+
     // Bảng product_genres
     $sqlProductGenres = "CREATE TABLE IF NOT EXISTS product_genres (
         id INT AUTO_INCREMENT PRIMARY KEY,
         product_id INT NOT NULL,
-        genre VARCHAR(100) NOT NULL,
-        FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
+        genre_id INT NOT NULL,
+        FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE,
+        FOREIGN KEY (genre_id) REFERENCES genres(id) ON DELETE CASCADE
     )";
 
     if ($conn->query($sqlProductGenres) === TRUE) {
@@ -139,12 +152,25 @@ function TaoDatabaseVaTable()
         die("Lỗi khi tạo bảng 'product_genres': " . $conn->error);
     }
 
+    // Bảng tags
+    $sqlTags = "CREATE TABLE IF NOT EXISTS tags (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        name VARCHAR(100) NOT NULL
+    )";
+
+    if ($conn->query($sqlTags) === TRUE) {
+        echo "Bảng 'tags' đã được tạo hoặc đã tồn tại.<br>";
+    } else {
+        die("Lỗi khi tạo bảng 'tags': " . $conn->error);
+    }
+
     // Bảng product_tags
     $sqlProductTags = "CREATE TABLE IF NOT EXISTS product_tags (
         id INT AUTO_INCREMENT PRIMARY KEY,
         product_id INT NOT NULL,
-        tag VARCHAR(100) NOT NULL,
-        FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
+        tag_id INT NOT NULL,
+        FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE,
+        FOREIGN KEY (tag_id) REFERENCES tags(id) ON DELETE CASCADE
     )";
 
     if ($conn->query($sqlProductTags) === TRUE) {
@@ -246,6 +272,8 @@ function TaoDatabaseVaTable()
 // Hàm chèn dữ liệu từ file sql
 function ChenDuLieuTuFileSQL($sqlFile = 'data.sql')
 {
+    echo "Chèn dữ liệu từ file '$sqlFile'...<br>";
+
     include_once 'db_connect.php';
     $conn = MoKetNoi();
 
@@ -253,24 +281,14 @@ function ChenDuLieuTuFileSQL($sqlFile = 'data.sql')
         die("Kết nối thất bại: " . mysqli_connect_error());
     }
 
-    // Đọc file sql
-    // $sqlFile = file_get_contents($sqlFile);
-
     // Đọc file SQL
     $sqlFileContent = file_get_contents($sqlFile);
 
-    // Sử dụng biểu thức chính quy để chia các câu lệnh SQL theo dấu `;`
-    $sqlArray = preg_split('/;\s*$/m', $sqlFileContent);
-
-    // Thực thi từng câu lệnh SQL
-    foreach ($sqlArray as $sql) {
-        if (trim($sql)) {
-            if ($conn->query($sql) === TRUE) {
-                echo "Câu lệnh SQL đã được thực thi thành công: " . substr($sql, 0, 50) . "...<br>";
-            } else {
-                echo "Lỗi khi thực thi câu lệnh SQL: " . $conn->error . "<br>";
-            }
-        }
+   // Thực thi câu lệnh SQL
+    if ($conn->multi_query($sqlFileContent) === TRUE) {
+        echo "Dữ liệu đã được chèn thành công từ file '$sqlFile'.<br>";
+    } else {
+        die("Lỗi khi chèn dữ liệu từ file '$sqlFile': " . $conn->error);
     }
 
     // Đóng kết nối
@@ -280,16 +298,29 @@ function ChenDuLieuTuFileSQL($sqlFile = 'data.sql')
 // Gọi hàm tạo database và table
 TaoDatabaseVaTable();
 
-// Chèn user
-// ChenDuLieuTuFileSQL("../../database/insert_user.sql");
+echo "Database và các bảng đã được tạo thành công!<br><br>";
 
-// Chèn product
-// ChenDuLieuTuFileSQL("../../database/insert_product.sql");
+// Danh sách các file chứa dữ liệu cần chèn
+$list_tables = [
+    "../../database/insert_user.sql",
+    "../../database/insert_product.sql",
+    "../../database/insert_developer.sql",
+    "../../database/insert_publisher.sql",
+    "../../database/insert_platform.sql",
+    "../../database/insert_screenshots.sql",
+    "../../database/insert_videos.sql",
+    "../../database/insert_genres.sql",
+    "../../database/insert_product_genres.sql",
+    "../../database/insert_tags.sql",
+    "../../database/insert_product_tags.sql",
+    "../../database/insert_features.sql",
+    "../../database/insert_systemRequirements.sql",
+    "../../database/insert_achievements.sql",
+    "../../database/insert_languages.sql"
+];
 
-// Chèn achievements
-// ChenDuLieuTuFileSQL("../../database/insert_achievements.sql");
-
-// Chèn languages
-// ChenDuLieuTuFileSQL("../../database/insert_languages.sql");
+foreach ($list_tables as $table) {
+    ChenDuLieuTuFileSQL($table);
+}
 
 echo "Dữ liệu đã được chèn thành công!";
