@@ -22,12 +22,6 @@ function TaoDatabaseVaTable()
         role varchar(10) DEFAULT 'user' 
     )";
 
-    if ($conn->query($sqlUsers) === TRUE) {
-        echo "Bảng 'users' đã được tạo hoặc đã tồn tại.<br>";
-    } else {
-        die("Lỗi khi tạo bảng 'users': " . $conn->error);
-    }
-
     // SQL tạo bảng products nếu chưa tồn tại
     $sqlProducts = "CREATE TABLE IF NOT EXISTS products (
         id INT AUTO_INCREMENT PRIMARY KEY,
@@ -47,12 +41,6 @@ function TaoDatabaseVaTable()
         updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
     )";
 
-    if ($conn->query($sqlProducts) === TRUE) {
-        echo "Tables created successfully";
-    } else {
-        die("Error creating tables: " . $conn->error);
-    }
-
     // Bảng product_developers
     $sqlProductDevelopers = "CREATE TABLE IF NOT EXISTS product_developers (
         id INT AUTO_INCREMENT PRIMARY KEY,
@@ -60,12 +48,6 @@ function TaoDatabaseVaTable()
         developer VARCHAR(255) NOT NULL,
         FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
     )";
-
-    if ($conn->query($sqlProductDevelopers) === TRUE) {
-        echo "Bảng 'product_developers' đã được tạo hoặc đã tồn tại.<br>";
-    } else {
-        die("Lỗi khi tạo bảng 'product_developers': " . $conn->error);
-    }
 
     // Bảng product_publishers
     $sqlProductPublishers = "CREATE TABLE IF NOT EXISTS product_publishers (
@@ -75,12 +57,6 @@ function TaoDatabaseVaTable()
         FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
     )";
 
-    if ($conn->query($sqlProductPublishers) === TRUE) {
-        echo "Bảng 'product_publishers' đã được tạo hoặc đã tồn tại.<br>";
-    } else {
-        die("Lỗi khi tạo bảng 'product_publishers': " . $conn->error);
-    }
-
     // Bảng product_platforms
     $sqlProductPlatforms = "CREATE TABLE IF NOT EXISTS product_platforms (
         id INT AUTO_INCREMENT PRIMARY KEY,
@@ -89,12 +65,6 @@ function TaoDatabaseVaTable()
         FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
     )";
 
-    if ($conn->query($sqlProductPlatforms) === TRUE) {
-        echo "Bảng 'product_platforms' đã được tạo hoặc đã tồn tại.<br>";
-    } else {
-        die("Lỗi khi tạo bảng 'product_platforms': " . $conn->error);
-    }
-
     // Bảng product_screenshots
     $sqlProductScreenshots = "CREATE TABLE IF NOT EXISTS product_screenshots (
         id INT AUTO_INCREMENT PRIMARY KEY,
@@ -102,12 +72,6 @@ function TaoDatabaseVaTable()
         screenshot VARCHAR(255) NOT NULL,
         FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
     )";
-
-    if ($conn->query($sqlProductScreenshots) === TRUE) {
-        echo "Bảng 'product_screenshots' đã được tạo hoặc đã tồn tại.<br>";
-    } else {
-        die("Lỗi khi tạo bảng 'product_screenshots': " . $conn->error);
-    }
 
     // Bảng product_videos
     $sqlProductVideos = "CREATE TABLE IF NOT EXISTS product_videos (
@@ -119,23 +83,11 @@ function TaoDatabaseVaTable()
         FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
     )";
 
-    if ($conn->query($sqlProductVideos) === TRUE) {
-        echo "Bảng 'product_videos' đã được tạo hoặc đã tồn tại.<br>";
-    } else {
-        die("Lỗi khi tạo bảng 'product_videos': " . $conn->error);
-    }
-
     // Bảng genres
     $sqlGenres = "CREATE TABLE IF NOT EXISTS genres (
         id INT AUTO_INCREMENT PRIMARY KEY,
         name VARCHAR(100) NOT NULL
     )";
-
-    if ($conn->query($sqlGenres) === TRUE) {
-        echo "Bảng 'genres' đã được tạo hoặc đã tồn tại.<br>";
-    } else {
-        die("Lỗi khi tạo bảng 'genres': " . $conn->error);
-    }
 
     // Bảng product_genres
     $sqlProductGenres = "CREATE TABLE IF NOT EXISTS product_genres (
@@ -146,23 +98,11 @@ function TaoDatabaseVaTable()
         FOREIGN KEY (genre_id) REFERENCES genres(id) ON DELETE CASCADE
     )";
 
-    if ($conn->query($sqlProductGenres) === TRUE) {
-        echo "Bảng 'product_genres' đã được tạo hoặc đã tồn tại.<br>";
-    } else {
-        die("Lỗi khi tạo bảng 'product_genres': " . $conn->error);
-    }
-
     // Bảng tags
     $sqlTags = "CREATE TABLE IF NOT EXISTS tags (
         id INT AUTO_INCREMENT PRIMARY KEY,
         name VARCHAR(100) NOT NULL
     )";
-
-    if ($conn->query($sqlTags) === TRUE) {
-        echo "Bảng 'tags' đã được tạo hoặc đã tồn tại.<br>";
-    } else {
-        die("Lỗi khi tạo bảng 'tags': " . $conn->error);
-    }
 
     // Bảng product_tags
     $sqlProductTags = "CREATE TABLE IF NOT EXISTS product_tags (
@@ -173,25 +113,20 @@ function TaoDatabaseVaTable()
         FOREIGN KEY (tag_id) REFERENCES tags(id) ON DELETE CASCADE
     )";
 
-    if ($conn->query($sqlProductTags) === TRUE) {
-        echo "Bảng 'product_tags' đã được tạo hoặc đã tồn tại.<br>";
-    } else {
-        die("Lỗi khi tạo bảng 'product_tags': " . $conn->error);
-    }
+    // Bảng features
+    $sqlFeatures = "CREATE TABLE IF NOT EXISTS features (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        name VARCHAR(100) NOT NULL
+    )";
 
     // Bảng product_features
     $sqlProductFeatures = "CREATE TABLE IF NOT EXISTS product_features (
         id INT AUTO_INCREMENT PRIMARY KEY,
         product_id INT NOT NULL,
-        feature VARCHAR(255) NOT NULL,
-        FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
+        feature_id INT NOT NULL,
+        FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE,
+        FOREIGN KEY (feature_id) REFERENCES features(id) ON DELETE CASCADE
     )";
-
-    if ($conn->query($sqlProductFeatures) === TRUE) {
-        echo "Bảng 'product_features' đã được tạo hoặc đã tồn tại.<br>";
-    } else {
-        die("Lỗi khi tạo bảng 'product_features': " . $conn->error);
-    }
 
     // Bảng product_system_requirements
     $sqlProductSystemRequirements = "CREATE TABLE IF NOT EXISTS product_system_requirements (
@@ -203,12 +138,6 @@ function TaoDatabaseVaTable()
         recommended TEXT,
         FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
     )";
-
-    if ($conn->query($sqlProductSystemRequirements) === TRUE) {
-        echo "Bảng 'product_system_requirements' đã được tạo hoặc đã tồn tại.<br>";
-    } else {
-        die("Lỗi khi tạo bảng 'product_system_requirements': " . $conn->error);
-    }
 
     // Bảng product_reviews
     $sqlProductReviews = "CREATE TABLE IF NOT EXISTS product_reviews (
@@ -225,12 +154,6 @@ function TaoDatabaseVaTable()
         FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
     )";
 
-    if ($conn->query($sqlProductReviews) === TRUE) {
-        echo "Bảng 'product_reviews' đã được tạo hoặc đã tồn tại.<br>";
-    } else {
-        die("Lỗi khi tạo bảng 'product_reviews': " . $conn->error);
-    }
-
     // Bảng product_achievements
     $sqlProductAchievements = "CREATE TABLE IF NOT EXISTS product_achievements (
         id INT AUTO_INCREMENT PRIMARY KEY,
@@ -242,27 +165,49 @@ function TaoDatabaseVaTable()
         FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
     )";
 
-    if ($conn->query($sqlProductAchievements) === TRUE) {
-        echo "Bảng 'product_achievements' đã được tạo hoặc đã tồn tại.<br>";
-    } else {
-        die("Lỗi khi tạo bảng 'product_achievements': " . $conn->error);
-    }
+    // Bảng languages
+    $sqlLanguages = "CREATE TABLE IF NOT EXISTS languages (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        name VARCHAR(100) NOT NULL
+    )";
 
     // Bảng product_languages
     $sqlProductLanguages = "CREATE TABLE IF NOT EXISTS product_languages (
         id INT AUTO_INCREMENT PRIMARY KEY,
         product_id INT NOT NULL,
-        language VARCHAR(100) NOT NULL,
+        language_id INT NOT NULL,
         interface BOOLEAN,
         fullAudio BOOLEAN,
         subtitles BOOLEAN,
-        FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
+        FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE,
+        FOREIGN KEY (language_id) REFERENCES languages(id) ON DELETE CASCADE
     )";
 
-    if ($conn->query($sqlProductLanguages) === TRUE) {
-        echo "Bảng 'product_languages' đã được tạo hoặc đã tồn tại.<br>";
-    } else {
-        die("Lỗi khi tạo bảng 'product_languages': " . $conn->error);
+    $sqlArray = [
+        $sqlUsers,
+        $sqlProducts,
+        $sqlProductDevelopers,
+        $sqlProductPublishers,
+        $sqlProductPlatforms,
+        $sqlProductScreenshots,
+        $sqlProductVideos,
+        $sqlGenres,
+        $sqlProductGenres,
+        $sqlTags,
+        $sqlProductTags,
+        $sqlProductFeatures,
+        $sqlProductSystemRequirements,
+        $sqlProductReviews,
+        $sqlProductAchievements,
+        $sqlProductLanguages
+    ];
+
+    foreach ($sqlArray as $sql) {
+        if ($conn->query($sql) === TRUE) {
+            echo "Tạo bảng thành công!<br>";
+        } else {
+            die("Lỗi khi tạo bảng: " . $conn->error);
+        }
     }
 
     // Đóng kết nối

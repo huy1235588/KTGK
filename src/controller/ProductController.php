@@ -135,9 +135,10 @@ class ProductController
     // Hàm lấy tất cả tags
     public function getTags()
     {
-        $sql = "SELECT tag, COUNT(*) as count
-        FROM product_tags
-        GROUP BY tag";
+        $sql = "SELECT t.id, name, COUNT(*) as count
+        FROM tags t
+        JOIN product_tags pt ON t.id = pt.tag_id
+        GROUP BY name";
 
         $stmt = $this->conn->prepare($sql);
         $stmt->execute();

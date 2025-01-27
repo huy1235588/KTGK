@@ -36,7 +36,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             header("Location: $redirect");
             exit();
         } else {
-            header("Location: trangchu.php");
+            header("Location: index.php");
             exit();
         }
     } else {

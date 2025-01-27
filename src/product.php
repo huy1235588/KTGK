@@ -15,7 +15,7 @@ $result = $stmt->get_result();
 // Nếu sản phẩm không active thì chuyển hướng về trang chủ
 $isActive = $result->fetch_assoc()['isActive'];
 if ($isActive == 0) {
-    header('Location: trangchu.php');
+    header('Location: index.php');
     exit();
 }
 

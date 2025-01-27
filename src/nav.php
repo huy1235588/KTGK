@@ -10,22 +10,22 @@ $currentUrl = urlencode($_SERVER['REQUEST_URI']);
 <nav class="menu">
     <ul class="menu-list">
         <li class="menu-item">
-            <a href="trangchu.php">
+            <a href="index.php">
                 Store
             </a>
         </li>
         <li class="menu-item">
-            <a href="trangchu.php">
+            <a href="index.php">
                 Product
             </a>
         </li>
         <li class="menu-item">
-            <a href="trangchu.php">
+            <a href="index.php">
                 Genre
             </a>
         </li>
         <li class="menu-item">
-            <a href="trangchu.php">
+            <a href="index.php">
                 About us
             </a>
         </li>

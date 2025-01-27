@@ -139,7 +139,7 @@ DongKetNoi($conn);
                     <a type="button"
                         role="link"
                         class="empty-cart-link"
-                        href="trangchu.php">
+                        href="index.php">
                         <span class="">
                             Shop for Games &amp; Apps
                         </span>
@@ -240,7 +240,7 @@ DongKetNoi($conn);
                             </button>
                         </li>
                         <li class="sumray-continue">
-                            <a href="trangchu.php">
+                            <a href="index.php">
                                 Continue shopping
                             </a>
                         </li>

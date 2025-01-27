@@ -39,8 +39,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     LIMIT $limit OFFSET $offset
     ";
 
-    echo $_GET['platform'];
-
     // Tính tổng số trang
     $countSql = "SELECT COUNT(*) as total 
         FROM products 
@@ -274,7 +272,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 
                                                 <!-- Platform -->
                                                 <span class="product-platform">
-                                                    <?php foreach ($productDetail['product_platforms'] as $platform): ?>
+                                                    <?php foreach ($productDetail['product_platforms'] as $platform):
+
+                                                    ?>
                                                         <img class="product-platform-icon"
                                                             src="/assets/icons/platform/<?= htmlspecialchars($platform['platform']) ?>.svg"
                                                             alt="">
@@ -413,7 +413,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
                         <!-- Body -->
                         <div class="filter-body">
                             <?php foreach ($productController->getPlatforms() as $platform):
-                                // $isChecked = isset($_GET['platform']) && in_array($platform['platform'], $_GET['platform']);
+                                $platforms = $productController->getPlatforms();
+                                $isChecked = isset($_GET['platform']) && $platform['platform'] === $_GET['platform'];
                             ?>
                                 <label class="filter-checkbox">
                                     <input type="checkbox" name="platform" value="<?= htmlspecialchars($platform['platform']) ?>" <?= $isChecked ? 'checked' : '' ?>>
@@ -449,11 +450,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 
                             <!-- Scrollable -->
                             <div class="filter-scrollable">
-                                <?php foreach ($productController->getGenres() as $genre): ?>
+                                <?php foreach ($productController->getGenres() as $genre):
+                                    // 1%2C4%2C7 -> [1, 4, 7]
+                                    $genresChecked = isset($_GET['genre']) ? explode(',', $_GET['genre']) : [];
+                                    $isChecked = isset($_GET['genre']) && in_array($genre['id'], $genresChecked);
+                                ?>
                                     <label class="filter-checkbox">
-                                        <input type="checkbox" name="category" value="<?= htmlspecialchars($genre['genre']) ?>">
+                                        <input type="checkbox" name="category" value="<?= htmlspecialchars($genre['id']) ?>" <?= $isChecked ? 'checked' : '' ?>>
                                         <span class="filter-checkbox-text">
-                                            <?= htmlspecialchars($genre['genre']) ?>
+                                            <?= htmlspecialchars($genre['name']) ?>
                                         </span>
                                         <span class="filter-exclude-checkbox"></span>
                                     </label>
@@ -485,11 +490,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 
                             <!-- Scrollable -->
                             <div class="filter-scrollable">
-                                <?php foreach ($productController->getTags() as $tag): ?>
+                                <?php foreach ($productController->getTags() as $tag):
+                                    $tagChecked = isset($_GET['tag']) ? explode(',', $_GET['tag']) : [];
+                                    $isChecked = isset($_GET['tag']) && in_array($tag['id'], $tagChecked);
+                                ?>
                                     <label class="filter-checkbox">
-                                        <input type="checkbox" name="category" value="<?= htmlspecialchars($tag['tag']) ?>">
+                                        <input type="checkbox" name="category" value="<?= htmlspecialchars($tag['id']) ?>" <?= $isChecked ? 'checked' : '' ?>>
                                         <span class="filter-checkbox-text">
-                                            <?= htmlspecialchars($tag['tag']) ?>
+                                            <?= htmlspecialchars($tag['name']) ?>
                                             (<?= htmlspecialchars($tag['count']) ?>)
                                         </span>
                                         <span class="filter-exclude-checkbox"></span>
@@ -522,9 +530,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 
                             <!-- Scrollable -->
                             <div class="filter-scrollable">
-                                <?php foreach ($productController->getFeatures() as $feature): ?>
+                                <?php foreach ($productController->getFeatures() as $feature):
+                                    $isChecked = isset($_GET['feature']) && $feature['feature'] === $_GET['feature'];
+                                ?>
                                     <label class="filter-checkbox">
-                                        <input type="checkbox" name="category" value="<?= htmlspecialchars($feature['feature']) ?>">
+                                        <input type="checkbox" name="category" value="<?= htmlspecialchars($feature['feature']) ?>" <?= $isChecked ? 'checked' : '' ?>>
                                         <span class="filter-checkbox-text">
                                             <?= htmlspecialchars($feature['feature']) ?>
                                         </span>
@@ -558,9 +568,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 
                             <!-- Scrollable -->
                             <div class="filter-scrollable">
-                                <?php foreach ($productController->getLanguages() as $language): ?>
+                                <?php foreach ($productController->getLanguages() as $language):
+                                    $isChecked = isset($_GET['language']) && $language['language'] === $_GET['language'];
+                                ?>
                                     <label class="filter-checkbox">
-                                        <input type="checkbox" name="category" value="<?= htmlspecialchars($language['language']) ?>">
+                                        <input type="checkbox" name="category" value="<?= htmlspecialchars($language['language']) ?>" <?= $isChecked ? 'checked' : '' ?>>
                                         <span class="filter-checkbox-text">
                                             <?= htmlspecialchars($language['language']) ?>
                                         </span>

@@ -13,7 +13,7 @@ if ($notification): ?>
 <?php endif; ?>
 
 <header class="header">
-    <a href="trangchu.php">
+    <a href="index.php">
         <img class="logo" src="assets/logo1.png" alt="" loading="lazy" />
         <!-- <span>Lê Huy</span> -->
     </a>

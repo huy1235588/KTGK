@@ -7,6 +7,6 @@ session_destroy();
 
 $currentUrl = "http://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
 
-$redirect = isset($_GET['redirect']) ? $_GET['redirect'] : 'trangchu.php';
+$redirect = isset($_GET['redirect']) ? $_GET['redirect'] : 'index.php';
 header("Location: {$redirect}");
 exit();
