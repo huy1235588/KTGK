@@ -129,7 +129,7 @@ DongKetNoi($conn);
     }
 
     // Lấy genre của sản phẩm
-    $sql = "SELECT name AS genre
+    $sql = "SELECT name AS genre, genres.id as id
     FROM product_genres JOIN genres ON product_genres.genre_id = genres.id
     WHERE product_id = ?";
     $stmt = $conn->prepare($sql);
@@ -145,7 +145,7 @@ DongKetNoi($conn);
     }
 
     // Truy vấn tags
-    $sql = "SELECT name AS tag
+    $sql = "SELECT name AS tag, tags.id as id
     FROM product_tags JOIN tags ON product_tags.tag_id = tags.id
     WHERE product_id = ?";
     $stmt = $conn->prepare($sql);
@@ -155,10 +155,8 @@ DongKetNoi($conn);
 
     // Lấy danh sách tags
     $tags = [];
-    if ($result->num_rows > 0) {
-        while ($row = $result->fetch_assoc()) {
-            $tags[] = $row['tag'];
-        }
+    while ($row = $result->fetch_assoc()) {
+        $tags[] = $row;
     }
 
     // Truy vấn features
@@ -437,8 +435,8 @@ DongKetNoi($conn);
                 <!-- Tag -->
                 <div class="tag-container">
                     <?php foreach ($tags as $tag): ?>
-                        <a href="#" class="tag">
-                            <?= htmlspecialchars($tag) ?>
+                        <a href="tags.php?tag=<?= htmlspecialchars($tag['id']) ?>" class="tag">
+                            <?= htmlspecialchars($tag['tag']) ?>
                         </a>
                     <?php endforeach; ?>
                 </div>
@@ -636,7 +634,7 @@ DongKetNoi($conn);
                     <b>Genre:</b>
                     <span data-panel="{&quot;flow-children&quot;:&quot;row&quot;}">
                         <?php foreach ($genre as $g): ?>
-                            <a href="/genres.php/genres=<?= $g['genre'] ?>" class="genre"><?= $g['genre'] ?></a><?php if ($g !== end($genre)) echo ", "; ?>
+                            <a href="/genre.php?id=<?= $g['id'] ?>" class="genre"><?= $g['genre'] ?></a><?php if ($g !== end($genre)) echo ", "; ?>
                         <?php endforeach; ?>
                     </span><br>
 
@@ -707,7 +705,7 @@ DongKetNoi($conn);
                     <br>
                     <div class="achievements">
                         <?php foreach ($achievements as $achievement): ?>
-                            <img src="<?= $achievement['image'] ?>" alt="<?= $achievement['title'] ?>" loading="lazy">
+                            <img src="https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/<?= $achievement['image'] ?>" alt="<?= $achievement['title'] ?>" loading="lazy">
                         <?php endforeach; ?>
                     </div>
                 </div>

@@ -4,18 +4,16 @@ include 'utils/db_connect.php';
 $conn = MoKetNoi();
 
 // Lấy thể loại từ URL
-$genre_id = $_GET['id'];
+$tag = $_GET['tag'];
 
 // Truy vấn danh sách sản phẩm theo thể loại
 $sqlProducts = "SELECT *
-    FROM products p JOIN product_genres pg ON p.id = pg.product_id
-                    JOIN genres g ON pg.genre_id = g.id
-    WHERE g.id = '$genre_id'";
+    FROM products p JOIN product_tags pg ON p.id = pg.product_id
+                    JOIN tags g ON pg.tag_id = g.id
+    WHERE g.id = '$tag'";
 
 // Thực thi truy vấn
 $products = $conn->query($sqlProducts);
-
-$genre_name = $products->fetch_assoc()['name'];
 
 // Đóng kết nối
 DongKetNoi($conn);
@@ -28,7 +26,7 @@ DongKetNoi($conn);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>
-        <?= htmlspecialchars($genre_name) ?>
+        <?= htmlspecialchars($tag) ?>
     </title>
     <link rel="stylesheet" href="css/index.css">
     <link rel="icon" type="image/x-icon" href="assets/logo.ico">

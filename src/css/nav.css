@@ -1,3 +1,17 @@
+/* Hidden */
+.hs-hidden {
+    display: none;
+    visibility: hidden;
+    opacity: 0;
+}
+
+/* Visible */
+.hs-visible {
+    display: block;
+    visibility: visible;
+    opacity: 1;
+}
+
 .menu {
     position: sticky;
     top: 0;
@@ -14,7 +28,6 @@
 .menu .menu-list > .menu-item {
     display: flex;
     align-items: center;
-    margin-left: 5px;
     color: white;
 }
 
@@ -26,10 +39,6 @@
 
 .menu .menu-list > .menu-item a:hover {
     color: rgb(39, 198, 238);
-}
-
-.menu .menu-list > .menu-item .username {
-    margin-right: 10px;
 }
 
 .menu .menu-list > .menu-item.search {
@@ -211,4 +220,24 @@
     border-radius: 50%;
     padding: 2px 5px;
     font-size: 0.75rem;
+}
+
+/* Account dropdown */
+.menu .menu-list > .menu-item .username {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    padding: 0 10px;
+    user-select: none;
+    cursor: pointer;
+}
+
+.menu .account-dropdown {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background-color: #3d4450;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
