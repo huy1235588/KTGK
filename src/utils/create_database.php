@@ -195,10 +195,12 @@ function TaoDatabaseVaTable()
         $sqlProductGenres,
         $sqlTags,
         $sqlProductTags,
+        $sqlFeatures,
         $sqlProductFeatures,
         $sqlProductSystemRequirements,
         $sqlProductReviews,
         $sqlProductAchievements,
+        $sqlLanguages,
         $sqlProductLanguages
     ];
 

@@ -100,6 +100,7 @@ def fetch_graphql_data(api_url, query):
 def json_to_sql(data, output_file):
     genres_list = []  # List genres
     tags_list = []
+    features_list = []
 
     # Process products
     with open(f"{output_file}_product.sql", "w", encoding="utf-8") as file:
@@ -272,7 +273,7 @@ def json_to_sql(data, output_file):
         # Ghi list tags vào file product_tags
         insert_statement += ",\n".join(value_list) + ";\n"
         file.write(insert_statement)
-        print("Đã ghi câu lệnh SQL vào tệp 'insert_tags.sql'")
+        print("Đã ghi câu lệnh SQL vào tệp 'insert_product_tags.sql'")
 
         # Ghi list tags vào file tags
         with open(f"{output_file}_tags.sql", "w", encoding="utf-8") as file_tags:
@@ -284,21 +285,46 @@ def json_to_sql(data, output_file):
         print("Đã ghi câu lệnh SQL vào tệp 'insert_tags.sql'")
 
     # Insert features in a single statement
-    with open(f"{output_file}_features.sql", "w", encoding="utf-8") as file:
-        insert_statement = (
-            "\nINSERT INTO product_features (product_id, feature) VALUES\n"
-        )
+    with open(f"{output_file}_product_features.sql", "w", encoding="utf-8") as file:
+        insert_statement = "INSERT INTO product_features (product_id, feature) VALUES\n"
         value_list = []
+        feature_map = {}  # Map feature_id với feature_name
+        feature_id_counter = 0
+
         for product in data["data"]["products"]:
             if product["features"]:
-                value_list.extend(
-                    [
-                        f"({product['_id']}, '{feature.replace('\'', '\'\'')}')"
-                        for feature in product["features"]
-                    ]
-                )
+                # Lấy id của sản phẩm
+                product_id = product["_id"]
+
+                # Duyệt qua từng feature của sản phẩm
+                for feature in product["features"]:
+                    if feature not in feature_map:
+                        feature_id_counter += 1
+                        feature_map[feature] = feature_id_counter
+                        # Thêm vào danh sách feature
+                        features_list.append((feature_id_counter, feature))
+
+                    # Thêm vào danh sách giá trị
+                    feature_id = feature_map[feature]
+                    value_list.append(f"({product_id}, {feature_id})")
+
+        # Ghi list features vào file product_features
         insert_statement += ",\n".join(value_list) + ";\n"
         file.write(insert_statement)
+        print("Đã ghi câu lệnh SQL vào tệp 'insert_product_features.sql'")
+
+        # Ghi list features vào file features
+        with open(
+            f"{output_file}_features.sql", "w", encoding="utf-8"
+        ) as file_features:
+            file_features.write(f"INSERT INTO features (id, name) VALUES\n")
+            features_values = ",\n".join(
+                [
+                    f"({id}, '{name.replace('\'', '\\\'')}')"
+                    for id, name in features_list
+                ]
+            )
+            file_features.write(features_values + ";\n")
         print("Đã ghi câu lệnh SQL vào tệp 'insert_features.sql'")
 
     # Insert systemRequirements in a single statement
@@ -359,50 +385,86 @@ def json_to_sql(data, output_file):
 # Hàm chuyển đổi dữ liệu achievements thành các câu lệnh SQL
 def achievements_to_sql(data, output_file):
     with open(output_file, "w", encoding="utf-8") as file:
-        file.write(
-            f"INSERT INTO product_achievements (product_id, title, percent, description, image) VALUES"
-        )
+        insert_statement = f"INSERT INTO product_achievements (product_id, title, percent, description, image) VALUES"
+        value_list = []
+        achievement_map = {}  # Map achievement_id với achievement_name
+        achievement_id_counter = 0
+
         for achievement in data["data"]["getAchievementList"]:
             product_id = achievement["productId"]
             for ach in achievement["achievements"]:
-                title = ach["title"].replace("'", "''")
+                # Lấy title, percent, description, image của achievement
+                title = ach["title"].replace("'", "''").replace('\\', '')
                 percent = ach["percent"]
-                description = ach["description"].replace("'", "''")
-                image = ach["image"].replace("'", "''")
-                # Xoá , nếu là phần tử cuối cùng
-                if (
-                    achievement == data["data"]["getAchievementList"][-1]
-                    and ach == achievement["achievements"][-1]
-                ):
-                    file.write(
-                        f"({product_id}, '{title}', {percent}, '{description}', '{image}');\n"
-                    )
-                else:
-                    file.write(
-                        f"({product_id}, '{title}', {percent}, '{description}', '{image}'),\n"
+                description = ach["description"].replace("'", "''").replace('\\', '')
+                
+                # steamcommunity/public/images/apps/2440380/faf.jpg -> 2440380/faf.jpg
+                image = ach["image"].split("/")[-2] + "/" + ach["image"].split("/")[-1]
+                # Nếu achievement chưa tồn tại trong map thì thêm vào
+                if title not in achievement_map:
+                    achievement_id_counter += 1
+                    achievement_map[title] = achievement_id_counter
+                    value_list.append(
+                        f"({product_id}, '{title}', {percent}, '{description}', '{image}')"
                     )
 
+        # Ghi câu lệnh insert vào file
+        insert_statement += ",\n".join(value_list) + ";"
+        file.write(insert_statement)
+        print("Đã ghi câu lệnh SQL vào tệp 'insert_achievements.sql'")
+        
 
 # Hàm chuyển đổi dữ liệu languages thành các câu lệnh SQL
 def languages_to_sql(data, output_file):
-    with open(output_file, "w", encoding="utf-8") as file:
+    languages_list = []  # List languages
+    with open(f"{output_file}_product_languages.sql", "w", encoding="utf-8") as file:
         insert_statement = f"INSERT INTO product_languages (product_id, language, interface, fullAudio, subtitles) VALUES"
         value_list = []
+        language_map = {}  # Map language_id với language_name
+        language_id_counter = 0
 
         for language in data["data"]["getLanguagesList"]:
             product_id = language["productId"]
             for lang in language["languages"]:
-                language = lang["language"].replace("'", "''")
+                # Lấy tên ngôn ngữ
+                lang_name = lang["language"].replace("'", "''")
+                # Nếu language chưa tồn tại trong map thì thêm vào
+                if lang_name not in language_map:
+                    # Tăng id cho ngôn ngữ
+                    language_id_counter += 1
+                    # Thêm vào map
+                    language_map[lang_name] = language_id_counter
+                    # Thêm vào danh sách ngôn ngữ
+                    languages_list.append((language_id_counter, lang_name))
+
                 # "True" => 1, "False" => 0
                 interface = 1 if lang["interface"] else 0
                 fullAudio = 1 if lang["fullAudio"] else 0
                 subtitles = 1 if lang["subtitles"] else 0
+                # Thêm vào danh sách ngôn ngữ
+                languages_id = language_map[lang_name]
                 value_list.append(
-                    f"({product_id}, '{language}', {interface}, {fullAudio}, {subtitles})"
+                    f"({product_id}, '{languages_id}', {interface}, {fullAudio}, {subtitles})"
                 )
+
         # Ghi câu lệnh insert vào file
         insert_statement += ",\n".join(value_list) + ";"
         file.write(insert_statement)
+        print("Đã ghi câu lệnh SQL vào tệp 'insert_product_languages.sql'")
+
+        # Ghi list languages vào file languages
+        with open(
+            f"{output_file}_languages.sql", "w", encoding="utf-8"
+        ) as file_languages:
+            file_languages.write(f"INSERT INTO languages (id, name) VALUES\n")
+            languages_values = ",\n".join(
+                [
+                    f"({lang_id}, '{lang_name.replace('\'', '\\\'')}')"
+                    for lang_id, lang_name in languages_list
+                ]
+            )
+            file_languages.write(languages_values + ";\n")
+        print("Đã ghi câu lệnh SQL vào tệp 'insert_languages.sql'")
 
 
 # Ghi câu lệnh SQL vào file
@@ -446,14 +508,13 @@ if __name__ == "__main__":
             achievements_data, "database/insert_achievements.sql"
         )
         print("Đã ghi câu lệnh SQL vào tệp 'insert_achievements.sql'")
+
         # Chuyển đổi JSON thành các câu lệnh SQL
-        sql_statements = languages_to_sql(
-            languages_data, "database/insert_languages.sql"
-        )
-        print("Đã ghi câu lệnh SQL vào tệp 'insert_languages.sql'")
-        
+        sql_statements = languages_to_sql(languages_data, "database/insert")
+
         # insert user
         insert_user(graphql_data, "database/insert_user.sql")
+        print("Đã ghi câu lệnh SQL vào tệp 'insert_user.sql'")
 
     except Exception as e:
         print(f"Có lỗi xảy ra: {e}")
