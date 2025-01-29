@@ -31,14 +31,14 @@
     color: white;
 }
 
-.menu .menu-list > .menu-item a {
+.menu .menu-list > .menu-item > a {
     display: inline-block;
     padding: 12px 14px;
     color: white;
 }
 
-.menu .menu-list > .menu-item a:hover {
-    color: rgb(39, 198, 238);
+.menu .menu-list > .menu-item > a:hover {
+    color: #27c6ee;
 }
 
 .menu .menu-list > .menu-item.search {
@@ -223,6 +223,10 @@
 }
 
 /* Account dropdown */
+.menu .menu-item.account:hover{
+    color: #27c6ee;
+}
+
 .menu .menu-list > .menu-item .username {
     display: flex;
     align-items: center;
@@ -236,8 +240,44 @@
 .menu .account-dropdown {
     position: absolute;
     top: 100%;
-    right: 0;
+    right: 20px;
+    width: 350px;
+    padding: 8px 0;
     background-color: #3d4450;
     border-radius: 4px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.account-dropdown .account-dropdown-title {
+    padding: 12px 16px;
+    color: #f5f5f5;
+    font-weight: 400;
+    font-size: 1rem;
+    line-height: 1.75;
+    letter-spacing: 0.00938em;
+}
+
+.account-dropdown-item a {
+    display: flex;
+    align-items: center;
+    padding: 8px 16px;
+    color: #8f96b6;
+}
+
+.account-dropdown-item a:hover {
+    color: #556de5;
+    background-color: #343746;
+}
+
+.account-dropdown-item a .icon {
+    display: flex;
+    align-items: center;
+    margin-right: 16px;
+}
+
+.account-dropdown-divider {
+    margin: 8px 0;
+    border-width: 0px 0px thin;
+    border-style: solid;
+    border-color: rgba(255, 255, 255, 0.12);
 }
