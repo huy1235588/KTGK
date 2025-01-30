@@ -286,7 +286,9 @@ def json_to_sql(data, output_file):
 
     # Insert features in a single statement
     with open(f"{output_file}_product_features.sql", "w", encoding="utf-8") as file:
-        insert_statement = "INSERT INTO product_features (product_id, feature) VALUES\n"
+        insert_statement = (
+            "INSERT INTO product_features (product_id, feature_id) VALUES\n"
+        )
         value_list = []
         feature_map = {}  # Map feature_id với feature_name
         feature_id_counter = 0
@@ -394,10 +396,10 @@ def achievements_to_sql(data, output_file):
             product_id = achievement["productId"]
             for ach in achievement["achievements"]:
                 # Lấy title, percent, description, image của achievement
-                title = ach["title"].replace("'", "''").replace('\\', '')
+                title = ach["title"].replace("'", "''").replace("\\", "")
                 percent = ach["percent"]
-                description = ach["description"].replace("'", "''").replace('\\', '')
-                
+                description = ach["description"].replace("'", "''").replace("\\", "")
+
                 # steamcommunity/public/images/apps/2440380/faf.jpg -> 2440380/faf.jpg
                 image = ach["image"].split("/")[-2] + "/" + ach["image"].split("/")[-1]
                 # Nếu achievement chưa tồn tại trong map thì thêm vào
@@ -412,7 +414,7 @@ def achievements_to_sql(data, output_file):
         insert_statement += ",\n".join(value_list) + ";"
         file.write(insert_statement)
         print("Đã ghi câu lệnh SQL vào tệp 'insert_achievements.sql'")
-        
+
 
 # Hàm chuyển đổi dữ liệu languages thành các câu lệnh SQL
 def languages_to_sql(data, output_file):
@@ -475,11 +477,11 @@ def write_sql_to_file(sql_statements, filename):
 
 def insert_user(data, output_file):
     with open(output_file, "w", encoding="utf-8") as file:
-        insert_statement = f"INSERT INTO users (id, name, phone, email, gender, username, password, role) VALUES\n"
+        insert_statement = f"INSERT INTO users (id, firstName, lastName, phone, email, gender, username, password, role) VALUES\n"
         value_list = [
-            "(1, 'ha', '0123456789', 'ha@ha', 'male', 'ha', 'ha', 'admin')",
-            "(3, 'he', '0123456789', 'he@he', 'female', 'he', 'he', 'user')",
-            "(4, 'ho', '0123456789', 'ho@ho', 'male', 'ho', 'ho', 'user')",
+            "(1, 'ha', 'ha', '0123456789', 'ha@ha', 'male', '1998-21-01','ha', 'ha', 'admin')",
+            "(3, 'he', 'he', '0123456789', 'he@he', 'female', '1998-21-01', 'he', 'he', 'user')",
+            "(4, 'ho', 'ho', '0123456789', 'ho@ho', 'male', 'ho', '1998-21-01', 'ho', 'user')",
         ]
 
         insert_statement += ",\n".join(value_list) + ";"

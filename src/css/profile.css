@@ -1,0 +1,267 @@
+/*=========================================================
+Author       : LeThienHuy.
+==============================================================*/
+
+/*=============================================================
+    CSS INDEX
+  =============================
+    01.GENERAL STYLE
+
+		
+*=============================================================*/
+
+/*===================================*
+  01.GENERAL STYLE
+*===================================*/
+* {
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+}
+
+:root {
+    --brown: #8d6e63;
+    --white-cream: #f5f5dc;
+    --white: #fff;
+    --gray: #e0e0e0;
+    --yellow: #020202;
+
+    /* --header-bg: #266A29; */
+    --body-bg: #1b2838;
+    --body-bg: #ffffff;
+    --header-bg: #393939;
+    /* --header-bg: transparent; */
+    --header-text: #000000;
+    --header-text-hover: #ffcc00;
+    --button-lang: #19c430;
+    --footer-title-text: #9f9f9f;
+    --footer-link-hover: #9f9f9f;
+    --footer-legal-link-hover: #9f9f9f;
+    --banner-button-bg: #19c430;
+    --product-button-bg: #19c430;
+    --section-header-text: #000;
+    --section-header-link: #c7d5e0;
+    --section-text: #000000;
+    --product-boxshadow: 0 2px 4px 0 rgba(0, 0, 0, 0.15);
+    --product-info-bg: linear-gradient(
+        -45deg,
+        rgba(64, 121, 153, 1) 5%,
+        rgba(42, 62, 89, 1) 95%
+    );
+}
+
+body {
+    background-color: var(--body-bg);
+    font-family: Lato, sans-serif;
+    color: #000000;
+}
+
+tbody {
+    border: none;
+}
+
+a,
+ul,
+li {
+    text-decoration: none;
+    list-style: none;
+    color: #fff;
+}
+
+button {
+    border: none;
+    margin: 0;
+    text-decoration: none;
+    background: none;
+    color: #fff;
+    cursor: pointer;
+}
+
+.container {
+    width: 100%;
+    margin: 0 auto;
+    padding: 0 15px;
+}
+
+@media (min-width: 576px) {
+    .container {
+        max-width: 540px;
+    }
+}
+
+@media (min-width: 768px) {
+    .container {
+        max-width: 720px;
+    }
+}
+
+@media (min-width: 992px) {
+    .container {
+        max-width: 900px;
+    }
+}
+
+@media (min-width: 1200px) {
+    .container {
+        max-width: 1180px;
+    }
+}
+
+@media (min-width: 1440px) {
+    .container {
+        max-width: 1280px;
+    }
+}
+
+.ngl-hide {
+    display: none;
+}
+
+:root {
+    --scrollbar-width: 17px;
+    --mesh-column: 4;
+    --mesh-gutter: var(--space-5);
+    --mesh-margin: var(--space-6);
+    --mesh-container-width: calc(
+        (100vw - var(--scrollbar-width, 0)) - var(--mesh-margin) -
+            var(--mesh-margin) + var(--mesh-gutter)
+    );
+    --mesh-column-width: calc(var(--mesh-container-width) / var(--mesh-column));
+}
+
+:root {
+    --space-1: 2px;
+    --space-2: 4px;
+    --space-3: 7px;
+    --space-4: 10px;
+    --space-5: 14px;
+    --space-6: 21px;
+    --space-7: 28px;
+    --space-8: 35px;
+    --space-9: 42px;
+    --space-10: 56px;
+    --space-11: 70px;
+    --space-12: 112px;
+    --space-13: 224px;
+}
+
+@media (min-width: 360px) {
+    :root {
+        --mesh-margin: var(--space-7);
+    }
+}
+
+@media (min-width: 768px) {
+    :root {
+        --mesh-column: 12;
+        --mesh-margin: var(--space-9);
+    }
+}
+
+@media (min-width: 1367px) {
+    :root {
+        --mesh-margin: var(--space-11);
+    }
+}
+
+@media (min-width: 1920px) {
+    :root {
+        --mesh-column: 24;
+    }
+}
+
+/*===================================*
+    01.END GENERAL STYLE
+*===================================*/
+/*
+
+
+
+
+
+
+
+
+
+
+*/
+/*===================================*
+    02. START FORM
+*===================================*/
+.input-group {
+    margin-bottom: 15px;
+}
+
+.input-group label {
+    display: block;
+    font-weight: bold;
+}
+
+.input-group input,
+.input-group select {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.edit-btn {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.save-btn {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    padding: 10px;
+    width: 100%;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.popup {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.popup-content {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    max-width: 300px;
+    margin: 100px auto;
+    text-align: center;
+}
+
+.popup button {
+    margin-top: 10px;
+    padding: 5px 10px;
+    border: none;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+#confirm-btn {
+    background-color: #007bff;
+    color: white;
+}
+
+#cancel-btn {
+    background-color: #dc3545;
+    color: white;
+}
+/*===================================*
+    02. END FORM
+*===================================*/

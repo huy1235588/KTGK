@@ -11,11 +11,14 @@ function TaoDatabaseVaTable()
     // SQL tạo bảng users nếu chưa tồn tại
     $sqlUsers = "CREATE TABLE IF NOT EXISTS users (
         id INT AUTO_INCREMENT PRIMARY KEY,
-        name VARCHAR(100) NOT NULL,
+        firstName VARCHAR(100) NOT NULL,
+        lastName VARCHAR(100) NOT NULL,
         phone VARCHAR(15) NOT NULL,
         email VARCHAR(100) NOT NULL UNIQUE,
         address VARCHAR(255),
         gender ENUM('Nam', 'Nữ') NOT NULL,
+        birthday DATE,
+        avatar VARCHAR(255) DEFAULT 'uploads/default_avatar.png',
         username VARCHAR(50) NOT NULL UNIQUE,
         password VARCHAR(255) NOT NULL,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -261,6 +264,7 @@ $list_tables = [
     "../../database/insert_tags.sql",
     "../../database/insert_product_tags.sql",
     "../../database/insert_features.sql",
+    "../../database/insert_product_features.sql",
     "../../database/insert_systemRequirements.sql",
     "../../database/insert_achievements.sql",
     "../../database/insert_languages.sql"

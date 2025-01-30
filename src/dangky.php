@@ -6,7 +6,8 @@ if (!function_exists('MoKetNoi')) {
 
 // Khởi tạo mảng lưu lỗi
 $errors = [
-    'name' => '',
+    'firstName' => '',
+    'lastName' => '',
     'phone' => '',
     'email' => '',
     'address' => '',
@@ -18,7 +19,8 @@ $errors = [
 
 // Xử lý form
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $name = htmlspecialchars($_POST['name']);
+    $firstName = htmlspecialchars($_POST['firstName']);
+    $lastName = htmlspecialchars($_POST['lastName']);
     $phone = htmlspecialchars($_POST['phone']);
     $email = htmlspecialchars($_POST['email']);
     $address = htmlspecialchars($_POST['address']);
@@ -65,8 +67,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (empty(array_filter($errors))) {
 
         // Insert người dùng vào database
-        $stmt = $conn->prepare("INSERT INTO users (name, phone, email, address, gender, username, password) VALUES (?, ?, ?, ?, ?, ?, ?)");
-        $stmt->bind_param("sssssss", $name, $phone, $email, $address, $gender, $username, $password);
+        $stmt = $conn->prepare("INSERT INTO users (firstName, lastName, phone, email, address, gender, username, password) VALUES (?, ?, ?, ?, ?, ?, ?)");
+        $stmt->bind_param("sssssss", $firstName, $lastName, $phone, $email, $address, $gender, $username, $password);
 
         if ($stmt->execute()) {
             require 'components/notification.php';
@@ -109,21 +111,31 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     <!-- Content -->
     <main class="container">
-        <h1>ĐĂNG KÝ</h1>
+        <h1>Sign up</h1>
         <form action="dangky.php" method="post">
             <table>
                 <tr>
                     <td class="label">
-                        <label for="name">Họ tên:</label>
+                        <label for="firstName">First Name:</label>
                     </td>
                     <td>
-                        <input type="text" id="name" name="name" value="<?php echo htmlspecialchars($name ?? ''); ?>" required>
-                        <span class="error"><?php echo $errors['name'] ?? ''; ?></span>
+                        <input type="text" id="firstName" name="firstName" value="<?php echo htmlspecialchars($firstName ?? ''); ?>" required>
+                        <span class="error"><?php echo $errors['firstName'] ?? ''; ?></span>
                     </td>
                 </tr>
                 <tr>
                     <td class="label">
-                        <label for="phone">Số điện thoại:</label>
+                        <label for="lastName">Last Name:</label>
+                    </td>
+                    <td>
+                        <input type="text" id="lastName" name="lastName" value="<?php echo htmlspecialchars($lastName ?? ''); ?>" required>
+                        <span class="error"><?php echo $errors['lastName'] ?? ''; ?></span>
+                </tr>
+                <tr>
+                    <td class="label">
+                        <label for="phone">
+                            Phone:
+                        </label>
                     </td>
                     <td>
                         <input class="<?php echo $errors['phone'] ? 'input-error' : ''; ?>" type="text" id="phone" name="phone" value="<?php echo htmlspecialchars($phone ?? ''); ?>" required>
@@ -141,14 +153,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 </tr>
                 <tr>
                     <td class="label">
-                        <label for="address">Địa chỉ:</label>
+                        <label for="address">Address:</label>
                     </td>
                     <td>
                         <input type="text" id="address" name="address" value="<?= htmlspecialchars($_POST['address'] ?? '') ?>">
                     </td>
                 </tr>
                 <tr>
-                    <td class="label">Giới tính:</td>
+                    <td class="label">Gender:</td>
                     <td>
                         <input type="radio" id="male" name="gender" value="Nam" <?= (isset($_POST['gender']) && $_POST['gender'] == 'Nam') ? 'checked' : '' ?>>
                         <label for="male">Nam</label>
@@ -163,7 +175,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 </tr>
                 <tr>
                     <td class="label">
-                        <label for="username">Tên đăng nhập:</label>
+                        <label for="username">Username:</label>
                     </td>
                     <td>
                         <input class="<?php echo $errors['username'] ? 'input-error' : ''; ?>" type="text" id="username" name="username" value="<?php echo htmlspecialchars($username ?? ''); ?>" required>
@@ -172,7 +184,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 </tr>
                 <tr>
                     <td class="label">
-                        <label for="password">Mật khẩu:</label>
+                        <label for="password">Password:</label>
                     </td>
                     <td>
                         <input class="<?php echo $errors['password'] ? 'input-error' : ''; ?>" type="password" id="password" name="password" required>
@@ -181,7 +193,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 </tr>
                 <tr>
                     <td class="label">
-                        <label for="confirm_password">Nhập lại mật khẩu:</label>
+                        <label for="confirm_password">Confirm password:</label>
                     </td>
                     <td>
                         <input class="<?php echo $errors['password'] ? 'input-error' : ''; ?>" type="password" id="confirm_password" name="confirm_password" required>
@@ -190,7 +202,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 </tr>
                 <tr>
                     <td colspan="2">
-                        <button class="button-submit" type="submit">Đăng ký</button>
+                        <button class="button-submit" type="submit">
+                            Sign up
+                        </button>
                     </td>
                 </tr>
             </table>
