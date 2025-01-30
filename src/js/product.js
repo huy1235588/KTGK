@@ -84,7 +84,7 @@ document.addEventListener('DOMContentLoaded', () => {
             youtubePlayers[playerIndex].unMute();
 
             // Phát video YouTube
-            youtubePlayers[playerIndex].playVideo(); 
+            youtubePlayers[playerIndex].playVideo();
         }
         else {
             // Nếu không có video, đảm bảo autoplay vẫn hoạt động
@@ -99,7 +99,7 @@ document.addEventListener('DOMContentLoaded', () => {
             video.pause();
             video.currentTime = 0; // Reset thời gian về 0
         });
-        
+
         // Dừng tất cả video youtube
         Object.values(youtubePlayers).forEach((player) => {
             if (player.getPlayerState() === YT.PlayerState.PLAYING) {

@@ -160,7 +160,9 @@ DongKetNoi($conn);
     }
 
     // Truy vấn features
-    $stmt = $conn->prepare("SELECT * FROM product_features WHERE product_id = ?");
+    $stmt = $conn->prepare("SELECT * 
+    FROM product_features JOIN features ON product_features.feature_id = features.id
+    WHERE product_id = ?");
     $stmt->bind_param("i", $productId);
     $stmt->execute();
     $result = $stmt->get_result();
@@ -197,7 +199,9 @@ DongKetNoi($conn);
     }
 
     // Lấy danh sách languages
-    $stmt = $conn->prepare("SELECT * FROM product_languages WHERE product_id = ?");
+    $stmt = $conn->prepare("SELECT * 
+    FROM product_languages JOIN languages ON product_languages.language_id = languages.id
+    WHERE product_id = ?");
     $stmt->bind_param("i", $productId);
     $stmt->execute();
     $result = $stmt->get_result();
@@ -206,7 +210,7 @@ DongKetNoi($conn);
     $languages = [];
     if ($result->num_rows > 0) {
         while ($row = $result->fetch_assoc()) {
-            $languages[] = $row['language'];
+            $languages[] = $row['name'];
             $interfaceLanguages[] = $row['interface'];
             $fullAudioLanguages[] = $row['fullAudio'];
             $subtitlesLanguages[] = $row['subtitles'];
@@ -214,7 +218,10 @@ DongKetNoi($conn);
     }
 
     // Lấy danh sách achievements
-    $stmt = $conn->prepare("SELECT title, image FROM product_achievements WHERE product_id = ? LIMIT 3");
+    $stmt = $conn->prepare("SELECT title, image 
+    FROM product_achievements 
+    WHERE product_id = ? 
+    LIMIT 3");
     $stmt->bind_param("i", $productId);
     $stmt->execute();
     $result = $stmt->get_result();
@@ -565,10 +572,10 @@ DongKetNoi($conn);
                                         <img
                                             <?php
                                             // Chuyển chuỗi feature về chữ thường để so sánh không phân biệt hoa thường
-                                            $featureLower = trim(strtolower($feature['feature']));
+                                            $featureLower = trim(strtolower($feature['name']));
 
                                             // Nếu chuỗi feature có remote ở đầu -> ico_remote_play.png
-                                            if (stripos($feature['feature'], 'Remote') === 0) {
+                                            if (stripos($feature['name'], 'Remote') === 0) {
                                                 $featureIcon = 'ico_remote_play.png';
                                             }
                                             // Nếu có pvp hoặc MMO hoặc multiplayer-> ico_multiplayer.png
@@ -611,11 +618,11 @@ DongKetNoi($conn);
 
 
                                             src="assets/icons/features/<?= $featureIcon ?>"
-                                            alt="<?= htmlspecialchars($feature['feature']) ?>"
+                                            alt="<?= htmlspecialchars($feature['name']) ?>"
                                             loading="lazy">
                                     </span>
                                     <span class="feature-title">
-                                        <?= htmlspecialchars($feature['feature']) ?>
+                                        <?= htmlspecialchars($feature['name']) ?>
                                     </span>
                                 </a>
                             </li>
@@ -625,11 +632,12 @@ DongKetNoi($conn);
 
                 <!-- Product detail -->
                 <div id="genresAndManufacturer" class="details_block">
-                    <b>Title:</b>
-                    <span>
-                        <?= $name ?>
-                    </span>
-                    <br>
+                    <div class="dev_row">
+                        <b>Title:</b>
+                        <span>
+                            <?= $name ?>
+                        </span>
+                    </div>
 
                     <b>Genre:</b>
                     <span data-panel="{&quot;flow-children&quot;:&quot;row&quot;}">
@@ -654,19 +662,20 @@ DongKetNoi($conn);
                         <?php endforeach; ?>
                     </div>
 
-                    <b>Release Date:</b>
-                    <span>
-                        <?= $releaseDate ?>
-                    </span>
-                    <br>
+                    <div class="dev_row">
+                        <b>Release Date:</b>
+                        <span>
+                            <?= $releaseDate ?>
+                        </span>
+                    </div>
                 </div>
 
                 <!-- Language -->
                 <div class="details_block">
-                    <p>
+                    <h3 class="title">
                         Languages:
-                    </p>
-                    <table>
+                    </h3>
+                    <table class="languages-table">
                         <tr>
                             <th></th>
                             <th>Interface</th>
@@ -674,19 +683,21 @@ DongKetNoi($conn);
                             <th>Subtitles</th>
                         </tr>
                         <?php for ($i = 0; $i < count($languages); $i++): ?>
-                            <tr>
-                                <td><?= $languages[$i] ?></td>
-                                <td>
+                            <tr style="<?php if ($i >= 5) echo 'display: none;' ?>">
+                                <td class="ellipsis">
+                                    <?= $languages[$i] ?>
+                                </td>
+                                <td class="check-col">
                                     <?php if ($interfaceLanguages[$i] == 1): ?>
                                         ✔
                                     <?php endif; ?>
                                 </td>
-                                <td>
+                                <td class="check-col">
                                     <?php if ($fullAudioLanguages[$i] == 1): ?>
                                         ✔
                                     <?php endif; ?>
                                 </td>
-                                <td>
+                                <td class="check-col">
                                     <?php if ($subtitlesLanguages[$i] == 1): ?>
                                         ✔
                                     <?php endif; ?>
@@ -694,21 +705,55 @@ DongKetNoi($conn);
                             </tr>
                         <?php endfor; ?>
                     </table>
+
+                    <?php if (count($languages) > 5): ?>
+                        <script>
+                            function showMoreLanguages(button) {
+                                const languagesTable = document.querySelector('.languages-table');
+                                const rows = languagesTable.querySelectorAll('tr');
+
+                                rows.forEach((row, index) => {
+                                    if (index >= 5) {
+                                        row.style.display = 'table-row';
+                                    }
+                                });
+
+                                button.style.display = 'none';
+                            }
+                        </script>
+
+                        <!-- Nút xem thêm -->
+                        <button class="all_languages" onclick="showMoreLanguages(this)">
+                            See all <?= count($languages) ?> supported languages
+                        </button>
+                    <?php endif; ?>
                 </div>
 
                 <!-- Achievements -->
-                <div class="details_block">
-                    <b>Achievements:</b>
-                    <span>
-                        <?= $totalAchievements ?> <?= $totalAchievements > 1 ? 'achievements' : 'achievement' ?>
-                    </span>
-                    <br>
-                    <div class="achievements">
-                        <?php foreach ($achievements as $achievement): ?>
-                            <img src="https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/<?= $achievement['image'] ?>" alt="<?= $achievement['title'] ?>" loading="lazy">
-                        <?php endforeach; ?>
+                <?php if ($totalAchievements > 0): ?>
+                    <div class="details_block">
+                        <div class="dev_row">
+                            <b>Achievements:</b>
+                            <span>
+                                <?= $totalAchievements ?> <?= $totalAchievements > 1 ? 'achievements' : 'achievement' ?>
+                            </span>
+                        </div>
+
+                        <div class="achievements">
+                            <?php foreach ($achievements as $achievement): ?>
+                                <img class="achievement"
+                                    src="https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/<?= $achievement['image'] ?>"
+                                    alt="<?= $achievement['title'] ?>"
+                                    loading="lazy">
+                            <?php endforeach; ?>
+                            <a href="" class="view-all-achievements">
+                                View
+                                <br>
+                                all <?= $totalAchievements ?>
+                            </a>
+                        </div>
                     </div>
-                </div>
+                <?php endif; ?>
             </div>
         </aside>
     </article>

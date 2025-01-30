@@ -389,11 +389,15 @@ def achievements_to_sql(data, output_file):
     with open(output_file, "w", encoding="utf-8") as file:
         insert_statement = f"INSERT INTO product_achievements (product_id, title, percent, description, image) VALUES"
         value_list = []
-        achievement_map = {}  # Map achievement_id với achievement_name
-        achievement_id_counter = 0
 
         for achievement in data["data"]["getAchievementList"]:
             product_id = achievement["productId"]
+
+            # Nếu không có achievements, thêm một dòng với các giá trị NULL
+            if not achievement["achievements"]:
+                value_list.append(f"({product_id}, NULL, NULL, NULL, NULL)")
+                continue
+
             for ach in achievement["achievements"]:
                 # Lấy title, percent, description, image của achievement
                 title = ach["title"].replace("'", "''").replace("\\", "")
@@ -401,14 +405,15 @@ def achievements_to_sql(data, output_file):
                 description = ach["description"].replace("'", "''").replace("\\", "")
 
                 # steamcommunity/public/images/apps/2440380/faf.jpg -> 2440380/faf.jpg
-                image = ach["image"].split("/")[-2] + "/" + ach["image"].split("/")[-1]
-                # Nếu achievement chưa tồn tại trong map thì thêm vào
-                if title not in achievement_map:
-                    achievement_id_counter += 1
-                    achievement_map[title] = achievement_id_counter
-                    value_list.append(
-                        f"({product_id}, '{title}', {percent}, '{description}', '{image}')"
-                    )
+                if ach["image"]:
+                    image = ach["image"].split("/")[-2] + "/" + ach["image"].split("/")[-1]
+                else:
+                    image = "NULL"
+
+                # Thêm vào danh sách giá trị
+                value_list.append(
+                    f"({product_id}, '{title}', {percent}, '{description}', '{image}')"
+                )
 
         # Ghi câu lệnh insert vào file
         insert_statement += ",\n".join(value_list) + ";"
@@ -420,7 +425,7 @@ def achievements_to_sql(data, output_file):
 def languages_to_sql(data, output_file):
     languages_list = []  # List languages
     with open(f"{output_file}_product_languages.sql", "w", encoding="utf-8") as file:
-        insert_statement = f"INSERT INTO product_languages (product_id, language, interface, fullAudio, subtitles) VALUES"
+        insert_statement = f"INSERT INTO product_languages (product_id, language_id, interface, fullAudio, subtitles) VALUES"
         value_list = []
         language_map = {}  # Map language_id với language_name
         language_id_counter = 0
@@ -477,11 +482,11 @@ def write_sql_to_file(sql_statements, filename):
 
 def insert_user(data, output_file):
     with open(output_file, "w", encoding="utf-8") as file:
-        insert_statement = f"INSERT INTO users (id, firstName, lastName, phone, email, gender, username, password, role) VALUES\n"
+        insert_statement = f"INSERT INTO users (id, firstName, lastName, phone, email, gender, birthday, username, password, role) VALUES\n"
         value_list = [
             "(1, 'ha', 'ha', '0123456789', 'ha@ha', 'male', '1998-21-01','ha', 'ha', 'admin')",
             "(3, 'he', 'he', '0123456789', 'he@he', 'female', '1998-21-01', 'he', 'he', 'user')",
-            "(4, 'ho', 'ho', '0123456789', 'ho@ho', 'male', 'ho', '1998-21-01', 'ho', 'user')",
+            "(4, 'ho', 'ho', '0123456789', 'ho@ho', 'male', '1998-21-01', 'ho', 'ho', 'user')",
         ]
 
         insert_statement += ",\n".join(value_list) + ";"

@@ -161,10 +161,10 @@ function TaoDatabaseVaTable()
     $sqlProductAchievements = "CREATE TABLE IF NOT EXISTS product_achievements (
         id INT AUTO_INCREMENT PRIMARY KEY,
         product_id INT NOT NULL,
-        title VARCHAR(255) NOT NULL,
-        percent DECIMAL(5, 2) NOT NULL,
+        title VARCHAR(255),
+        percent DECIMAL(5, 2),
         description TEXT,
-        image VARCHAR(255) NOT NULL,
+        image VARCHAR(255),
         FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
     )";
 
@@ -267,7 +267,8 @@ $list_tables = [
     "../../database/insert_product_features.sql",
     "../../database/insert_systemRequirements.sql",
     "../../database/insert_achievements.sql",
-    "../../database/insert_languages.sql"
+    "../../database/insert_languages.sql",
+    "../../database/insert_product_languages.sql"
 ];
 
 foreach ($list_tables as $table) {
