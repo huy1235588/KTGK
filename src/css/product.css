@@ -266,6 +266,10 @@ img {
     padding-bottom: 20px;
 }
 
+.game_page_autocollapse_ctn.expanded {
+    padding-bottom: 0;
+}
+
 .game_page_autocollapse {
     overflow: hidden;
     max-height: 850px;
@@ -276,7 +280,7 @@ img {
     font-size: 14px;
     margin-top: 30px;
     overflow: hidden;
-    width: 616px;
+    /* width: 616px; */
     max-width: 100%;
     font-family: "Motiva Sans", Sans-serif;
     font-weight: normal;
@@ -317,6 +321,7 @@ img {
 }
 
 .game_area_description img.bb_img {
+    width: 100%;
     max-width: 100%;
 }
 
@@ -352,7 +357,7 @@ img {
     bottom: 0;
     height: 73px;
     z-index: 1;
-    background: url("/assets/fade.png") repeat-y;
+    background: url("/assets/fade.png");
 }
 
 .game_page_autocollapse_ctn.collapsed .game_page_autocollapse_fade {
@@ -373,7 +378,7 @@ img {
 }
 
 /* System requirement */
-.system-requirements{
+.system-requirements {
     margin-top: 20px;
 }
 
@@ -416,7 +421,8 @@ img {
     cursor: pointer;
 }
 
-.sysreq_tab:hover, .discselect_tab:hover {
+.sysreq_tab:hover,
+.discselect_tab:hover {
     color: #2b2b2b;
 }
 
@@ -850,21 +856,61 @@ aside.right-content .product-info {
 /*===================================*
     04.START PRODUCT RELATE
 *===================================*/
-.product-relate .swiper-slide {
-    height: 280px;
-    border: 1px #858d9f solid;
+.product-relate-container {
+    padding: 20px 30px 50px;
 }
 
-.product-relate .product-img {
+.product-relate-container .title {
+    font-size: 20px;
+    font-weight: 600;
+    color: #000;
+    margin-bottom: 20px;
+}
+
+.product-relate-container .products {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    width: 100%;
+    gap: 15px;
+}
+
+.product-relate-container .product-item:first-child,
+.product-relate-container .product-item:nth-child(5) {
+    margin-left: 0;
+}
+
+.product-relate-container .product-item {
+    border: 1px #858d9f solid;
+    border-radius: 5px;
+    transition: all 0.3s ease-in-out;
+}
+
+.product-relate-container .product-item:hover {
+    border: 1px #007bff solid;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
+}
+
+/* Info */
+.product-relate-container .product-info {
+    padding: 10px;
+    padding-top: 5px;
+    background-color: #fff;
+}
+
+.product-relate-container-container .title {
+    margin: 20px 0;
+}
+
+.product-relate-container .product-img {
     width: 100%;
     height: 150px;
     padding: 0;
 }
 
-.product-relate .product-name {
+.product-relate-container .product-name {
     height: 41px;
     line-height: 20px;
-    margin: 3px 0 10px;
+    margin: 3px 0 5px;
     transition: all 0.3s ease-in-out;
     color: #585858;
     text-align: start;
@@ -877,6 +923,37 @@ aside.right-content .product-info {
     text-overflow: ellipsis; /* Hiển thị dấu ... */
 }
 
+.product-relate-container .price-container {
+    display: flex;
+    align-items: center;
+}
+
+.product-relate-container .price {
+    display: flex;
+    flex-direction: row;
+    text-align: start;
+    color: #000000;
+    font-size: 18px;
+    font-weight: bolder;
+    column-gap: 5px;
+}
+
+.product-relate-container .original-price {
+    display: flex;
+    align-items: center;
+    color: #9da7bc;
+    font-size: 14px;
+    text-decoration-line: line-through;
+}
+
+.product-relate-container .discount {
+    display: inline-block;
+    margin-left: 7px;
+    padding: 3px 5px;
+    border-radius: 5px;
+    background-color: #ff0101b3;
+    color: #fff;
+}
 /*===================================*
     04.END PRODUCT RELATE
 *===================================*/

@@ -118,19 +118,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     /**************************************
      * 
-     *    Swiper sản phẩm liên quan
-     * 
-    ***************************************/
-    const swiperProductRelate = new Swiper('.product-relate', {
-        loop: false, // Nối tiếp các slide
-        autoplay: false,
-        slidesPerView: 4, // Hiển thị 5 slide mỗi lần
-        spaceBetween: 10, // Khoảng cách giữa các slide
-    });
-
-
-    /**************************************
-     * 
      *    System requirements tabs
      * 
     ***************************************/
@@ -144,6 +131,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
             tab.classList.add('active');
             contentsSystemRequirements[index].classList.add('active');
+        });
+    });
+
+    /**************************************
+     * 
+     *    Read more button
+     * 
+    ***************************************/
+    const j = document.querySelectorAll('.game_page_autocollapse_ctn');
+
+    j.forEach((element) => {
+        const button = element.querySelector('.game_page_autocollapse_readmore');
+        const content = element.querySelector('.game_page_autocollapse');
+
+        button.addEventListener('click', () => {
+            element.classList.add('expanded');
+            element.classList.remove('collapsed');
+
+            content.style.maxHeight = 'none';
         });
     });
 });

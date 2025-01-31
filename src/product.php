@@ -253,7 +253,7 @@ DongKetNoi($conn);
         )
         AND p.id != ?
         ORDER BY RAND()
-        LIMIT 10
+        LIMIT 12
     ");
     $stmt->bind_param("ii", $productId, $productId); // Truyền hai giá trị $productId
     $stmt->execute();
@@ -455,7 +455,7 @@ DongKetNoi($conn);
                 </div>
 
                 <!-- Detail -->
-                <div class="game_page_autocollapse_ctn">
+                <div class="game_page_autocollapse_ctn collapsed">
                     <!-- Description -->
                     <div class="game_page_autocollapse">
                         <div class="game_area_description" id="game_area_description">
@@ -478,7 +478,7 @@ DongKetNoi($conn);
                     </h2>
 
                     <!-- Tabs -->
-                    <?php if ($mac != null || $linux != null) : ?>
+                    <?php if ($mac != null) : ?>
                         <div class="sysreq_tabs">
                             <button class="sysreq_tab active" data-os="win">
                                 Windows
@@ -486,9 +486,11 @@ DongKetNoi($conn);
                             <button class="sysreq_tab" data-os="mac">
                                 Mac OS X
                             </button>
-                            <button class="sysreq_tab" data-os="linux">
-                                SteamOS + Linux
-                            </button>
+                            <?php if ($linux) : ?>
+                                <button class="sysreq_tab" data-os="linux">
+                                    SteamOS + Linux
+                                </button>
+                            <?php endif; ?>
                         </div>
                     <?php endif; ?>
 
@@ -869,62 +871,65 @@ DongKetNoi($conn);
     <!-- Sản phẩm liên quan -->
     <section class="section product-relate-container">
         <h2 class="title">
-            Sẩn phẩm liên quan
+            More like this
         </h2>
 
-        <div class="swiper product-relate">
-            <ul class="swiper-wrapper">
-                <?php foreach ($relatedProducts as $sp): ?>
-                    <li class="swiper-slide">
-                        <a href="product.php?id=<?= htmlspecialchars($sp['id']) ?>">
-                            <p class="product-img-container">
-                                <img class="product-img"
-                                    src="<?= htmlspecialchars($sp['headerImage']) ?>"
-                                    alt="<?= htmlspecialchars($sp['title']) ?>"
-                                    loading="lazy">
-                            </p>
+        <ul class="products">
+            <?php foreach ($relatedProducts as $sp): ?>
+                <li class="product-item">
+                    <a href="product.php?id=<?= htmlspecialchars($sp['id']) ?>">
+                        <!-- Hình ảnh sản phẩm -->
+                        <p class="product-img-container">
+                            <img class="product-img"
+                                src="<?= htmlspecialchars($sp['headerImage']) ?>"
+                                alt="<?= htmlspecialchars($sp['title']) ?>"
+                                loading="lazy">
+                        </p>
+
+                        <div class="product-info">
+                            <!-- Tên sản phẩm -->
                             <p class="product-name">
                                 <?= htmlspecialchars(($sp['title'])) ?>
                             </p>
+
                             <!-- Price -->
                             <div class="price-container">
-                                <span class="price">
-                                    <?php
-                                    if ($sp['price'] != null) {
-                                        echo "$" . number_format($product['price'], 2);
-                                    } else {
-                                        echo "$" . number_format(htmlspecialchars($product['price']), 2);
-                                    }
-                                    ?>
-                                </span>
-
-                                <!-- Origin price -->
-                                <?php if ($product['price'] && htmlspecialchars($product['discount']) > 0): ?>
-                                    <p class="origin-price">
-                                        <span class="original-price">
-                                            <?php
-                                            // Tình giá gốc
-                                            $originPrice = $product['price'] / (1 - $product['discount'] / 100);
-                                            ?>
+                                <div class="price">
+                                    <span class="price-text">
+                                        <?php
+                                        if ($product['price'] == 0) {
+                                            echo "Free";
+                                        } else {
+                                            echo "$" . number_format(htmlspecialchars($product['price']), 2);
+                                        }
+                                        ?>
+                                    </span>
+                                    <!-- Origin price -->
+                                    <span class="original-price">
+                                        <?php
+                                        // Tình giá gốc
+                                        $originPrice = $product['price'] / (1 - $product['discount'] / 100);
+                                        if ($product['price'] && htmlspecialchars($product['discount']) > 0):
+                                        ?>
 
                                             <?= number_format($originPrice, 2) ?>
-                                        </span>
-                                        <span class="discount">
-                                            <?php
-                                            echo "-" .  number_format(htmlspecialchars($product['discount']), 0) . "%";
-                                            ?>
-                                        </span>
-                                    </p>
+                                        <?php endif ?>
+                                    </span>
+                                </div>
+                                <!-- Discount -->
+                                <?php if ($product['price'] && htmlspecialchars($product['discount']) > 0): ?>
+                                    <span class="discount">
+                                        <?php
+                                        echo "-" .  number_format(htmlspecialchars($product['discount']), 0) . "%";
+                                        ?>
+                                    </span>
                                 <?php endif ?>
                             </div>
-                        </a>
-                    </li>
-                <?php endforeach; ?>
-            </ul>
-            <!-- Nút điều hướng -->
-            <div class="swiper-button product-relate-button-prev"></div>
-            <div class="swiper-button product-relate-button-next"></div>
-        </div>
+                        </div>
+                    </a>
+                </li>
+            <?php endforeach; ?>
+        </ul>
     </section>
 
     <?php
