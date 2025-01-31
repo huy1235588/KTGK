@@ -127,4 +127,23 @@ document.addEventListener('DOMContentLoaded', () => {
         slidesPerView: 4, // Hiển thị 5 slide mỗi lần
         spaceBetween: 10, // Khoảng cách giữa các slide
     });
+
+
+    /**************************************
+     * 
+     *    System requirements tabs
+     * 
+    ***************************************/
+    const tabsSystemRequirements = document.querySelectorAll('.sysreq_tab');
+    const contentsSystemRequirements = document.querySelectorAll('.sysreq_contents');
+
+    tabsSystemRequirements.forEach((tab, index) => {
+        tab.addEventListener('click', () => {
+            tabsSystemRequirements.forEach((tab) => tab.classList.remove('active'));
+            contentsSystemRequirements.forEach((content) => content.classList.remove('active'));
+
+            tab.classList.add('active');
+            contentsSystemRequirements[index].classList.add('active');
+        });
+    });
 });

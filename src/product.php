@@ -191,9 +191,9 @@ DongKetNoi($conn);
             if ($row['platform'] == 'win') {
                 $windows[] = $row;
             } else if ($row['platform'] == 'mac') {
-                $mac = $row;
+                $mac[] = $row;
             } else if ($row['platform'] == 'linux') {
-                $linux = $row;
+                $linux[] = $row;
             }
         }
     }
@@ -440,17 +440,35 @@ DongKetNoi($conn);
                 </p>
 
                 <!-- Tag -->
-                <div class="tag-container">
-                    <?php foreach ($tags as $tag): ?>
-                        <a href="tags.php?tag=<?= htmlspecialchars($tag['id']) ?>" class="tag">
-                            <?= htmlspecialchars($tag['tag']) ?>
-                        </a>
-                    <?php endforeach; ?>
+                <div class="tags">
+                    <h2 class="title">
+                        Tag:
+                    </h2>
+
+                    <div class="tag-container">
+                        <?php for ($i = 0; $i < 8; $i++): ?>
+                            <a href="tags.php?tag=<?= htmlspecialchars($tags[$i]['id']) ?>" class="tag">
+                                <?= htmlspecialchars($tags[$i]['tag']) ?>
+                            </a>
+                        <?php endfor; ?>
+                    </div>
                 </div>
 
                 <!-- Detail -->
-                <div class="detail">
-                    <?= $detail ?>
+                <div class="game_page_autocollapse_ctn">
+                    <!-- Description -->
+                    <div class="game_page_autocollapse">
+                        <div class="game_area_description" id="game_area_description">
+                            <?= $detail ?>
+                        </div>
+                    </div>
+
+                    <!-- Read more -->
+                    <div class="game_page_autocollapse_fade">
+                        <div class="game_page_autocollapse_readmore">
+                            READ MORE
+                        </div>
+                    </div>
                 </div>
 
                 <!-- System requirements -->
@@ -460,42 +478,131 @@ DongKetNoi($conn);
                     </h2>
 
                     <!-- Tabs -->
-                    <div class="tabs">
-                        <button class="tab active" data-tab="win">
-                            Windows
-                        </button>
-                        <button class="tab" data-tab="mac">
-                            Mac OS X
-                        </button>
-                        <button class="tab" data-tab="linux">
-                            SteamOS + Linux
-                        </button>
-                    </div>
+                    <?php if ($mac != null || $linux != null) : ?>
+                        <div class="sysreq_tabs">
+                            <button class="sysreq_tab active" data-os="win">
+                                Windows
+                            </button>
+                            <button class="sysreq_tab" data-os="mac">
+                                Mac OS X
+                            </button>
+                            <button class="sysreq_tab" data-os="linux">
+                                SteamOS + Linux
+                            </button>
+                        </div>
+                    <?php endif; ?>
 
                     <!-- Window -->
-                    <div class="tab-content active" id="win">
-                        <h3 class="title">
-                            Windows
-                        </h3>
-                        <div style="display: flex;">
-                            <ul>
+                    <div class="sysreq_contents active" data-os="win">
+                        <div class="game_area_sys_req sysreq_content active">
+                            <ul class="game_area_sys_req_leftCol">
+                                <li>
+                                    <strong class="sysreq_label">
+                                        MINIMUM:
+                                    </strong>
+                                </li>
                                 <?php foreach ($windows as $win): ?>
-                                    <li>
-                                        <b><?= $win['title'] ?></b>
-                                        <span><?= $win['recommended'] ?></span>
-                                    </li>
+                                    <?php if ($win['minimum'] != ""): ?>
+                                        <li>
+                                            <strong><?= $win['title'] ?></strong>
+                                            <span><?= $win['minimum'] ?></span>
+                                        </li>
+                                    <?php endif; ?>
                                 <?php endforeach; ?>
                             </ul>
-                            <ul>
+                            <ul class="game_area_sys_req_rightCol">
+                                <li>
+                                    <strong class="sysreq_label">
+                                        RECOMMENDED:
+                                    </strong>
+                                </li>
                                 <?php foreach ($windows as $win): ?>
-                                    <li>
-                                        <b><?= $win['title'] ?></b>
-                                        <span><?= $win['minimum'] ?></span>
-                                    </li>
+                                    <?php if ($win['recommended'] != ""): ?>
+                                        <li>
+                                            <strong><?= $win['title'] ?></strong>
+                                            <span><?= $win['recommended'] ?></span>
+                                        </li>
+                                    <?php endif; ?>
                                 <?php endforeach; ?>
                             </ul>
                         </div>
                     </div>
+
+                    <?php if ($mac): ?>
+                        <!-- MacOS -->
+                        <div class="sysreq_contents" data-os="mac">
+                            <div class="game_area_sys_req sysreq_content">
+                                <ul class="game_area_sys_req_leftCol">
+                                    <li>
+                                        <strong class="sysreq_label">
+                                            MINIMUM:
+                                        </strong>
+                                    </li>
+                                    <?php foreach ($mac as $macOS): ?>
+                                        <?php if ($macOS['minimum'] != ""): ?>
+                                            <li>
+                                                <strong><?= $macOS['title'] ?></strong>
+                                                <span><?= $macOS['minimum'] ?></span>
+                                            </li>
+                                        <?php endif; ?>
+                                    <?php endforeach; ?>
+                                </ul>
+                                <ul class="game_area_sys_req_rightCol">
+                                    <li>
+                                        <strong class="sysreq_label">
+                                            RECOMMENDED:
+                                        </strong>
+                                    </li>
+                                    <?php foreach ($mac as $macOS): ?>
+                                        <?php if ($macOS['recommended'] != ""): ?>
+                                            <li>
+                                                <strong><?= $macOS['title'] ?></strong>
+                                                <span><?= $macOS['recommended'] ?></span>
+                                            </li>
+                                        <?php endif; ?>
+                                    <?php endforeach; ?>
+                                </ul>
+                            </div>
+                        </div>
+                    <?php endif; ?>
+
+                    <?php if ($linux): ?>
+                        <!-- Linux -->
+                        <div class="sysreq_contents" data-os="linux">
+                            <div class="game_area_sys_req sysreq_content">
+                                <ul class="game_area_sys_req_leftCol">
+                                    <li>
+                                        <strong class="sysreq_label">
+                                            MINIMUM:
+                                        </strong>
+                                    </li>
+                                    <?php foreach ($linux as $linuxOS): ?>
+                                        <?php if ($linuxOS['minimum'] != ""): ?>
+                                            <li>
+                                                <strong><?= $linuxOS['title'] ?></strong>
+                                                <span><?= $linuxOS['minimum'] ?></span>
+                                            </li>
+                                        <?php endif; ?>
+                                    <?php endforeach; ?>
+                                </ul>
+                                <ul class="game_area_sys_req_rightCol">
+                                    <li>
+                                        <strong class="sysreq_label">
+                                            RECOMMENDED:
+                                        </strong>
+                                    </li>
+                                    <?php foreach ($linux as $linuxOS): ?>
+                                        <?php if ($linuxOS['recommended'] != ""): ?>
+                                            <li>
+                                                <strong><?= $linuxOS['title'] ?></strong>
+                                                <span><?= $linuxOS['recommended'] ?></span>
+                                            </li>
+                                        <?php endif; ?>
+                                    <?php endforeach; ?>
+                                </ul>
+                            </div>
+                        </div>
+                    <?php endif; ?>
                 </div>
             </section>
         </main>
@@ -744,6 +851,7 @@ DongKetNoi($conn);
                                 <img class="achievement"
                                     src="https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/apps/<?= $achievement['image'] ?>"
                                     alt="<?= $achievement['title'] ?>"
+                                    title="<?= $achievement['title'] ?>"
                                     loading="lazy">
                             <?php endforeach; ?>
                             <a href="" class="view-all-achievements">
