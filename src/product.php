@@ -897,10 +897,10 @@ DongKetNoi($conn);
                                 <div class="price">
                                     <span class="price-text">
                                         <?php
-                                        if ($product['price'] == 0) {
+                                        if ($sp['price'] == 0) {
                                             echo "Free";
                                         } else {
-                                            echo "$" . number_format(htmlspecialchars($product['price']), 2);
+                                            echo "$" . number_format(htmlspecialchars($sp['price']), 2);
                                         }
                                         ?>
                                     </span>
@@ -908,8 +908,8 @@ DongKetNoi($conn);
                                     <span class="original-price">
                                         <?php
                                         // Tình giá gốc
-                                        $originPrice = $product['price'] / (1 - $product['discount'] / 100);
-                                        if ($product['price'] && htmlspecialchars($product['discount']) > 0):
+                                        $originPrice = $sp['price'] / (1 - $sp['discount'] / 100);
+                                        if ($sp['price'] && htmlspecialchars($sp['discount']) > 0):
                                         ?>
 
                                             <?= number_format($originPrice, 2) ?>
@@ -917,10 +917,10 @@ DongKetNoi($conn);
                                     </span>
                                 </div>
                                 <!-- Discount -->
-                                <?php if ($product['price'] && htmlspecialchars($product['discount']) > 0): ?>
+                                <?php if ($sp['price'] && htmlspecialchars($sp['discount']) > 0): ?>
                                     <span class="discount">
                                         <?php
-                                        echo "-" .  number_format(htmlspecialchars($product['discount']), 0) . "%";
+                                        echo "-" .  number_format(htmlspecialchars($sp['discount']), 0) . "%";
                                         ?>
                                     </span>
                                 <?php endif ?>

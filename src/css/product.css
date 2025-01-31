@@ -923,6 +923,7 @@ aside.right-content .product-info {
     text-overflow: ellipsis; /* Hiển thị dấu ... */
 }
 
+/* Price */
 .product-relate-container .price-container {
     display: flex;
     align-items: center;

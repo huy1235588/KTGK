@@ -83,35 +83,38 @@
                                                 <h3 class="product-title">
                                                     <?= htmlspecialchars(($product['title'])) ?>
                                                 </h3>
+
                                                 <!-- Price -->
                                                 <div class="price-container">
-                                                    <span class="price">
-                                                        <?php
-                                                        if ($product['price'] != null) {
-                                                            echo "$" . number_format($product['price'], 2);
-                                                        } else {
-                                                            echo "$" . number_format(htmlspecialchars($product['price']), 2);
-                                                        }
-                                                        ?>
-                                                    </span>
-
-                                                    <!-- Origin price -->
-                                                    <?php if ($product['price'] && htmlspecialchars($product['discount']) > 0): ?>
-                                                        <p class="origin-price">
-                                                            <span class="original-price">
-                                                                <?php
-                                                                // Tình giá gốc
-                                                                $originPrice = $product['price'] / (1 - $product['discount'] / 100);
-                                                                ?>
+                                                    <div class="price">
+                                                        <span class="price-text">
+                                                            <?php
+                                                            if ($product['price'] == 0) {
+                                                                echo "Free";
+                                                            } else {
+                                                                echo "$" . number_format(htmlspecialchars($product['price']), 2);
+                                                            }
+                                                            ?>
+                                                        </span>
+                                                        <!-- Origin price -->
+                                                        <span class="original-price">
+                                                            <?php
+                                                            // Tình giá gốc
+                                                            $originPrice = $product['price'] / (1 - $product['discount'] / 100);
+                                                            if ($product['price'] && htmlspecialchars($product['discount']) > 0):
+                                                            ?>
 
                                                                 <?= number_format($originPrice, 2) ?>
-                                                            </span>
-                                                            <span class="discount">
-                                                                <?php
-                                                                echo "-" .  number_format(htmlspecialchars($product['discount']), 0) . "%";
-                                                                ?>
-                                                            </span>
-                                                        </p>
+                                                            <?php endif ?>
+                                                        </span>
+                                                    </div>
+                                                    <!-- Discount -->
+                                                    <?php if ($product['price'] && htmlspecialchars($product['discount']) > 0): ?>
+                                                        <span class="discount">
+                                                            <?php
+                                                            echo "-" .  number_format(htmlspecialchars($product['discount']), 0) . "%";
+                                                            ?>
+                                                        </span>
                                                     <?php endif ?>
                                                 </div>
                                             </div>
@@ -136,7 +139,7 @@
         <div class="arrow-right"></div>
     </div>
     <script src="js/gameHover.js"></script>
-    
+
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             new GameHover(".product-item", ".product-hover");
