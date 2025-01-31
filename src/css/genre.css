@@ -1,0 +1,470 @@
+/*=============================================================
+Author       : LeThienHuy.
+==============================================================*/
+
+/*=============================================================
+    CSS INDEX
+===============================================================
+    01.GENERAL STYLE
+    02. PRODUCT
+    03. PRODUCT HOVER
+    04. PAGINATION
+		
+*=============================================================*/
+
+/*===================================*
+  01.GENERAL STYLE
+*===================================*/
+* {
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+    padding: 0;
+    margin: 0;
+    text-decoration: none;
+}
+
+:root {
+    --primary-color: #d63384;
+    --secondary-color: #acacac;
+    --white-color: #ffffff;
+    --black-color: #000000;
+
+    --body-color: #ddd;
+    --body-bg-color: #161920;
+    --border-color: #394960;
+    --link-color: #00aff4;
+}
+
+a,
+ul,
+li {
+    padding: 0;
+    margin: 0;
+    text-decoration: none;
+    list-style: none;
+    color: #fff;
+}
+
+button {
+    border: none;
+    margin: 0;
+    text-decoration: none;
+    background: none;
+    color: #fff;
+    cursor: pointer;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: url("/assets/background.png") no-repeat center center fixed;
+    background-size: cover;
+    margin: 0;
+    padding: 0;
+}
+.container {
+    display: flex;
+    width: 95%;
+    margin: 0 auto;
+}
+
+h1 {
+    text-align: center;
+    color: #d63384;
+}
+
+/* Main title */
+.main-title {
+    color: #000000;
+    font-size: 40px;
+    text-align: start;
+}
+/* Logo */
+.logo {
+    width: 100px;
+}
+
+@keyframes shake {
+    0% {
+        transform: translate(2px, 1px) rotate(0deg);
+    }
+    10% {
+        transform: translate(-1px, -2px) rotate(-1deg);
+    }
+    20% {
+        transform: translate(-3px, 0px) rotate(1deg);
+    }
+    30% {
+        transform: translate(0px, 2px) rotate(0deg);
+    }
+    40% {
+        transform: translate(1px, -1px) rotate(1deg);
+    }
+    50% {
+        transform: translate(-1px, 2px) rotate(-1deg);
+    }
+    60% {
+        transform: translate(-3px, 1px) rotate(0deg);
+    }
+    70% {
+        transform: translate(2px, 1px) rotate(-1deg);
+    }
+    80% {
+        transform: translate(-1px, -1px) rotate(1deg);
+    }
+    90% {
+        transform: translate(2px, 2px) rotate(0deg);
+    }
+    100% {
+        transform: translate(1px, -2px) rotate(-1deg);
+    }
+}
+.shake {
+    -webkit-animation-name: shake;
+    animation-name: shake;
+    -webkit-animation-duration: 0.5s;
+    animation-duration: 0.5s;
+    -webkit-transform-origin: 50% 50%;
+    transform-origin: 50% 50%;
+    -webkit-animation-iteration-count: infinite;
+    animation-iteration-count: infinite;
+}
+
+.container {
+    display: flex;
+    width: 95%;
+    margin: 0 auto;
+}
+
+.main {
+    flex: 1;
+}
+
+@media screen and (max-width: 768px) {
+    .product-container {
+        grid-area: 2 / 1 / 3 / 3;
+    }
+}
+
+/* Logo */
+.logo {
+    width: 100px;
+}
+/*===================================*
+    01.END GENERAL STYLE
+*===================================*/
+/*
+
+
+
+
+
+
+
+
+
+
+*/
+/*===================================*
+    02.START PRODUCT
+*===================================*/
+/* PRODUCT */
+.product-container {
+    margin-bottom: 20px;
+}
+
+.genre-title {
+    margin-bottom: 20px;
+    color: #fff;
+    font-size: 40px;
+    text-align: center;
+}
+
+.product {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    width: 100%;
+    gap: 15px;
+}
+
+.product-item:first-child,
+.product-item:nth-child(5) {
+    margin-left: 0;
+}
+
+.product-item {
+    width: 100%;
+    border: 2px solid #acacac;
+    background-color: #ffffff;
+    transition: all 0.3s ease-in-out;
+}
+
+.product-item:nth-child(4n) {
+    margin-right: 0;
+}
+
+.product-info {
+    padding: 2px 10px 5px;
+}
+
+.product-title {
+    height: 37px;
+    margin: 3px 0 8px;
+    transition: all 0.3s ease-in-out;
+    color: #585858;
+    text-align: start;
+
+    display: -webkit-box; /* Sử dụng Flexbox để giới hạn số dòng */
+    line-height: 18px;
+    line-clamp: 2;
+    -webkit-line-clamp: 2; /* Giới hạn số dòng tối đa */
+    -webkit-box-orient: vertical; /* Định hướng các dòng theo chiều dọc */
+    overflow: hidden; /* Ẩn nội dung tràn */
+    text-overflow: ellipsis; /* Hiển thị dấu ... */
+}
+
+.product-item:hover {
+    border-color: #d63384;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
+}
+
+.product-item:hover .product-title {
+    color: #d63384;
+}
+
+.product-item:hover img {
+    transition: 0.3s ease;
+}
+
+.product-img-container {
+    overflow: hidden;
+}
+
+.product-img {
+    width: 100%;
+    object-fit: cover;
+    transition: 0.3s ease;
+}
+
+.product-item .price {
+    text-align: start;
+    margin: 5px 0 8px;
+    color: #000000;
+    font-size: 18px;
+    font-weight: bolder;
+}
+
+.section-header {
+    padding: 10px 12px;
+    margin-top: 0;
+    margin-bottom: 20px;
+    background-color: #d63384;
+    color: #fff;
+    font-size: 40px;
+    text-align: center;
+}
+
+/* Price */
+.product-info .price-container {
+    display: flex;
+    align-items: center;
+}
+
+.product-info .price {
+    display: flex;
+    flex-direction: row;
+    text-align: start;
+    color: #000000;
+    font-size: 18px;
+    font-weight: bolder;
+    column-gap: 5px;
+}
+
+.product-info .original-price {
+    display: flex;
+    align-items: center;
+    color: #9da7bc;
+    font-size: 14px;
+    text-decoration-line: line-through;
+}
+
+.product-info .discount {
+    display: inline-block;
+    margin-left: 7px;
+    padding: 3px 5px;
+    border-radius: 5px;
+    background-color: #ff0101b3;
+    color: #fff;
+}
+/*===================================*
+    02.END PRODUCT
+*===================================*/
+/*
+
+
+
+
+
+
+
+
+
+
+*/
+/*===================================*
+    03.START PRODUCT HOVER
+*===================================*/
+/* Game hover */
+.product-hover {
+    position: absolute;
+    display: none;
+    background: linear-gradient(
+        to bottom,
+        rgba(227, 234, 239, 1) 0%,
+        rgba(199, 213, 224, 1) 100%
+    );
+    border: 1px solid #ccc;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 400px;
+    padding: 5px 12px 0 12px;
+    transition: opacity 0.3s ease;
+    z-index: 1000;
+}
+
+.product-hover.active {
+    display: block;
+    opacity: 1;
+}
+
+.product-hover-content {
+    padding: 16px 8px;
+}
+
+.product-hover > .arrow-left {
+    position: absolute;
+    top: 48px;
+    left: -9px;
+    width: 7px;
+    height: 15px;
+    background: url("/assets/icons/arrow-left.png") no-repeat center;
+    background-position: left;
+    z-index: 1000;
+}
+
+.product-hover > .arrow-right {
+    position: absolute;
+    top: 48px;
+    right: -9px;
+    width: 7px;
+    height: 15px;
+    background: url("/assets/icons/arrow-right.png") no-repeat center;
+    background-position: right;
+    z-index: 1000;
+}
+
+.hover_product h4.hover_title {
+    color: #222d3d;
+    font-weight: normal;
+    font-size: 25px;
+    font-family: "Motiva Sans", Sans-serif;
+    font-weight: normal;
+    text-transform: unset;
+    letter-spacing: 0px;
+    margin-top: -4px;
+    line-height: 1.2;
+    margin-bottom: 4px;
+}
+
+.hover_product .hover_release {
+    font-size: 14px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.hover_screenshots {
+    position: relative;
+    width: 100%;
+    height: 180px;
+    margin: 5px 0;
+}
+
+.hover_screenshots .screenshot {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center center;
+    opacity: 0;
+    transition: opacity 0.5 ease;
+    animation: screenshot_hover_fadein 8s linear;
+    animation-iteration-count: infinite;
+}
+
+.hover_screenshots .screenshot:nth-child(1) {
+    animation-delay: 0s;
+}
+
+.hover_screenshots .screenshot:nth-child(2) {
+    animation-delay: 2s;
+}
+
+.hover_screenshots .screenshot:nth-child(3) {
+    animation-delay: 4s;
+}
+
+.hover_screenshots .screenshot:nth-child(4) {
+    animation-delay: 6s;
+}
+
+.hover-body {
+    margin-bottom: 6px;
+}
+
+.hover_tag_row {
+    overflow: hidden;
+    height: 33px;
+    margin-top: 2px;
+}
+
+.hover_tag_row .app_tag {
+    background-color: #96a3ae;
+    color: rgba(227, 234, 239, 1);
+    box-shadow: none;
+    padding: 6px 8px;
+    font-size: 16px;
+    border-radius: 2px;
+}
+
+.app_tag {
+    display: inline-block;
+    line-height: 19px;
+    padding: 0 7px;
+    color: #b0aeac;
+    background-color: #384959;
+    margin-right: 2px;
+    border-radius: 3px;
+    box-shadow: 1px 1px 0 0 #000000;
+    cursor: pointer;
+    margin-bottom: 3px;
+    max-width: 200px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+@keyframes screenshot_hover_fadein {
+    0% {
+        opacity: 0;
+    }
+    12.5% {
+        opacity: 1;
+    }
+    35% {
+        opacity: 1;
+    }
+    37.5% {
+        opacity: 0;
+    }
+}
+/*===================================*
+    03.END PRODUCT HOVER
+*===================================*/

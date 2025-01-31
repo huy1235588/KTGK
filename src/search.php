@@ -325,8 +325,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
                                                             $originPrice = $product['price'] / (1 - $product['discount'] / 100);
                                                             if ($product['price'] && htmlspecialchars($product['discount']) > 0):
                                                             ?>
-
-                                                                <?= number_format($originPrice, 2) ?>
+                                                                $<?= number_format($originPrice, 2) ?>
                                                             <?php endif ?>
                                                         </span>
                                                     </div>

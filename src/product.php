@@ -911,8 +911,7 @@ DongKetNoi($conn);
                                         $originPrice = $sp['price'] / (1 - $sp['discount'] / 100);
                                         if ($sp['price'] && htmlspecialchars($sp['discount']) > 0):
                                         ?>
-
-                                            <?= number_format($originPrice, 2) ?>
+                                            $<?= number_format($originPrice, 2) ?>
                                         <?php endif ?>
                                     </span>
                                 </div>

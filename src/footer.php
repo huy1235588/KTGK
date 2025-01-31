@@ -155,7 +155,7 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin: 20px auto;
+        margin: 10px auto;
     }
 
     .footer-item:first-child {

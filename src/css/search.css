@@ -218,6 +218,7 @@ h1 {
 
 .product-item:hover {
     border-color: #d63384;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
 }
 
 .product-item:hover .product-title {
