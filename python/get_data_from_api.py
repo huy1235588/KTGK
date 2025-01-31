@@ -6,6 +6,7 @@ import random
 # Định nghĩa GraphQL API endpoint và truy vấn
 # API_URL = "https://mail.lehuy.id.vn/graphql"
 API_URL = "http://localhost:3001/graphql"
+
 QUERY = """
 query {
     products {
@@ -102,15 +103,35 @@ def json_to_sql(data, output_file):
     genres_list = []  # List genres
     tags_list = []
     features_list = []
+    type_list = [
+        {"id": 1, "name": "Game"},
+        {"id": 2, "name": "Software"},
+        {"id": 3, "name": "Dlc"},
+        {"id": 4, "name": "Demo"},
+        {"id": 5, "name": "Video"},
+        {"id": 6, "name": "Music"},
+        {"id": 7, "name": "Other"},
+    ]
+
+    # Process types
+    with open(f"{output_file}_type.sql", "w", encoding="utf-8") as file:
+        insert_statement = f"INSERT INTO types (id, name) VALUES\n"
+        value_list = [f"({item['id']}, '{item['name']}')" for item in type_list]
+        insert_statement += ",\n".join(value_list) + ";"
+        file.write(insert_statement)
+        print("Đã ghi câu lệnh SQL vào tệp 'insert_type.sql'")
 
     # Process products
     with open(f"{output_file}_product.sql", "w", encoding="utf-8") as file:
-        insert_statement = f"INSERT INTO products (id, title, type, description, detail, price, discount, discountStartDate, discountEndDate, releaseDate, rating, isActive, headerImage) VALUES\n"
+        insert_statement = f"INSERT INTO products (id, title, type_id, description, detail, price, discount, discountStartDate, discountEndDate, releaseDate, rating, isActive, headerImage) VALUES\n"
         value_list = []
         for product in data["data"]["products"]:
             product_id = product["_id"]
             title = product["title"].replace("'", "''")
-            ptype = product["type"].replace("'", "''")
+            type_id = next(
+                (item["id"] for item in type_list if item["name"] == product["type"]),
+                "NULL",
+            )
             description = product["description"].replace("'", "''")
             # Thêm dấu nháy đơn vào đầu và cuối chuỗi nếu có
             detail = (
@@ -132,19 +153,19 @@ def json_to_sql(data, output_file):
             )
             if product["releaseDate"]:
                 releaseDate = f"'{datetime.fromtimestamp(int(product['releaseDate']) / 1000).strftime('%Y-%m-%d')}'"
-                
+
             if product["rating"]:
                 rating = product["rating"]
             else:
                 # Ngẫu nhiên sinh điểm rating từ 0 đến 5
                 rating = round(random.uniform(0, 5), 1)
-                
+
             isActive = "TRUE" if product["isActive"] else "FALSE"
             headerImage = product["headerImage"].replace("'", "''")
 
             # Insert product
             value_list.append(
-                f"({product_id}, '{title}', '{ptype}', '{description}', {detail}, {price}, {discount}, {discountStartDate}, {discountEndDate}, {releaseDate}, {rating}, {isActive}, '{headerImage}')"
+                f"({product_id}, '{title}', '{type_id}', '{description}', {detail}, {price}, {discount}, {discountStartDate}, {discountEndDate}, {releaseDate}, {rating}, {isActive}, '{headerImage}')"
             )
         # Ghi câu lệnh insert vào file
         insert_statement += ",\n".join(value_list) + ";"
@@ -413,7 +434,9 @@ def achievements_to_sql(data, output_file):
 
                 # steamcommunity/public/images/apps/2440380/faf.jpg -> 2440380/faf.jpg
                 if ach["image"]:
-                    image = ach["image"].split("/")[-2] + "/" + ach["image"].split("/")[-1]
+                    image = (
+                        ach["image"].split("/")[-2] + "/" + ach["image"].split("/")[-1]
+                    )
                 else:
                     image = "NULL"
 

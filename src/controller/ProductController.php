@@ -120,6 +120,16 @@ class ProductController
         return $results;
     }
 
+    // Hàm lấy kiểu của sản phẩm theo ID
+    public function getTypes()
+    {
+        $sql = "SELECT * FROM types";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute();
+        $result = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+        return $result;
+    }
+
     // Hàm lấy tất cả các thể loại
     public function getGenres()
     {

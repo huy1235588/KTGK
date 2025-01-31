@@ -25,11 +25,17 @@ function TaoDatabaseVaTable()
         role varchar(10) DEFAULT 'user' 
     )";
 
+    // SQL tạo bảng type nếu chưa tồn tại
+    $sqlType = "CREATE TABLE IF NOT EXISTS types (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        name VARCHAR(100) NOT NULL
+    )";
+
     // SQL tạo bảng products nếu chưa tồn tại
     $sqlProducts = "CREATE TABLE IF NOT EXISTS products (
         id INT AUTO_INCREMENT PRIMARY KEY,
         title VARCHAR(255) NOT NULL,
-        type VARCHAR(255),
+        type_id INT,
         description TEXT,
         detail TEXT,
         price DECIMAL(10, 2) DEFAULT 0,
@@ -41,7 +47,8 @@ function TaoDatabaseVaTable()
         isActive BOOLEAN DEFAULT TRUE,
         headerImage VARCHAR(255) NOT NULL,
         createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
-        updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+        updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+        FOREIGN KEY (type_id) REFERENCES types(id) ON DELETE SET NULL
     )";
 
     // Bảng product_developers
@@ -188,6 +195,7 @@ function TaoDatabaseVaTable()
 
     $sqlArray = [
         $sqlUsers,
+        $sqlType,
         $sqlProducts,
         $sqlProductDevelopers,
         $sqlProductPublishers,
@@ -253,6 +261,7 @@ echo "Database và các bảng đã được tạo thành công!<br><br>";
 // Danh sách các file chứa dữ liệu cần chèn
 $list_tables = [
     "../../database/insert_user.sql",
+    "../../database/insert_type.sql",
     "../../database/insert_product.sql",
     "../../database/insert_developer.sql",
     "../../database/insert_publisher.sql",
