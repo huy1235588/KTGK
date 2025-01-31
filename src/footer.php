@@ -155,6 +155,7 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
+        margin: 20px auto;
     }
 
     .footer-item:first-child {
@@ -264,6 +265,7 @@
     .footer-section {
         display: flex;
         justify-content: space-between;
+        margin: 10px auto;
     }
 
     .footer-copyright {

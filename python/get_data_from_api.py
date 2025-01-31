@@ -1,6 +1,7 @@
 import requests
 from datetime import datetime
 import os
+import random
 
 # Định nghĩa GraphQL API endpoint và truy vấn
 # API_URL = "https://mail.lehuy.id.vn/graphql"
@@ -131,7 +132,13 @@ def json_to_sql(data, output_file):
             )
             if product["releaseDate"]:
                 releaseDate = f"'{datetime.fromtimestamp(int(product['releaseDate']) / 1000).strftime('%Y-%m-%d')}'"
-            rating = product["rating"]
+                
+            if product["rating"]:
+                rating = product["rating"]
+            else:
+                # Ngẫu nhiên sinh điểm rating từ 0 đến 5
+                rating = round(random.uniform(0, 5), 1)
+                
             isActive = "TRUE" if product["isActive"] else "FALSE"
             headerImage = product["headerImage"].replace("'", "''")
 

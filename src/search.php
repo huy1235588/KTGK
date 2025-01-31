@@ -38,18 +38,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     ORDER BY $sort $order
     LIMIT $limit OFFSET $offset
     ";
+    
+    // Thực thi truy vấn
+    $products = $conn->query($sql);
 
     // Tính tổng số trang
     $countSql = "SELECT COUNT(*) as total 
         FROM products 
-        WHERE title LIKE '%$search%' AND isActive = 1
+        WHERE isActive = 1 AND
+        (title LIKE '%$search%' OR description LIKE '%$search%')
+        AND price >= $min_price AND price <= $max_price
+        AND rating >= $min_rating
+        AND discount >= $min_discount
+        AND releaseDate >= '$min_release' AND releaseDate <= '$max_release'
     ";
+
+    // Thực thi truy vấn
     $countResult = $conn->query($countSql);
     $total = $countResult->fetch_assoc()['total'];
     $totalPages = ceil($total / $limit);
-
-    // Thực thi truy vấn
-    $products = $conn->query($sql);
 
     // Khởi tạo đối tượng ProductController
     $productController = new ProductController($conn);
@@ -388,8 +395,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 
                     <!-- Discount -->
                     <div class="fancy-range">
-                        <label for="js-input-discount">Discount: <span id="js-value-discount">>0</span>%</label>
-                        <input type="range" class="fancy-range-input" id="js-input-discount" name="min_discount" min="0" max="95" step="5" value="<?= htmlspecialchars($_GET['min_discount'] ?? 0) ?>">
+                        <label for="js-input-discount">Discount: <span id="js-value-discount"><?php
+                                                                                                if ($_GET['min_discount'] > 0) echo "≥";
+                                                                                                else echo ">";
+                                                                                                echo htmlspecialchars($_GET['min_discount'] ?? 0)
+                                                                                                ?></span>%</label>
+                        <input type="range"
+                            class="fancy-range-input"
+                            id="js-input-discount"
+                            name="min_discount"
+                            min="0"
+                            max="95"
+                            step="5"
+                            value="<?= htmlspecialchars($_GET['min_discount'] ?? 0) ?>">
                     </div>
 
                     <!-- Release date -->
@@ -531,12 +549,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
                             <!-- Scrollable -->
                             <div class="filter-scrollable">
                                 <?php foreach ($productController->getFeatures() as $feature):
-                                    $isChecked = isset($_GET['feature']) && $feature['feature'] === $_GET['feature'];
+                                    $featureChecked = isset($_GET['feature']) ? explode(',', $_GET['feature']) : [];
+                                    $isChecked = isset($_GET['feature']) && in_array($feature['id'], $featureChecked);
                                 ?>
                                     <label class="filter-checkbox">
-                                        <input type="checkbox" name="category" value="<?= htmlspecialchars($feature['feature']) ?>" <?= $isChecked ? 'checked' : '' ?>>
+                                        <input type="checkbox" name="category" value="<?= htmlspecialchars($feature['id']) ?>" <?= $isChecked ? 'checked' : '' ?>>
                                         <span class="filter-checkbox-text">
-                                            <?= htmlspecialchars($feature['feature']) ?>
+                                            <?= htmlspecialchars($feature['name']) ?>
                                         </span>
                                         <span class="filter-exclude-checkbox"></span>
                                     </label>
@@ -569,12 +588,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
                             <!-- Scrollable -->
                             <div class="filter-scrollable">
                                 <?php foreach ($productController->getLanguages() as $language):
-                                    $isChecked = isset($_GET['language']) && $language['language'] === $_GET['language'];
+                                    $languageChecked = isset($_GET['language']) ? explode(',', $_GET['language']) : [];
+                                    $isChecked = isset($_GET['language']) && in_array($language['id'], $languageChecked);
                                 ?>
                                     <label class="filter-checkbox">
-                                        <input type="checkbox" name="category" value="<?= htmlspecialchars($language['language']) ?>" <?= $isChecked ? 'checked' : '' ?>>
+                                        <input type="checkbox" name="category" value="<?= htmlspecialchars($language['id']) ?>" <?= $isChecked ? 'checked' : '' ?>>
                                         <span class="filter-checkbox-text">
-                                            <?= htmlspecialchars($language['language']) ?>
+                                            <?= htmlspecialchars($language['name']) ?>
                                         </span>
                                         <span class="filter-exclude-checkbox"></span>
                                     </label>

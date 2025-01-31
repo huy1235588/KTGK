@@ -102,6 +102,13 @@ class ProductController
                 WHERE product_id = ?";
             }
 
+            if ($table === 'product_features') {
+                $sql = "SELECT * 
+                FROM product_features
+                JOIN features ON product_features.feature_id = features.id
+                WHERE product_id = ?";
+            }
+
             $stmt = $this->conn->prepare($sql);
             $stmt->bind_param("i", $id);
             $stmt->execute();
@@ -149,7 +156,12 @@ class ProductController
     // Hàm lấy tất cả features
     public function getFeatures()
     {
-        $stmt = $this->conn->prepare("SELECT DISTINCT feature FROM product_features");
+        $sql = "SELECT f.id, name, COUNT(*) as count
+        FROM features f
+        JOIN product_features pf ON f.id = pf.feature_id
+        GROUP BY name";
+
+        $stmt = $this->conn->prepare($sql);
         $stmt->execute();
         $result = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
         return $result;
@@ -158,7 +170,12 @@ class ProductController
     // Hàm lấy tất cả ngôn ngữ
     public function getLanguages()
     {
-        $stmt = $this->conn->prepare("SELECT DISTINCT language FROM product_languages");
+        $sql = "SELECT l.id, name, COUNT(*) as count
+        FROM languages l
+        JOIN product_languages pl ON l.id = pl.language_id
+        GROUP BY name";
+
+        $stmt = $this->conn->prepare($sql);
         $stmt->execute();
         $result = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
         return $result;
