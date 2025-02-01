@@ -4,13 +4,17 @@ $conn = MoKetNoi();
 
 session_start();
 
-// Lấy giỏ hàng từ session
-$sessionCart = isset($_SESSION['cart']) ? $_SESSION['cart'] : [];
+// Lấy giỏ hàng từ database
+$sql = "SELECT * 
+FROM cart
+WHERE user_id = {$_SESSION['user']['id']}";
+$result = mysqli_query($conn, $sql);
+$carts = mysqli_fetch_all($result, MYSQLI_ASSOC);
 
 $products = [];
-if (!empty($sessionCart)) {
+if (!empty($carts)) {
     // Lấy danh sách sản phẩm từ giỏ hàng
-    $productIds = array_column($sessionCart, 'productId');
+    $productIds = array_column($carts, 'product_id');
 
     // Chuyển mảng id sang chuỗi để truy vấn
     $productIdsString = implode(',', $productIds);
@@ -57,8 +61,8 @@ if (!empty($sessionCart)) {
 
 // Tạo giỏ hàng với thông tin sản phẩm đầy đủ
 $cart = [];
-foreach ($sessionCart as $item) {
-    $productId = $item['productId'];
+foreach ($carts as $item) {
+    $productId = $item['product_id'];
     if (isset($products[$productId])) {
         // Lấy thông tin sản phẩm
         $product = $products[$productId];

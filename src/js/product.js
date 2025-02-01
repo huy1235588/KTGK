@@ -169,6 +169,7 @@ document.addEventListener('DOMContentLoaded', () => {
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded'
             },
+            // Gửi dữ liệu productId và userId
             body: `productId=${productId}`
         });
 

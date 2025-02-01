@@ -5,6 +5,21 @@ if (!isset($_SESSION)) {
     session_start();
 }
 $currentUrl = urlencode($_SERVER['REQUEST_URI']);
+
+// Nếu MoKetNoi() đã tồn tại
+if (!function_exists('MoKetNoi')) {
+    include 'utils/db_connect.php';
+}
+$conn = MoKetNoi();
+
+// Lấy số lượng sản phẩm trong giỏ hàng từ database
+$sql = 'SELECT COUNT(*) AS quantity FROM cart WHERE user_id = ?';
+$stmt = $conn->prepare($sql);
+$stmt->bind_param('i', $_SESSION['user']['id']);
+$stmt->execute();
+$result = $stmt->get_result();
+$cartQuantity = $result->fetch_assoc()['quantity'];
+
 ?>
 
 <nav class="menu">
@@ -69,14 +84,14 @@ $currentUrl = urlencode($_SERVER['REQUEST_URI']);
                             const cartLink = document.querySelector('.cart-link');
 
                             // Hiển thị số lượng sản phẩm trong giỏ hàng
-                            cartQuantity.textContent = <?= isset($_SESSION['cart']) ? count($_SESSION['cart']) : 0 ?>;
+                            cartQuantity.textContent = <?= $cartQuantity ?>;
 
                             // Cập nhật hiển thị số lượng sản phẩm
                             function updateDisplay() {
                                 if (cartQuantity.textContent === '0') {
                                     cartQuantity.style.display = 'none';
                                 } else {
-                                    cartQuantity.style.display = 'block';
+                                    cartQuantity.style.display = 'flex';
                                 }
                             }
 

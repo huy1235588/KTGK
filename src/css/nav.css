@@ -215,15 +215,19 @@
     position: absolute;
     top: 0px;
     right: 0px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
     background-color: #f44336;
     color: white;
     border-radius: 50%;
-    padding: 3px;
     font-size: 0.75rem;
 }
 
 /* Account dropdown */
-.menu .menu-item.account:hover{
+.menu .menu-item.account:hover {
     color: #27c6ee;
 }
 

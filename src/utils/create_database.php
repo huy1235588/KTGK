@@ -292,8 +292,8 @@ $list_tables = [
     "../../database/insert_product_languages.sql"
 ];
 
-foreach ($list_tables as $table) {
-    ChenDuLieuTuFileSQL($table);
-}
+// foreach ($list_tables as $table) {
+//     ChenDuLieuTuFileSQL($table);
+// }
 
 echo "Dữ liệu đã được chèn thành công!";
