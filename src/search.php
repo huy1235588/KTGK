@@ -38,7 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     ORDER BY $sort $order
     LIMIT $limit OFFSET $offset
     ";
-    
+
     // Thực thi truy vấn
     $products = $conn->query($sql);
 
@@ -283,7 +283,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 
                                                     ?>
                                                         <img class="product-platform-icon"
-                                                            src="/assets/icons/platform/<?= htmlspecialchars($platform['platform']) ?>.svg"
+                                                            src="/assets/icons/platform/<?= htmlspecialchars($platform['name']) ?>.svg"
                                                             alt="">
                                                     <?php endforeach; ?>
                                                 </span>
@@ -395,10 +395,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
                     <!-- Discount -->
                     <div class="fancy-range">
                         <label for="js-input-discount">Discount: <span id="js-value-discount"><?php
-                                                                                                if ($_GET['min_discount'] > 0) echo "≥";
-                                                                                                else echo ">";
-                                                                                                echo htmlspecialchars($_GET['min_discount'] ?? 0)
-                                                                                                ?></span>%</label>
+                                                                        if (isset($_GET['min_discount']) && $_GET['min_discount'] > 0) {
+                                                                            echo "≥";
+                                                                        } else {
+                                                                            echo ">";
+                                                                        }
+                                                                        echo htmlspecialchars($_GET['min_discount'] ?? 0);
+                                                                        ?></span>%</label>
                         <input type="range"
                             class="fancy-range-input"
                             id="js-input-discount"
@@ -431,12 +434,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
                         <div class="filter-body">
                             <?php foreach ($productController->getPlatforms() as $platform):
                                 $platforms = $productController->getPlatforms();
-                                $isChecked = isset($_GET['platform']) && $platform['platform'] === $_GET['platform'];
+                                $isChecked = isset($_GET['platform']) && $platform['name'] === $_GET['platform'];
                             ?>
                                 <label class="filter-checkbox">
-                                    <input type="checkbox" name="platform" value="<?= htmlspecialchars($platform['platform']) ?>" <?= $isChecked ? 'checked' : '' ?>>
+                                    <input type="checkbox" name="platform" value="<?= htmlspecialchars($platform['name']) ?>" <?= $isChecked ? 'checked' : '' ?>>
                                     <span>
-                                        <?= htmlspecialchars($platform['platform']) ?>
+                                        <?= htmlspecialchars($platform['name']) ?>
                                     </span>
                                     <span class="filter-exclude-checkbox"></span>
                                 </label>

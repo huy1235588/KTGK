@@ -27,9 +27,10 @@ if (!empty($carts)) {
             p.price,
             p.discount,
             p.headerImage,
-            pp.platform
+            p2.name AS platform
         FROM products p
         LEFT JOIN product_platforms pp ON p.id = pp.product_id
+        LEFT JOIN platforms p2 ON pp.platform_id = p2.id
         WHERE p.id IN ($productIdsString)
     ";
 

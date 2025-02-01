@@ -160,7 +160,7 @@ $productDetails = $productController->getProductDetailsById($productId, $tables)
                 <span>
                     <?php
                     foreach ($productDetails['product_platforms'] as $platform) {
-                        echo $platform['platform'] . ', ';
+                        echo $platform['name'] . ', ';
                     }
                     ?>
                 </span>

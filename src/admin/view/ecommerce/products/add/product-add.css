@@ -50,6 +50,16 @@ Author       : LeThienHuy.
     margin: 1rem 0px 0.5rem;
 }
 
+.form-group-flex {
+    display: flex;
+    gap: 1rem;
+}
+
+.form-group-flex .form-group {
+    width: 50%;
+    margin: 0px;
+}
+
 .form-label {
     color: rgba(0, 0, 0, 0.7);
     font-family: Roboto, Helvetica, Arial, sans-serif;
@@ -134,11 +144,53 @@ Author       : LeThienHuy.
     outline: none;
 }
 
+/* disabled */
+.form-control:disabled {
+    color: rgba(0, 0, 0, 0.3);
+    cursor: not-allowed;
+}
+
+.form-control:disabled + .form-control-outline {
+    border-color: rgba(0, 0, 0, 0.3);
+}
+
 .form-control:focus + .form-control-outline {
     border-width: 2px;
     border-color: #5fa9e4;
 }
 
+.form-label-hint {
+    color: #ce0a0a;
+    font-family: Roboto, Helvetica, Arial, sans-serif;
+    font-size: 0.75rem;
+    line-height: 1.25;
+    letter-spacing: 0.03333em;
+    margin-top: 0.25rem;
+    margin-left: 0.125rem;
+    padding: 0px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: color 200ms cubic-bezier(0, 0, 0.2, 1);
+}
+/*===================================*
+    10.END MAIN CONTENT
+*===================================*/
+/*
+
+
+
+
+
+
+
+
+
+
+*/
+/*===================================*
+    11.START SELECT
+*===================================*/
 /* Select */
 .form-control-wrapper.select {
     font-family: Roboto, Helvetica, Arial, sans-serif;
@@ -424,5 +476,25 @@ Author       : LeThienHuy.
     }
 }
 /*===================================*
-    10.END MAIN CONTENT
+    11.END SELECT
+*===================================*/
+/*
+
+
+
+
+
+
+
+
+
+
+*/
+/*===================================*
+    12.START CALENDAR
+*===================================*/
+/* Calendar */
+
+/*===================================*
+    12.END CALENDAR
 *===================================*/

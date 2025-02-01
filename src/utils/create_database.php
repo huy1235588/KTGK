@@ -67,12 +67,19 @@ function TaoDatabaseVaTable()
         FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
     )";
 
+    // Bản platforms
+    $sqlPlatforms = "CREATE TABLE IF NOT EXISTS platforms (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        name VARCHAR(100) NOT NULL
+    )";
+
     // Bảng product_platforms
     $sqlProductPlatforms = "CREATE TABLE IF NOT EXISTS product_platforms (
         id INT AUTO_INCREMENT PRIMARY KEY,
         product_id INT NOT NULL,
-        platform VARCHAR(100) NOT NULL,
-        FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
+        platform_id INT NOT NULL,
+        FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE,
+        FOREIGN KEY (platform_id) REFERENCES platforms(id) ON DELETE CASCADE
     )";
 
     // Bảng product_screenshots
@@ -210,6 +217,7 @@ function TaoDatabaseVaTable()
         $sqlProducts,
         $sqlProductDevelopers,
         $sqlProductPublishers,
+        $sqlPlatforms,
         $sqlProductPlatforms,
         $sqlProductScreenshots,
         $sqlProductVideos,
@@ -277,7 +285,8 @@ $list_tables = [
     "../../database/insert_product.sql",
     "../../database/insert_developer.sql",
     "../../database/insert_publisher.sql",
-    "../../database/insert_platform.sql",
+    "../../database/insert_platforms.sql",
+    "../../database/insert_product_platforms.sql",
     "../../database/insert_screenshots.sql",
     "../../database/insert_videos.sql",
     "../../database/insert_genres.sql",
@@ -292,8 +301,8 @@ $list_tables = [
     "../../database/insert_product_languages.sql"
 ];
 
-// foreach ($list_tables as $table) {
-//     ChenDuLieuTuFileSQL($table);
-// }
+foreach ($list_tables as $table) {
+    ChenDuLieuTuFileSQL($table);
+}
 
 echo "Dữ liệu đã được chèn thành công!";

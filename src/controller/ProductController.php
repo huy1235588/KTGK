@@ -88,6 +88,13 @@ class ProductController
         foreach ($tables as $table) {
             $sql = "SELECT * FROM $table WHERE product_id = ?";
 
+            if ($table === 'product_platforms') {
+                $sql = "SELECT *
+                FROM platforms
+                JOIN product_platforms ON platforms.id = product_platforms.platform_id
+                WHERE product_platforms.product_id = ?";
+            }
+
             if ($table === 'product_genres') {
                 $sql = "SELECT *
                 FROM genres
@@ -143,7 +150,8 @@ class ProductController
     // Hàm lấy tất cả platform
     public function getPlatforms()
     {
-        $stmt = $this->conn->prepare("SELECT DISTINCT platform FROM product_platforms");
+        $sql = "SELECT * FROM platforms";
+        $stmt = $this->conn->prepare($sql);
         $stmt->execute();
         $result = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
         return $result;

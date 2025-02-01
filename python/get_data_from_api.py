@@ -112,6 +112,11 @@ def json_to_sql(data, output_file):
         {"id": 6, "name": "Music"},
         {"id": 7, "name": "Other"},
     ]
+    platform_list = [
+        {"id": 1, "name": "Windows"},
+        {"id": 2, "name": "Mac"},
+        {"id": 3, "name": "Linux"},
+    ]
 
     # Process types
     with open(f"{output_file}_type.sql", "w", encoding="utf-8") as file:
@@ -215,9 +220,9 @@ def json_to_sql(data, output_file):
         print("Đã ghi câu lệnh SQL vào tệp 'insert_publisher.sql'")
 
     # insert platform in a single statement
-    with open(f"{output_file}_platform.sql", "w", encoding="utf-8") as file:
+    with open(f"{output_file}_product_platforms.sql", "w", encoding="utf-8") as file:
         insert_statement = (
-            "INSERT INTO product_platforms (product_id, platform) VALUES\n"
+            "INSERT INTO product_platforms (product_id, platform_id) VALUES\n"
         )
         value_list = []
         # Duyệt qua từng sản phẩm, nếu có platform thì thêm vào list
@@ -225,15 +230,29 @@ def json_to_sql(data, output_file):
             if product["platform"]:
                 # Duyệt qua từng platform của sản phẩm
                 for platform in product["platform"]:
+                    platform_id = next(
+                        (item["id"] for item in platform_list if item["name"] == platform),
+                        "NULL",
+                    )
+                    
                     # Thêm vào list một tuple (product_id, platform)
                     value_list.append(
-                        f"({product['_id']}, '{platform.replace('\'', '\'\'')}')"
+                        f"({product['_id']}, '{platform_id}')"
                     )
         # Ghi list platforms vào file
         insert_statement += ",\n".join(value_list) + ";\n"
         # Ghi câu lệnh insert vào file
         file.write(insert_statement)
-        print("Đã ghi câu lệnh SQL vào tệp 'insert_platform.sql'")
+        print("Đã ghi câu lệnh SQL vào tệp 'insert_product_platforms.sql'")
+        
+         # Ghi list platforms vào file platforms
+        with open(f"{output_file}_platforms.sql", "w", encoding="utf-8") as file_platforms:
+            file_platforms.write(f"INSERT INTO platforms (id, name) VALUES\n")
+            platforms_values = ",\n".join(
+                [f"({item['id']}, '{item['name']}')" for item in platform_list]
+            )
+            file_platforms.write(platforms_values + ";\n")
+        print("Đã ghi câu lệnh SQL vào tệp 'insert_platforms.sql'")
 
     # Insert genres in a single statement
     with open(f"{output_file}_product_genres.sql", "w", encoding="utf-8") as file:
