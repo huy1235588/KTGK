@@ -19,7 +19,7 @@ function TaoDatabaseVaTable()
         gender ENUM('Nam', 'Nữ') NOT NULL,
         birthday DATE,
         avatar VARCHAR(255) DEFAULT 'uploads/default_avatar.png',
-        username VARCHAR(50) NOT NULL UNIQUE,
+        userName VARCHAR(50) NOT NULL UNIQUE,
         password VARCHAR(255) NOT NULL,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         role varchar(10) DEFAULT 'user' 
@@ -193,6 +193,17 @@ function TaoDatabaseVaTable()
         FOREIGN KEY (language_id) REFERENCES languages(id) ON DELETE CASCADE
     )";
 
+    // Bảng cart
+    $sqlCart = "CREATE TABLE IF NOT EXISTS cart (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        user_id INT NOT NULL,
+        product_id INT NOT NULL,
+        createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+        FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
+    )";
+
+    // Mảng chứa các câu lệnh SQL
     $sqlArray = [
         $sqlUsers,
         $sqlType,
@@ -212,7 +223,8 @@ function TaoDatabaseVaTable()
         $sqlProductReviews,
         $sqlProductAchievements,
         $sqlLanguages,
-        $sqlProductLanguages
+        $sqlProductLanguages,
+        $sqlCart
     ];
 
     foreach ($sqlArray as $sql) {

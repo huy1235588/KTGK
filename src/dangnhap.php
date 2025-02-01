@@ -45,8 +45,9 @@ include 'components/notification.php';
             $user = $result->fetch_assoc(); // Lấy dữ liệu người dùng
 
             // Lưu username vào session
-            $_SESSION['username'] = $username;
-            $_SESSION['role'] = $user['role'];
+            $_SESSION['user']['id'] = $user['id'];
+            $_SESSION['user']['username'] = $user['userName'];
+            $_SESSION['user']['role'] = $user['role'];
 
             $stmt->close();
             DongKetNoi($conn);

@@ -218,47 +218,12 @@
     background-color: #f44336;
     color: white;
     border-radius: 50%;
-    padding: 2px 5px;
+    padding: 3px;
     font-size: 0.75rem;
 }
 
-.cart-quantity-wrapper {
-    position: relative;
-    display: inline-block;
-    width: 20px;
-    height: 20px;
-    overflow: hidden;
-}
-
-.cart-quantity {
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-    transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
-    font-weight: bold;
-    font-size: 16px;
-}
-
-.old-quantity {
-    top: 0;
-}
-
-.new-quantity {
-    top: -100%;
-}
-
-.slide-down {
-    transform: translateX(-50%) translateY(100%);
-    opacity: 0;
-}
-
-.slide-up {
-    transform: translateX(-50%) translateY(0%);
-    opacity: 1;
-}
-
 /* Account dropdown */
-.menu .menu-item.account:hover {
+.menu .menu-item.account:hover{
     color: #27c6ee;
 }
 

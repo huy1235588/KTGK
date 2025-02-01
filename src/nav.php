@@ -56,8 +56,8 @@ $currentUrl = urlencode($_SERVER['REQUEST_URI']);
             </div>
         </li>
 
-        <?php if (isset($_SESSION['username'])): ?>
-            <?php if (isset($_SESSION['role']) && $_SESSION['role'] === 'user'): ?>
+        <?php if (isset($_SESSION['user']['username'])): ?>
+            <?php if (isset($_SESSION['user']['role']) && $_SESSION['user']['role'] === 'user'): ?>
                 <li class="menu-item">
                     <a href="cart.php" class="cart-link">
                         Cart
@@ -108,7 +108,7 @@ $currentUrl = urlencode($_SERVER['REQUEST_URI']);
             <li class="menu-item account">
                 <div class="username">
                     Hello
-                    <?= htmlspecialchars($_SESSION['username']) ?>
+                    <?= htmlspecialchars($_SESSION['user']['username']) ?>
                 </div>
                 <div class="account-dropdown hs-hidden">
                     <ul class="account-dropdown-list">
@@ -117,7 +117,7 @@ $currentUrl = urlencode($_SERVER['REQUEST_URI']);
                         </h6>
 
                         <li class="account-dropdown-item">
-                            <a href="profile.php?id=<?= $_SESSION['username'] ?>">
+                            <a href="profile.php?id=<?= $_SESSION['user']['username'] ?>">
                                 <div class="icon">
                                     <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 24 24" font-size="20px" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
                                         <path d="M20 2H8a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2zm-6 2.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5zM19 15H9v-.25C9 12.901 11.254 11 14 11s5 1.901 5 3.75V15z"></path>

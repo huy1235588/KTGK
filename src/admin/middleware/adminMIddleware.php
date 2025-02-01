@@ -3,7 +3,7 @@ function adminMiddleware()
 {
     session_start();
 
-    if (!isset($_SESSION['userId']) || $_SESSION['role'] !== 'admin') {
+    if (!isset($_SESSION['userId']) || $_SESSION['user']['role'] !== 'admin') {
         exit();
     }
 }

@@ -65,7 +65,7 @@
                                         <a href="product.php?id=<?= htmlspecialchars($product['product_id']) ?>">
                                             <!-- Image -->
                                             <div class="product-img-container">
-                                                <div class="skeleton-wrapper" style="--skeleton-height: 150px;">
+                                                <div class="skeleton-wrapper product-img-skeleton">
                                                     <!-- Skeleton loader -->
                                                     <div class="skeleton skeleton-img"></div>
 
@@ -76,6 +76,33 @@
                                                         alt="<?= htmlspecialchars($product['title']) ?>"
                                                         loading="lazy" />
                                                 </div>
+                                                <script>
+                                                    document.addEventListener("DOMContentLoaded", function() {
+                                                        const productImg = document.querySelector('.product-img');
+                                                        const skeletonWrapper = document.querySelectorAll('.skeleton-wrapper.product-img-skeleton');
+
+                                                        // Hàm cập nhật chiều cao của skeleton
+                                                        const updateSkeletonHeight = () => {
+                                                            const imgHeight = productImg.offsetHeight;
+                                                            
+                                                            // Set chiều cao cho skeleton loader
+                                                            skeletonWrapper.forEach(function(wrapper) {
+                                                                wrapper.style.setProperty('--skeleton-height', `${imgHeight}px`);
+                                                            });
+                                                        };
+
+                                                        // Cập nhật chiều cao khi hình ảnh tải xong
+                                                        // productImg.onload = updateSkeletonHeight;
+
+                                                        // Cập nhật chiều cao khi kích thước màn hình thay đổi
+                                                        window.addEventListener('resize', updateSkeletonHeight);
+
+                                                        // Nếu ảnh đã load xong thì gọi hàm onload
+                                                        if (productImg.complete) {
+                                                            productImg.onload();
+                                                        }
+                                                    });
+                                                </script>
                                             </div>
                                             <!-- Product info -->
                                             <div class="product-info">

@@ -117,8 +117,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 
     <script>
         var sessionCart = <?= json_encode($_SESSION['cart'] ?? []) ?>;
-        var sessionUsername = <?= json_encode($_SESSION['username'] ?? '') ?>;
-        var sessionRole = <?= json_encode($_SESSION['role'] ?? '') ?>;
+        var sessionUsername = <?= json_encode($_SESSION['user']['username'] ?? '') ?>;
+        var sessionRole = <?= json_encode($_SESSION['user']['role'] ?? '') ?>;
 
         // Pagination
         var totalPages = <?= $totalPages ?>;
