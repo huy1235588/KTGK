@@ -181,8 +181,8 @@ function addToCart() {
     * @example updateCartQuantity(5) // Thêm 5 sản phẩm vào giỏ hàng
     */
     function updateCartQuantity(count) {
-        const cartquantity = document.querySelector('.cart-quantity');
-        cartquantity.textContent = parseInt(cartquantity.textContent) + count;
+        const cartQuantity = document.querySelector('.cart-quantity');
+        cartQuantity.textContent = parseInt(cartQuantity.textContent) + count;
     }
 
     /**

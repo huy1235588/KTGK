@@ -1,3 +1,5 @@
+<div id="notification-container" class="notification-container"></div>
+
 <footer class="footer">
     <ul class="footer-list container">
         <li class="footer-item">

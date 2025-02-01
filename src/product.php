@@ -272,75 +272,8 @@ DongKetNoi($conn);
     DongKetNoi($conn);
     ?>
 
-    <!-- Xử lý thêm vào giỏ hàng -->
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const cartBtn = document.querySelector('.cart-btn');
-            if (!cartBtn) return; // Kiểm tra nếu nút không tồn tại
-
-            const productId = cartBtn.dataset.id;
-            const sessionCart = <?php echo json_encode($_SESSION['cart']); ?> || [];
-            const cartProductIds = sessionCart.map(item => item.productId);
-
-            let isProductInCart = cartProductIds.includes(productId);
-
-            // Cập nhật giao diện nút nếu sản phẩm đã trong giỏ hàng
-            if (isProductInCart) {
-                updateCartButton(cartBtn, true);
-            }
-
-            // Xử lý sự kiện click
-            cartBtn.addEventListener('click', () => {
-                if (isProductInCart) {
-                    window.location.href = 'cart.php';
-                } else {
-                    addToCart(productId).then(message => {
-                        setNotification(message, 'success');
-                        updateCartButton(cartBtn, true);
-                        isProductInCart = true;
-                    }).catch(error => {
-                        setNotification(error.message, 'error');
-                    });
-                }
-            });
-        });
-
-        /**
-         * Gửi yêu cầu thêm sản phẩm vào giỏ hàng
-         * @param {string} productId - ID của sản phẩm
-         * @returns {Promise<string>} - Trả về thông báo thành công hoặc lỗi
-         */
-        async function addToCart(productId) {
-            const response = await fetch('api/cart.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded'
-                },
-                body: `productId=${productId}`
-            });
-
-            if (!response.ok) {
-                throw new Error('Failed to add product to cart');
-            }
-
-            const data = await response.json();
-            return data.message;
-        }
-
-        /**
-         * Cập nhật giao diện nút giỏ hàng
-         * @param {HTMLElement} button - Nút cần cập nhật
-         * @param {boolean} inCart - Trạng thái sản phẩm trong giỏ hàng
-         */
-        function updateCartButton(button, inCart) {
-            if (inCart) {
-                button.textContent = 'VIEW IN CART';
-                button.classList.add('view-cart-btn');
-            } else {
-                button.textContent = 'ADD TO CART';
-                button.classList.remove('view-cart-btn');
-            }
-        }
+        const sessionCart = <?php echo json_encode($_SESSION['cart']); ?> || [];
     </script>
 
     <!-- Content -->
@@ -446,7 +379,7 @@ DongKetNoi($conn);
                     </h2>
 
                     <div class="tag-container">
-                        <?php for ($i = 0; $i < 8; $i++): ?>
+                        <?php for ($i = 0; $i < 6; $i++): ?>
                             <a href="tags.php?tag=<?= htmlspecialchars($tags[$i]['id']) ?>" class="tag">
                                 <?= htmlspecialchars($tags[$i]['tag']) ?>
                             </a>

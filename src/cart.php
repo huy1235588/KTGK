@@ -106,7 +106,6 @@ DongKetNoi($conn);
     <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
     <script src="https://www.youtube.com/iframe_api"></script>
-    <script src="components/notification.js"></script>
 </head>
 
 <body>
