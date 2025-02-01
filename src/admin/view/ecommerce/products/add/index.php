@@ -381,7 +381,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                             <div class="dropdown-select-item-text">
                                 <span class="dropdown-select-item-text-primary">
-                                    <?php echo $platform['platform']; ?>
+                                    <?php echo $platform['name']; ?>
                                 </span>
                             </div>
                         </li>
