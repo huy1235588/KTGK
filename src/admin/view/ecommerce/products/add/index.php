@@ -19,11 +19,20 @@ $conn = MoKetNoi();
 // Khởi tạo ProductController
 $productController = new ProductController($conn);
 
-// Lấy tất cả thể loại
+// Lấy tất cả types
 $types = $productController->getTypes();
 
 // Lấy tất cả platform
 $platforms = $productController->getPlatforms();
+
+// Lấy tất cả genres
+$genres = $productController->getGenres();
+
+// Lấy tất cả tags
+$tags = $productController->getTags();
+
+// Lấy tất cả features
+$features = $productController->getFeatures();
 
 // Xử lý form
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -338,7 +347,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         </div>
 
         <!-- Platform -->
-        <div class="form-group form-group-select">
+        <div class="form-group form-group-select-multiple">
             <label for="platform" class="form-label">
                 Platform
             </label>
@@ -382,6 +391,198 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             <div class="dropdown-select-item-text">
                                 <span class="dropdown-select-item-text-primary">
                                     <?php echo $platform['name']; ?>
+                                </span>
+                            </div>
+                        </li>
+                    <?php endforeach; ?>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Genres -->
+        <div class="form-group form-group-select-multiple">
+            <label for="genres" class="form-label">
+                Genres
+            </label>
+            <div class="form-control-wrapper select">
+                <div tabindex="0"
+                    role="combobox"
+                    id="genres"
+                    class="select-box">
+                    <div class="select-value">
+                        <em style="color: gray;">Select Genres</em>
+                    </div>
+                </div>
+                <input class="form-control-select"
+                    id="genres"
+                    name="genres">
+
+                <svg class="select-icon"
+                    focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="ArrowDropDownIcon">
+                    <path d="M7 10l5 5 5-5z"></path>
+                </svg>
+
+                <fieldset class="form-control-outline"></fieldset>
+            </div>
+
+            <!-- Dropdown -->
+            <div class="dropdown-select-menu">
+                <!-- Search -->
+                <div class="filter-select-search">
+                    <input type="search"
+                        autocomplete="off"
+                        autocorrect="off"
+                        autocapitilize="off"
+                        spellcheck="false"
+                        placeholder="Search">
+                </div>
+
+                <!-- List -->
+                <ul class="dropdown-select-list">
+                    <?php foreach ($genres as $genre) : ?>
+                        <li class="dropdown-select-item">
+                            <span class="dropdown-select-item-checkbox-wrapper">
+                                <input
+                                    class="dropdown-select-item-checkbox"
+                                    data-indeterminate="false"
+                                    type="checkbox">
+
+                                <svg class="dropdown-select-icon" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="CheckBoxOutlineBlankIcon">
+                                    <path d="M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"></path>
+                                </svg>
+                            </span>
+
+                            <div class="dropdown-select-item-text">
+                                <span class="dropdown-select-item-text-primary">
+                                    <?php echo $genre['name']; ?>
+                                </span>
+                            </div>
+                        </li>
+                    <?php endforeach; ?>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Tags -->
+        <div class="form-group form-group-select-multiple">
+            <label for="tags" class="form-label">
+                Tags
+            </label>
+            <div class="form-control-wrapper select">
+                <div tabindex="0"
+                    role="combobox"
+                    id="tags"
+                    class="select-box">
+                    <div class="select-value">
+                        <em style="color: gray;">Select Tags</em>
+                    </div>
+                </div>
+                <input class="form-control-select"
+                    id="tags"
+                    name="tags">
+
+                <svg class="select-icon"
+                    focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="ArrowDropDownIcon">
+                    <path d="M7 10l5 5 5-5z"></path>
+                </svg>
+
+                <fieldset class="form-control-outline"></fieldset>
+            </div>
+
+            <!-- Dropdown -->
+            <div class="dropdown-select-menu">
+                 <!-- Search -->
+                 <div class="filter-select-search">
+                    <input type="search"
+                        autocomplete="off"
+                        autocorrect="off"
+                        autocapitilize="off"
+                        spellcheck="false"
+                        placeholder="Search">
+                </div>
+
+                <!-- List -->
+                <ul class="dropdown-select-list">
+                    <?php foreach ($tags as $tag) : ?>
+                        <li class="dropdown-select-item">
+                            <span class="dropdown-select-item-checkbox-wrapper">
+                                <input
+                                    class="dropdown-select-item-checkbox"
+                                    data-indeterminate="false"
+                                    type="checkbox">
+
+                                <svg class="dropdown-select-icon" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="CheckBoxOutlineBlankIcon">
+                                    <path d="M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"></path>
+                                </svg>
+                            </span>
+
+                            <div class="dropdown-select-item-text">
+                                <span class="dropdown-select-item-text-primary">
+                                    <?php echo $tag['name']; ?>
+                                </span>
+                            </div>
+                        </li>
+                    <?php endforeach; ?>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Features -->
+        <div class="form-group form-group-select-multiple">
+            <label for="features" class="form-label">
+                Features
+            </label>
+            <div class="form-control-wrapper select">
+                <div tabindex="0"
+                    role="combobox"
+                    id="features"
+                    class="select-box">
+                    <div class="select-value">
+                        <em style="color: gray;">Select Features</em>
+                    </div>
+                </div>
+                <input class="form-control-select"
+                    id="features"
+                    name="features">
+
+                <svg class="select-icon"
+                    focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="ArrowDropDownIcon">
+                    <path d="M7 10l5 5 5-5z"></path>
+                </svg>
+
+                <fieldset class="form-control-outline"></fieldset>
+            </div>
+
+            <!-- Dropdown -->
+            <div class="dropdown-select-menu">
+                 <!-- Search -->
+                 <div class="filter-select-search">
+                    <input type="search"
+                        autocomplete="off"
+                        autocorrect="off"
+                        autocapitilize="off"
+                        spellcheck="false"
+                        placeholder="Search">
+                </div>
+
+                <!-- List -->
+                <ul class="dropdown-select-list">
+                    <?php foreach ($features as $feature) : ?>
+                        <li class="dropdown-select-item">
+                            <span class="dropdown-select-item-checkbox-wrapper">
+                                <input
+                                    class="dropdown-select-item-checkbox"
+                                    data-indeterminate="false"
+                                    type="checkbox">
+
+                                <svg class="dropdown-select-icon" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="CheckBoxOutlineBlankIcon">
+                                    <path d="M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"></path>
+                                </svg>
+                            </span>
+
+                            <div class="dropdown-select-item-text">
+                                <span class="dropdown-select-item-text-primary">
+                                    <?php echo $feature['name']; ?>
                                 </span>
                             </div>
                         </li>
