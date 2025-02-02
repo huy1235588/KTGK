@@ -44,6 +44,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $txtDiscountStartDate = htmlspecialchars($_POST['discount-start-date']);
     $txtDiscountEndDate = htmlspecialchars($_POST['discount-end-date']);
     $txtReleaseDate = htmlspecialchars($_POST['release-date']);
+    $txtDeveloper = htmlspecialchars($_POST['developer']);
+    $txtPublisher = htmlspecialchars($_POST['publisher']);
+    $txtPlatform = htmlspecialchars($_POST['platform']);
+    $txtGenres = htmlspecialchars($_POST['genres']);
+    $txtTags = htmlspecialchars($_POST['tags']);
+    $txtFeatures = htmlspecialchars($_POST['features']);
 
     // Nếu discount < 0 thì discountStart và discountEnd phải bằng null
     if ($txtDiscount < 0) {
@@ -51,8 +57,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $txtDiscountEndDate = null;
     }
 
-    echo $txtTitle;
-    echo $txtType;
+    echo 'Title: ' . $txtTitle . '<br/>';
+    echo 'Type:' . $txtType . '<br/>';
+    echo 'Description: ' . $txtDescription . '<br/>';
+    echo 'Price: ' . $txtPrice . '<br/>';
+    echo 'Discount: ' . $txtDiscount . '<br/>';
+    echo 'Discount Start Date: ' . $txtDiscountStartDate . '<br/>';
+    echo 'Discount End Date: ' . $txtDiscountEndDate . '<br/>';
+    echo 'Release Date: ' . $txtReleaseDate . '<br/>';
+    echo 'Developer: ' . $txtDeveloper . '<br/>';
+    echo 'Publisher: ' . $txtPublisher . '<br/>';
+    echo 'Platform: ' . $txtPlatform . '<br/>';
+    echo 'Genres: ' . $txtGenres . '<br/>';
+    echo 'Tags: ' . $txtTags . '<br/>';
+    echo 'Features: ' . $txtFeatures . '<br/>';
 }
 ?>
 
@@ -152,7 +170,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <textarea class="form-control"
                     id="description"
                     name="description"
-                    placeholder="Enter description"></textarea>
+                    placeholder="Enter description"><?php echo $txtDescription ?? ''; ?></textarea>
 
                 <fieldset class="form-control-outline"></fieldset>
             </div>
@@ -177,7 +195,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         id="price"
                         name="price"
                         min="0"
-                        placeholder="Enter price">
+                        placeholder="Enter price"
+                        value="<?php echo $txtPrice ?? ''; ?>">
 
                     <fieldset class="form-control-outline"></fieldset>
                 </div>
@@ -201,7 +220,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         name="discount"
                         min="0"
                         max="100"
-                        placeholder="Enter discount">
+                        placeholder="Enter discount"
+                        value="<?php echo $txtDiscount ?? ''; ?>">
 
                     <fieldset class="form-control-outline"></fieldset>
                 </div>
@@ -280,6 +300,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 discountStartDateInput.disabled = true;
                 discountEndDateInput.disabled = true;
 
+                // Khi discount > 0 thì enable discount start và end date
+                if (discountInput.value > 0) {
+                    discountStartDateInput.disabled = false;
+                    discountEndDateInput.disabled = false;
+                }
+
                 // Khi discount < 0 thì disable discount start và end date
                 discountInput.addEventListener('input', function() {
                     if (discountInput.value <= 0) {
@@ -303,7 +329,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     type="datetime-local"
                     id="release-date"
                     name="release-date"
-                    placeholder="Enter release date">
+                    placeholder="Enter release date"
+                    value="<?php echo $txtReleaseDate ?? ''; ?>">
 
                 <fieldset class="form-control-outline"></fieldset>
             </div>
@@ -322,7 +349,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         type="text"
                         id="developer"
                         name="developer"
-                        placeholder="Enter developer">
+                        placeholder="Enter developer"
+                        value="<?php echo $txtDeveloper ?? ''; ?>">
 
                     <fieldset class="form-control-outline"></fieldset>
                 </div>
@@ -339,7 +367,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         type="text"
                         id="publisher"
                         name="publisher"
-                        placeholder="Enter publisher">
+                        placeholder="Enter publisher"
+                        value="<?php echo $txtPublisher ?? ''; ?>">
 
                     <fieldset class="form-control-outline"></fieldset>
                 </div>
@@ -355,6 +384,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <div tabindex="0"
                     role="combobox"
                     id="platform"
+                    data-placeholder="Select Platform"
                     class="select-box">
                     <div class="select-value">
                         <em style="color: gray;">Select Platform</em>
@@ -362,7 +392,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 </div>
                 <input class="form-control-select"
                     id="platform"
-                    name="platform">
+                    name="platform"
+                    value="<?php echo $txtPlatform ?? ''; ?>">
 
                 <svg class="select-icon"
                     focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="ArrowDropDownIcon">
@@ -408,6 +439,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <div tabindex="0"
                     role="combobox"
                     id="genres"
+                    data-placeholder="Select Genres"
                     class="select-box">
                     <div class="select-value">
                         <em style="color: gray;">Select Genres</em>
@@ -415,7 +447,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 </div>
                 <input class="form-control-select"
                     id="genres"
-                    name="genres">
+                    name="genres"
+                    value="<?php echo $txtGenres ?? ''; ?>">
 
                 <svg class="select-icon"
                     focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="ArrowDropDownIcon">
@@ -472,6 +505,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <div tabindex="0"
                     role="combobox"
                     id="tags"
+                    data-placeholder="Select Tags"
                     class="select-box">
                     <div class="select-value">
                         <em style="color: gray;">Select Tags</em>
@@ -479,7 +513,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 </div>
                 <input class="form-control-select"
                     id="tags"
-                    name="tags">
+                    name="tags"
+                    value="<?php echo $txtTags ?? ''; ?>">
 
                 <svg class="select-icon"
                     focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="ArrowDropDownIcon">
@@ -491,8 +526,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             <!-- Dropdown -->
             <div class="dropdown-select-menu">
-                 <!-- Search -->
-                 <div class="filter-select-search">
+                <!-- Search -->
+                <div class="filter-select-search">
                     <input type="search"
                         autocomplete="off"
                         autocorrect="off"
@@ -536,6 +571,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <div tabindex="0"
                     role="combobox"
                     id="features"
+                    data-placeholder="Select Features"
                     class="select-box">
                     <div class="select-value">
                         <em style="color: gray;">Select Features</em>
@@ -543,7 +579,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 </div>
                 <input class="form-control-select"
                     id="features"
-                    name="features">
+                    name="features"
+                    value="<?php echo $txtFeatures ?? ''; ?>">
 
                 <svg class="select-icon"
                     focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="ArrowDropDownIcon">
@@ -555,8 +592,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             <!-- Dropdown -->
             <div class="dropdown-select-menu">
-                 <!-- Search -->
-                 <div class="filter-select-search">
+                <!-- Search -->
+                <div class="filter-select-search">
                     <input type="search"
                         autocomplete="off"
                         autocorrect="off"

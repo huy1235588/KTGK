@@ -4,7 +4,7 @@ function dropdownSelect() {
 
     formGroupSelects.forEach(formGroupSelect => {
         // Lấy ra các element cần thiết
-        const formControl = formGroupSelect.querySelectorAll('.form-control-select');
+        const formControl = formGroupSelect.querySelector('.form-control-select');
         const selectBox = formGroupSelect.querySelector('.select-box');
         const dropdownButton = formGroupSelect.querySelector('.form-control-wrapper.select');
         const dropdownMenu = formGroupSelect.querySelector('.dropdown-select-menu');
@@ -28,6 +28,17 @@ function dropdownSelect() {
 
         // Chọn một item trong dropdown menu
         dropdownItems.forEach(item => {
+            const formControlValue = formControl.value.trim();
+            const itemValue = item.querySelector('.dropdown-select-item-text span').textContent.trim();
+
+            // Nếu item đã chọn thì thêm class selected cho item đó
+            if (formControlValue === itemValue) {
+                item.classList.add('selected');
+                item.querySelector('.dropdown-select-icon').innerHTML = CheckBoxIcon;
+                selectBox.textContent = itemValue;
+            }
+
+            // Xử lý sự kiện khi click vào item
             item.addEventListener('click', function () {
                 // Lấy ra value của item đã chọn
                 const value = item.querySelector('.dropdown-select-item-text span').textContent;
@@ -56,7 +67,7 @@ function dropdownSelect() {
 }
 
 
-function dropdownSelectMutiple() {
+function dropdownSelectMultiple() {
     // Hàm render selected items
     function renderSelectedItems(selectedItems) {
         return `
@@ -80,7 +91,7 @@ function dropdownSelectMutiple() {
 
     formGroupSelects.forEach(formGroupSelect => {
         // Lấy ra các element cần thiết
-        const formControl = formGroupSelect.querySelectorAll('.form-control-select');
+        const formControl = formGroupSelect.querySelector('.form-control-select');
         const selectBox = formGroupSelect.querySelector('.select-box');
         const dropdownButton = formGroupSelect.querySelector('.form-control-wrapper.select');
         const dropdownMenu = formGroupSelect.querySelector('.dropdown-select-menu');
@@ -128,15 +139,34 @@ function dropdownSelectMutiple() {
 
         // Hàm cập nhật selectedItems
         function updateSelectedItems() {
-            selectBox.innerHTML = selectedItems.length > 0 ? renderSelectedItems(selectedItems) : '<em style="color: gray;">Select Platform</em>';
+            const placeholder = selectBox.getAttribute('data-placeholder');
+            selectBox.innerHTML = selectedItems.length > 0
+                ? renderSelectedItems(selectedItems)
+                : `<em style="color: gray;">${placeholder}</em>`;
             formControl.value = selectedItems.join(', ');
         }
 
+        // Lấy ra các item đã chọn
+        const formControlValue = formControl.value.split(',').map(i => i.trim());
+
         // Chọn một item trong dropdown menu
         dropdownItems.forEach(item => {
+            const itemValue = item.querySelector('.dropdown-select-item-text span').textContent.trim();
+
+            // Nếu item đã chọn thì thêm class selected cho item đó
+            if (formControlValue.includes(itemValue)) {
+                item.classList.add('selected');
+                item.querySelector('.dropdown-select-icon').innerHTML = CheckBoxIcon;
+                selectedItems.push(itemValue);
+            }
+
+            // Cập nhật selectedItems
+            updateSelectedItems();
+
+            // Xử lý sự kiện khi click vào item
             item.addEventListener('click', function () {
                 // Lấy ra value của item đã chọn
-                const value = item.querySelector('.dropdown-select-item-text span').textContent;
+                const value = item.querySelector('.dropdown-select-item-text span').textContent.trim();
 
                 // Kiểm tra xem item đã chọn có trong selectedItems chưa
                 const index = selectedItems.indexOf(value);
@@ -201,5 +231,5 @@ function dropdownSelectMutiple() {
 
 document.addEventListener('DOMContentLoaded', () => {
     dropdownSelect();
-    dropdownSelectMutiple();
+    dropdownSelectMultiple();
 });
