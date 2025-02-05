@@ -41,6 +41,11 @@ if ($result->num_rows > 0) {
     die("Sản phẩm không tồn tại.");
 }
 
+// Lấy danh sách thành tựu
+$stmt = $conn->prepare("SELECT * FROM product_achievements WHERE product_Id = ?");
+$stmt->bind_param("i", $productId);
+$stmt->execute();
+$achievements = $stmt->get_result();
 
 // Đóng kết nối
 DongKetNoi($conn);
@@ -80,8 +85,55 @@ DongKetNoi($conn);
                 <?= $name ?>
             </h1>
 
+            <div class="headerContent">
+                Total achievements:
+                <span class="wt">
+                    <?= $achievements->num_rows ?>
+                </span>
+            </div>
+
+            <!-- Thành tựu -->
+            <section class="achievements">
+                <?php
+                while ($achievement = $achievements->fetch_assoc()) {
+                    $title = htmlspecialchars($achievement['title']);
+                    $description = htmlspecialchars($achievement['description']);
+                    $image = htmlspecialchars($achievement['image']);
+                    $percent = intval($achievement['percent']);
+                ?>
+                    <div class="achieveRow">
+                        <div class="achieveImgHolder">
+                            <img
+                                src="https://cdn.fastly.steamstatic.com/steamcommunity/public/images/apps/<?= $image ?>"
+                                alt="<?= $title ?>"
+                                loading="lazy">
+                        </div>
+                        <div class="achieveTxtHolder">
+                            <div class="achieveFill"></div>
+                            <div class="achieveTxt">
+                                <h3><?= $title ?></h3>
+                                <h5><?= $description ?></h5>
+                            </div>
+                            <div class="achievePercent">
+                                <?= $percent ?>%
+                            </div>
+                        </div>
+                    </div>
+                <?php
+                }
+                ?>
+            </section>
         </main>
     </article>
+
+    <script>
+        // Tính width của achieveFill dựa vào achievePercent
+        const achieveFills = document.querySelectorAll('.achieveFill');
+        achieveFills.forEach(achieveFill => {
+            const percent = achieveFill.nextElementSibling.nextElementSibling.innerText;
+            achieveFill.style.width = percent;
+        });
+    </script>
 
     <?php
     include 'footer.php';
