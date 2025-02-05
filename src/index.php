@@ -29,6 +29,9 @@
 
     // Đóng kết nối
     DongKetNoi($conn);
+
+    // Danh sách sản phẩm
+    $productIdList = [];
     ?>
 
     <!-- Content -->
@@ -44,13 +47,20 @@
                     // Kết nối CSDL
                     $conn = MoKetNoi();
 
-                    // Truy vấn sản phẩm theo thể loại
+                    // Truy vấn sản phẩm theo thể loại, giới hạn 8 sản phẩm
+                    // Không lấy sản phẩm không hoạt động
+                    // Không lấy sản phẩm trong productIdList
                     $sqlProducts = "SELECT * 
                             FROM products p JOIN product_genres pg ON p.id = pg.product_id
                             WHERE pg.genre_id = '" . $genre['id'] . "' AND isActive = 1
-                            LIMIT 8";
+                            AND p.id NOT IN (" . (!empty($productIdList) ? implode(",", $productIdList) : "0") . ")                            LIMIT 8";
                     // Thực thi truy vấn
                     $products = $conn->query($sqlProducts);
+
+                    // Thêm sản phẩm vào productIdList
+                    while ($product = $products->fetch_assoc()) {
+                        $productIdList[] = $product['id'];
+                    }
                     ?>
                     <section>
                         <h2 class="section-header">
@@ -84,7 +94,7 @@
                                                         // Hàm cập nhật chiều cao của skeleton
                                                         const updateSkeletonHeight = () => {
                                                             const imgHeight = productImg.offsetHeight;
-                                                            
+
                                                             // Set chiều cao cho skeleton loader
                                                             skeletonWrapper.forEach(function(wrapper) {
                                                                 wrapper.style.setProperty('--skeleton-height', `${imgHeight}px`);

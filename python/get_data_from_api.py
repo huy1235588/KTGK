@@ -10,7 +10,7 @@ API_URL = "http://localhost:3001/graphql"
 QUERY = """
 query {
     products {
-        _id
+        productId
         title
         type
         description
@@ -131,7 +131,7 @@ def json_to_sql(data, output_file):
         insert_statement = f"INSERT INTO products (id, title, type_id, description, detail, price, discount, discountStartDate, discountEndDate, releaseDate, rating, isActive, headerImage) VALUES\n"
         value_list = []
         for product in data["data"]["products"]:
-            product_id = product["_id"]
+            product_id = product["productId"]
             title = product["title"].replace("'", "''")
             type_id = next(
                 (item["id"] for item in type_list if item["name"] == product["type"]),
@@ -186,12 +186,12 @@ def json_to_sql(data, output_file):
         # Duyệt qua từng sản phẩm, nếu có developer thì thêm vào list
         for product in data["data"]["products"]:
             if product["developer"]:
-                product_id = product["_id"]
+                product_id = product["productId"]
                 # Duyệt qua từng developer của sản phẩm
                 for developer in product["developer"]:
                     # Thêm vào list một tuple (product_id, developer)
                     value_list.append(
-                        f"({product['_id']}, '{developer.replace('\'', '\'\'')}')"
+                        f"({product['productId']}, '{developer.replace('\'', '\'\'')}')"
                     )
         # Ghi list developers vào file
         insert_statement += ",\n".join(value_list) + ";\n"
@@ -211,7 +211,7 @@ def json_to_sql(data, output_file):
                 for publisher in product["publisher"]:
                     # Thêm vào list một tuple (product_id, publisher)
                     value_list.append(
-                        f"({product['_id']}, '{publisher.replace('\'', '\'\'')}')"
+                        f"({product['productId']}, '{publisher.replace('\'', '\'\'')}')"
                     )
         # Ghi list publishers vào file
         insert_statement += ",\n".join(value_list) + ";\n"
@@ -237,7 +237,7 @@ def json_to_sql(data, output_file):
                     
                     # Thêm vào list một tuple (product_id, platform)
                     value_list.append(
-                        f"({product['_id']}, '{platform_id}')"
+                        f"({product['productId']}, '{platform_id}')"
                     )
         # Ghi list platforms vào file
         insert_statement += ",\n".join(value_list) + ";\n"
@@ -265,7 +265,7 @@ def json_to_sql(data, output_file):
         for product in data["data"]["products"]:
             if product["genres"]:
                 # Lấy id của sản phẩm
-                product_id = product["_id"]
+                product_id = product["productId"]
 
                 # Duyệt qua từng genre của sản phẩm
                 for genre in product["genres"]:
@@ -303,7 +303,7 @@ def json_to_sql(data, output_file):
         for product in data["data"]["products"]:
             if product["tags"]:
                 # Lấy id của sản phẩm
-                product_id = product["_id"]
+                product_id = product["productId"]
 
                 # Duyệt qua từng tag của sản phẩm
                 for tag in product["tags"]:
@@ -343,7 +343,7 @@ def json_to_sql(data, output_file):
         for product in data["data"]["products"]:
             if product["features"]:
                 # Lấy id của sản phẩm
-                product_id = product["_id"]
+                product_id = product["productId"]
 
                 # Duyệt qua từng feature của sản phẩm
                 for feature in product["features"]:
@@ -388,7 +388,7 @@ def json_to_sql(data, output_file):
                         minimum = requirement["minimum"].replace("'", "''")
                         recommended = requirement["recommended"].replace("'", "''")
                         value_list.append(
-                            f"({product['_id']}, '{platform}', '{title}', '{minimum}', '{recommended}')"
+                            f"({product['productId']}, '{platform}', '{title}', '{minimum}', '{recommended}')"
                         )
         insert_statement += ",\n".join(value_list) + ";\n"
         file.write(insert_statement)
@@ -404,7 +404,7 @@ def json_to_sql(data, output_file):
             if product["screenshots"]:
                 value_list.extend(
                     [
-                        f"({product['_id']}, '{screenshot.replace('\'', '\'\'')}')"
+                        f"({product['productId']}, '{screenshot.replace('\'', '\'\'')}')"
                         for screenshot in product["screenshots"]
                     ]
                 )
@@ -422,7 +422,7 @@ def json_to_sql(data, output_file):
             if product["videos"]:
                 value_list.extend(
                     [
-                        f"({product['_id']}, '{video['mp4'].replace('\'', '\'\'')}', '{video['webm'].replace('\'', '\'\'')}', '{video['thumbnail'].replace('\'', '\'\'')}')"
+                        f"({product['productId']}, '{video['mp4'].replace('\'', '\'\'')}', '{video['webm'].replace('\'', '\'\'')}', '{video['thumbnail'].replace('\'', '\'\'')}')"
                         for video in product["videos"]
                     ]
                 )
