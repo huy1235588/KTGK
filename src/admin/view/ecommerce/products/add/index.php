@@ -41,8 +41,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $txtDescription = htmlspecialchars($_POST['description']);
     $txtPrice = htmlspecialchars($_POST['price']);
     $txtDiscount = htmlspecialchars($_POST['discount']);
-    $txtDiscountStartDate = htmlspecialchars($_POST['discount-start-date']);
-    $txtDiscountEndDate = htmlspecialchars($_POST['discount-end-date']);
+
+    if ($txtDiscount > 0) {
+        $txtDiscountStartDate = htmlspecialchars($_POST['discount-start-date']);
+        $txtDiscountEndDate = htmlspecialchars($_POST['discount-end-date']);
+    }
+
     $txtReleaseDate = htmlspecialchars($_POST['release-date']);
     $txtDeveloper = htmlspecialchars($_POST['developer']);
     $txtPublisher = htmlspecialchars($_POST['publisher']);
@@ -84,7 +88,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         ?>
     </div>
 
-    <form action="" method="post" enctype="multipart/form-data">
+    <form action="" method="post" enctype="multipart/form-data" class="form" id="productAddForm">
         <!-- Title -->
         <div class="form-group">
             <label for="title" class="form-label">
@@ -109,7 +113,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         </div>
 
         <!-- Type -->
-        <div class="form-group form-group-select">
+        <div class="form-group form-group-select" id="type">
             <label for="type" class="form-label">
                 Type
             </label>
@@ -122,7 +126,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         <em style="color: gray;">Select Type</em>
                     </div>
                 </div>
-                <input class="form-control-select"
+                <input class="form-control-select form-control-select-single"
                     id="type"
                     name="type"
                     value="<?php echo $txtType ?? ''; ?>">
@@ -376,7 +380,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         </div>
 
         <!-- Platform -->
-        <div class="form-group form-group-select-multiple">
+        <div class="form-group form-group-select-multiple" id="platform">
             <label for="platform" class="form-label">
                 Platform
             </label>
@@ -386,11 +390,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     id="platform"
                     data-placeholder="Select Platform"
                     class="select-box">
-                    <div class="select-value">
-                        <em style="color: gray;">Select Platform</em>
-                    </div>
+                    <div class="select-value"><em style="color: gray;">Select Platform</em></div>
                 </div>
-                <input class="form-control-select"
+                <input class="form-control-select form-control-select-multiple"
                     id="platform"
                     name="platform"
                     value="<?php echo $txtPlatform ?? ''; ?>">
@@ -420,9 +422,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             </span>
 
                             <div class="dropdown-select-item-text">
-                                <span class="dropdown-select-item-text-primary">
-                                    <?php echo $platform['name']; ?>
-                                </span>
+                                <span class="dropdown-select-item-text-primary"><?php echo $platform['name']; ?></span>
                             </div>
                         </li>
                     <?php endforeach; ?>
@@ -431,7 +431,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         </div>
 
         <!-- Genres -->
-        <div class="form-group form-group-select-multiple">
+        <div class="form-group form-group-select-multiple" id="genres">
             <label for="genres" class="form-label">
                 Genres
             </label>
@@ -441,11 +441,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     id="genres"
                     data-placeholder="Select Genres"
                     class="select-box">
-                    <div class="select-value">
-                        <em style="color: gray;">Select Genres</em>
-                    </div>
+                    <div class="select-value"><em style="color: gray;">Select Genres</em></div>
                 </div>
-                <input class="form-control-select"
+                <input class="form-control-select form-control-select-multiple"
                     id="genres"
                     name="genres"
                     value="<?php echo $txtGenres ?? ''; ?>">
@@ -486,9 +484,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             </span>
 
                             <div class="dropdown-select-item-text">
-                                <span class="dropdown-select-item-text-primary">
-                                    <?php echo $genre['name']; ?>
-                                </span>
+                                <span class="dropdown-select-item-text-primary"><?php echo $genre['name']; ?></span>
                             </div>
                         </li>
                     <?php endforeach; ?>
@@ -497,7 +493,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         </div>
 
         <!-- Tags -->
-        <div class="form-group form-group-select-multiple">
+        <div class="form-group form-group-select-multiple" id="tags">
             <label for="tags" class="form-label">
                 Tags
             </label>
@@ -507,11 +503,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     id="tags"
                     data-placeholder="Select Tags"
                     class="select-box">
-                    <div class="select-value">
-                        <em style="color: gray;">Select Tags</em>
-                    </div>
+                    <div class="select-value"><em style="color: gray;">Select Tags</em></div>
                 </div>
-                <input class="form-control-select"
+                <input class="form-control-select form-control-select-multiple"
                     id="tags"
                     name="tags"
                     value="<?php echo $txtTags ?? ''; ?>">
@@ -552,9 +546,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             </span>
 
                             <div class="dropdown-select-item-text">
-                                <span class="dropdown-select-item-text-primary">
-                                    <?php echo $tag['name']; ?>
-                                </span>
+                                <span class="dropdown-select-item-text-primary"><?php echo $tag['name']; ?></span>
                             </div>
                         </li>
                     <?php endforeach; ?>
@@ -563,7 +555,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         </div>
 
         <!-- Features -->
-        <div class="form-group form-group-select-multiple">
+        <div class="form-group form-group-select-multiple" id="features">
             <label for="features" class="form-label">
                 Features
             </label>
@@ -573,11 +565,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     id="features"
                     data-placeholder="Select Features"
                     class="select-box">
-                    <div class="select-value">
-                        <em style="color: gray;">Select Features</em>
-                    </div>
+                    <div class="select-value"><em style="color: gray;">Select Features</em></div>
                 </div>
-                <input class="form-control-select"
+                <input class="form-control-select form-control-select-multiple"
                     id="features"
                     name="features"
                     value="<?php echo $txtFeatures ?? ''; ?>">
@@ -618,9 +608,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             </span>
 
                             <div class="dropdown-select-item-text">
-                                <span class="dropdown-select-item-text-primary">
-                                    <?php echo $feature['name']; ?>
-                                </span>
+                                <span class="dropdown-select-item-text-primary"><?php echo $feature['name']; ?></span>
                             </div>
                         </li>
                     <?php endforeach; ?>

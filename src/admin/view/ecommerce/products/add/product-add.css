@@ -278,7 +278,7 @@ Author       : LeThienHuy.
     width: 100%;
     min-width: 16px;
     min-height: 16px;
-    max-height: 224px;
+    max-height: 262px;
     background-color: #2c3a4b;
     border: 1px solid #1d2632;
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
@@ -288,6 +288,10 @@ Author       : LeThienHuy.
     transition: opacity 289ms cubic-bezier(0.4, 0, 0.2, 1),
         transform 192ms cubic-bezier(0.4, 0, 0.2, 1);
     z-index: 1000;
+}
+
+.dropdown-select-menu.show {
+    display: block;
 }
 
 .dropdown-select-menu .dropdown-select-item-checkbox-wrapper {
@@ -559,8 +563,9 @@ Author       : LeThienHuy.
     justify-content: center;
     -webkit-tap-highlight-color: transparent;
     color: rgba(255, 255, 255, 0.26);
-    font-size: 22px;
+    font-size: 16px;
     cursor: pointer;
+    padding-right: 8px;
     margin: 0px 5px 0px -6px;
 }
 
@@ -574,7 +579,6 @@ Author       : LeThienHuy.
     margin: 0;
     min-height: 26px;
     padding: 1px;
-    border-bottom: 1px solid #fff;
     position: relative;
     white-space: nowrap;
     width: 100%;
