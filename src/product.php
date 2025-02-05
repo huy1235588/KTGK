@@ -253,7 +253,7 @@ DongKetNoi($conn);
         )
         AND p.id != ?
         ORDER BY RAND()
-        LIMIT 12
+        LIMIT 8
     ");
     $stmt->bind_param("ii", $productId, $productId); // Truyền hai giá trị $productId
     $stmt->execute();
@@ -789,7 +789,8 @@ DongKetNoi($conn);
                                     title="<?= $achievement['title'] ?>"
                                     loading="lazy">
                             <?php endforeach; ?>
-                            <a href="" class="view-all-achievements">
+                            <a href="achievement.php?id=<?= $productId ?>"
+                                class="view-all-achievements">
                                 View
                                 <br>
                                 all <?= $totalAchievements ?>

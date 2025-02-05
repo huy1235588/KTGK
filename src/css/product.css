@@ -372,9 +372,13 @@ img {
     line-height: 20px;
     cursor: pointer;
     color: #537ca6;
-    font-size: 10px;
+    font-size: 12px;
     padding-right: 12px;
     background: url("/assets/readmore.png") right center no-repeat;
+}
+
+.game_page_autocollapse_readmore:hover {
+    color: #13a2db;
 }
 
 /* System requirement */
@@ -636,6 +640,7 @@ aside.right-content {
 
 aside.right-content .product-info {
     padding: 10px;
+    padding-bottom: 20px;
     background-color: #fff;
 }
 

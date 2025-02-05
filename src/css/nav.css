@@ -72,7 +72,7 @@
     font-size: 1rem;
     line-height: 1.4375em;
     letter-spacing: 0.00938em;
-    padding: 0.5rem;
+    padding: 0 0.75rem;
     color: rgb(255, 255, 255);
     box-sizing: border-box;
     position: relative;
@@ -86,7 +86,7 @@
     font: inherit;
     letter-spacing: inherit;
     color: currentColor;
-    padding: 4px 0 5px;
+    padding: 12px 0;
     border: 0;
     box-sizing: content-box;
     background: none;
