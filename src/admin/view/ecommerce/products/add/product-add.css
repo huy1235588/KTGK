@@ -470,7 +470,6 @@ Author       : LeThienHuy.
 .form-group-submit {
     display: flex;
     justify-content: center;
-    margin-top: 1rem;
 }
 
 .submit-btn {
@@ -503,7 +502,7 @@ Author       : LeThienHuy.
     --variant-containedColor: rgba(0, 0, 0, 0.87);
     --variant-containedBg: #90caf9;
     outline: 0px;
-    margin: 1rem 0px 0px;
+    margin: 0;
     text-decoration: none;
     padding: 6px 16px;
     border-width: 0px;

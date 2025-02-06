@@ -218,8 +218,8 @@ class ProductController
         $detail,
         $price,
         $discount,
-        $discount_start_date,
-        $discount_end_date,
+        $discount_start_date = null,
+        $discount_end_date = null,
         $release_date,
         $header_image,
         $is_active
@@ -254,14 +254,60 @@ class ProductController
         );
 
         // Thực thi câu lệnh
-        $result =  $stmt->execute();
+        $result = $stmt->execute();
 
         // Trả về ID của sản phẩm vừa thêm
         if ($result) {
-            return $this->conn->insert_id;
+            $product_id = $this->conn->insert_id;
+            return $product_id;
         } else {
             return false;
         }
+    }
+
+    // Hàm để insert thông tin khác của sản phẩm
+    public function addProductDetails(
+        $tables,
+        $product_id,
+        $data
+    ) {
+        // Kiểm tra nếu $tables không phải là mảng, thì chuyển nó thành mảng
+        if (!is_array($tables)) {
+            throw new Exception("Tables must be an array.");
+        }
+
+        // Duyệt qua từng bảng
+        foreach ($tables as $table) {
+            // Lấy dữ liệu cho bảng hiện tại
+            $tableData = $data[$table];
+
+            // Lấy tên cột (chỉ có một cột ngoài product_id)
+            $column = key($tableData);
+            $values = $tableData[$column];
+
+            // Nếu không phải mảng, thì báo lỗi
+            if (!is_array($values)) {
+                throw new Exception("Data for $table must be an array.");
+            }
+
+            // Xây dựng câu lệnh SQL (INSERT nhiều dòng)
+            $sql = "INSERT INTO $table (product_id, $column) VALUES (?, ?)";
+            $stmt = $this->conn->prepare($sql);
+
+            if (!$stmt) {
+                throw new Exception("Prepare statement failed for table $table: " . $this->conn->error);
+            }
+
+            // Duyệt qua từng giá trị và thực hiện INSERT
+            foreach ($values as $value) {
+                $stmt->bind_param("is", $product_id, $value);
+                if (!$stmt->execute()) {
+                    throw new Exception("Execute failed for table $table: " . $stmt->error);
+                }
+            }
+        }
+
+        return true;
     }
 
     // Hàm để update sản phẩm

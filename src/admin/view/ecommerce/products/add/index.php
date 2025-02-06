@@ -59,6 +59,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $txtDiscount = htmlspecialchars($_POST['discount']);
 
     // Nếu discount > 0 thì lấy discount start và end date
+    $txtDiscountStartDate = null;
+    $txtDiscountEndDate = null;
     if ($txtDiscount > 0) {
         $txtDiscountStartDate = htmlspecialchars($_POST['discount-start-date']);
         $txtDiscountEndDate = htmlspecialchars($_POST['discount-end-date']);
@@ -85,12 +87,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $txtIsActive = isset($_POST['isActive']) ? 1 : 0;
 
-    // Nếu discount < 0 thì discountStart và discountEnd phải bằng null
-    if ($txtDiscount < 0) {
-        $txtDiscountStartDate = null;
-        $txtDiscountEndDate = null;
-    }
-
     // Kiểm tra dữ liệu không được để trống
     foreach ($_POST as $key => $value) {
         if (!isset($value) || trim($value) === "") {
@@ -112,7 +108,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Nếu không có lỗi thì hiển thị dữ liệu
     if (empty(array_filter($errors))) {
         // Thực hiện thêm sản phẩm
-        $productController->addProduct(
+        $productId =  $productController->addProduct(
             $txtTitle,
             $txtType,
             $txtDescription,
@@ -125,6 +121,39 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $txtHeaderImage,
             $txtIsActive
         );
+
+        // Thêm developer, publisher, platform, genres, tags, features
+        $tables = [
+            'product_developers',
+            'product_publishers',
+            'product_platforms',
+            'product_genres',
+            'product_tags',
+            'product_features'
+        ];
+
+        $data = [
+            'product_developers' => [
+                'developer' => explode(',', $txtDeveloper)
+            ],
+            'product_publishers' => [
+                'publisher' => explode(',', $txtPublisher)
+            ],
+            'product_platforms' => [
+                'platform_id' => explode(',', $txtPlatform)
+            ],
+            'product_genres' => [
+                'genre_id' => explode(',', $txtGenres)
+            ],
+            'product_tags' => [
+                'tag_id' => explode(',', $txtTags)
+            ],
+            'product_features' => [
+                'feature_id' => explode(',', $txtFeatures)
+            ]
+        ];
+
+        $productController->addProductDetails($tables, $productId, $data);
     }
 }
 ?>
@@ -509,7 +538,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <div class="dropdown-select-list-wrapper">
                     <ul class="dropdown-select-list">
                         <?php foreach ($platforms as $platform) : ?>
-                            <li class="dropdown-select-item">
+                            <li class="dropdown-select-item" data-value="<?php echo $platform['id']; ?>">
                                 <span class="dropdown-select-item-checkbox-wrapper">
                                     <input
                                         class="dropdown-select-item-checkbox"
@@ -579,7 +608,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <div class="dropdown-select-list-wrapper">
                     <ul class="dropdown-select-list">
                         <?php foreach ($genres as $genre) : ?>
-                            <li class="dropdown-select-item">
+                            <li class="dropdown-select-item" data-value="<?php echo $genre['id']; ?>">
                                 <span class="dropdown-select-item-checkbox-wrapper">
                                     <input
                                         class="dropdown-select-item-checkbox"
@@ -649,7 +678,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <div class="dropdown-select-list-wrapper">
                     <ul class="dropdown-select-list">
                         <?php foreach ($tags as $tag) : ?>
-                            <li class="dropdown-select-item">
+                            <li class="dropdown-select-item" data-value="<?php echo $tag['id']; ?>">
                                 <span class="dropdown-select-item-checkbox-wrapper">
                                     <input
                                         class="dropdown-select-item-checkbox"
@@ -719,7 +748,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <div class="dropdown-select-list-wrapper">
                     <ul class="dropdown-select-list">
                         <?php foreach ($features as $feature) : ?>
-                            <li class="dropdown-select-item">
+                            <li class="dropdown-select-item" data-value="<?php echo $feature['id']; ?>">
                                 <span class="dropdown-select-item-checkbox-wrapper">
                                     <input
                                         class="dropdown-select-item-checkbox"

@@ -80,9 +80,8 @@ function dropdownSelect() {
     Dropdown Select Multiple
 
 *********************************/
-
 // Danh sách item đã chọn
-let selectedItemsMutipleMap = new Map();
+let selectedItemsMultipleMap = new Map();
 
 // Hàm cập nhật selectedItems
 function updateSelectedItems(formGroupSelect) {
@@ -91,22 +90,38 @@ function updateSelectedItems(formGroupSelect) {
     const placeholder = selectBox.getAttribute('data-placeholder');
     const formControlId = formControl.getAttribute('id');
 
-    // Lấy ra selectedItems từ selectedItemsMutipleMap
-    const selectedItems = selectedItemsMutipleMap.get(formControlId) || new Set();
+    // Lấy danh sách selectedItems từ selectedItemsMultipleMap
+    const selectedItems = selectedItemsMultipleMap.get(formControlId) || new Set();
+
+    // Mảng chứa các text đã chọn
+    let selectedTexts = [];
+    let selectedValues = [];
+
+    selectedItems.forEach(item => {
+        // Lấy ra dropdownItem có data-value trùng với item
+        const dropdownItem = [...formGroupSelect.querySelectorAll('.dropdown-select-menu .dropdown-select-item')]
+            .find(dropdownItem => dropdownItem.dataset.value === item);
+
+        // T
+        if (dropdownItem) {
+            selectedTexts.push(dropdownItem.querySelector('.dropdown-select-item-text span').textContent.trim());
+            selectedValues.push(item);
+        }
+    });
 
     // Hiển thị selected items
-    selectBox.innerHTML = selectedItems.size
+    selectBox.innerHTML = selectedTexts.length
         ? `<div class="selected-items">
-            ${[...selectedItems].map(item => `
-            <div class="selected-item" data-value="${item}">
-                <span>${item}</span>
+            ${selectedTexts.map((text) => `
+            <div class="selected-item" data-value="${text}">
+                <span>${text}</span>
                 <button class="remove-selected-item" type="button">✕</button>
             </div>`).join('')}
         </div>`
         : `<em style="color: gray;">${placeholder}</em>`;
 
     // Cập nhật value cho formControl
-    formControl.value = [...selectedItems].join(', ');
+    formControl.value = selectedValues.join(', ');
 
     // Trigger event input
     formControl.dispatchEvent(new Event('input'));
@@ -157,10 +172,10 @@ function dropdownSelectMultiple() {
             if (!item) return;
 
             // Lấy ra value của item đã chọn
-            const value = item.querySelector('.dropdown-select-item-text span').textContent.trim();
+            const value = item.dataset.value;
 
-            // Lấy ra selectedItems từ selectedItemsMutipleMap
-            const selectedItems = selectedItemsMutipleMap.get(formControlId) || new Set();
+            // Lấy ra selectedItems từ selectedItemsMultipleMap
+            const selectedItems = selectedItemsMultipleMap.get(formControlId) || new Set();
 
             // Nếu item đã chọn thì bỏ chọn, ngược lại thì chọn
             if (selectedItems.has(value)) {
@@ -183,8 +198,8 @@ function dropdownSelectMultiple() {
                 item.querySelector('.dropdown-select-icon').innerHTML = CHECKBOX_ICON;
             }
 
-            // Lưu selectedItems vào selectedItemsMutipleMap
-            selectedItemsMutipleMap.set(formControlId, selectedItems);
+            // Lưu selectedItems vào selectedItemsMultipleMap
+            selectedItemsMultipleMap.set(formControlId, selectedItems);
 
             // Cập nhật selectedItems
             updateSelectedItems(formGroupSelect);
@@ -201,8 +216,8 @@ function dropdownSelectMultiple() {
             // Lấy ra value của item đã chọn
             const value = selectedItem.dataset.value;
 
-            // Lấy ra selectedItems từ selectedItemsMutipleMap
-            const selectedItems = selectedItemsMutipleMap.get(formControlId) || new Set();
+            // Lấy ra selectedItems từ selectedItemsMultipleMap
+            const selectedItems = selectedItemsMultipleMap.get(formControlId) || new Set();
 
             // Xóa item khỏi selectedItems
             selectedItems.delete(value);
@@ -212,7 +227,7 @@ function dropdownSelectMultiple() {
             // Bỏ chọn item trong dropdown menu
             dropdownItems.forEach(item => {
                 // Nếu item đã chọn thì bỏ chọn
-                if (item.querySelector('.dropdown-select-item-text span').textContent.trim() === value) {
+                if (item.dataset.value === value) {
                     // Xóa class selected của item đã chọn
                     item.classList.remove('selected');
                     // Đổi icon của item đã chọn
@@ -220,8 +235,8 @@ function dropdownSelectMultiple() {
                 }
             });
 
-            // Lưu selectedItems vào selectedItemsMutipleMap
-            selectedItemsMutipleMap.set(formControlId, selectedItems);
+            // Lưu selectedItems vào selectedItemsMultipleMap
+            selectedItemsMultipleMap.set(formControlId, selectedItems);
         }
 
         // Gọi các hàm xử lý sự kiện
@@ -237,8 +252,6 @@ function dropdownSelectMultiple() {
         updateSelectedItems(formGroupSelect);
     });
 }
-
-
 
 /***************
  
@@ -546,7 +559,7 @@ function saveFormData() {
                     const dropdownItems = formGroupSelect.querySelectorAll(`#${formControlId} .dropdown-select-menu .dropdown-select-item`);
 
                     // Tìm dropdownItem có thẻ span chứa text giống với item
-                    const matchingDropdownItem = [...dropdownItems].find(dropdownItem => dropdownItem.querySelector('.dropdown-select-item-text span').textContent.trim() === item);
+                    const matchingDropdownItem = [...dropdownItems].find(dropdownItem => dropdownItem.dataset.value === item);
 
                     // Nếu dropdownItem tồn tại thì thêm class selected và icon cho dropdownItem
                     if (matchingDropdownItem) {
@@ -558,8 +571,8 @@ function saveFormData() {
                     }
                 }
 
-                // Lưu selectedItems vào selectedItemsMutipleMap
-                selectedItemsMutipleMap.set(formControlId, selectedItems);
+                // Lưu selectedItems vào selectedItemsMultipleMap
+                selectedItemsMultipleMap.set(formControlId, selectedItems);
 
                 // Cập nhật selectedItems
                 updateSelectedItems(formGroupSelect);
