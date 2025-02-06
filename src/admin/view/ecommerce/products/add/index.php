@@ -18,30 +18,33 @@ $conn = MoKetNoi();
 
 // Khởi tạo ProductController
 $productController = new ProductController($conn);
-
-// Lấy tất cả types
+// Lấy dữ liệu từ database
 $types = $productController->getTypes();
-
-// Lấy tất cả platform
 $platforms = $productController->getPlatforms();
-
-// Lấy tất cả genres
 $genres = $productController->getGenres();
-
-// Lấy tất cả tags
 $tags = $productController->getTags();
-
-// Lấy tất cả features
 $features = $productController->getFeatures();
+
+// Khởi tạo mảng lỗi
+$errors = [
+    'title' => '',
+    'description' => '',
+    'type' => '',
+    'price' => '',
+    'discount' => '',
+    'release-date' => '',
+];
 
 // Xử lý form
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // Lấy dữ liệu từ form
     $txtTitle = htmlspecialchars($_POST['title']);
     $txtType = htmlspecialchars($_POST['type']);
     $txtDescription = htmlspecialchars($_POST['description']);
     $txtPrice = htmlspecialchars($_POST['price']);
     $txtDiscount = htmlspecialchars($_POST['discount']);
 
+    // Nếu discount > 0 thì lấy discount start và end date
     if ($txtDiscount > 0) {
         $txtDiscountStartDate = htmlspecialchars($_POST['discount-start-date']);
         $txtDiscountEndDate = htmlspecialchars($_POST['discount-end-date']);
@@ -59,6 +62,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if ($txtDiscount < 0) {
         $txtDiscountStartDate = null;
         $txtDiscountEndDate = null;
+    }
+
+    // Kiểm tra dữ liệu không được để trống
+    foreach ($_POST as $key => $value) {
+        if (empty($value)) {
+            $errors[$key] = 'This field is required';
+        }
     }
 
     echo 'Title: ' . $txtTitle . '<br/>';
@@ -92,7 +102,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <!-- Title -->
         <div class="form-group">
             <label for="title" class="form-label">
-                Title
+                Title <span class="required">*</span>
             </label>
             <div class="form-control-wrapper">
                 <input class="form-control"
@@ -102,11 +112,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     placeholder="Enter title"
                     value="<?php echo $txtTitle ?? ''; ?>">
 
-                <fieldset class="form-control-outline"></fieldset>
+                <fieldset class="form-control-outline <?php echo isset($errors['title']) && $errors['title'] !== '' ? 'error' : ''; ?>"></fieldset>
             </div>
 
             <?php
-            if (isset($errors['title'])) {
+            if (isset($errors['title']) && $errors['title'] !== '') {
                 echo '<span class="error-message">' . $errors['title'] . '</span>';
             }
             ?>
@@ -115,7 +125,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <!-- Type -->
         <div class="form-group form-group-select" id="type">
             <label for="type" class="form-label">
-                Type
+                Type <span class="required">*</span>
             </label>
             <div class="form-control-wrapper select">
                 <div tabindex="0"
@@ -135,40 +145,47 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="ArrowDropDownIcon">
                     <path d="M7 10l5 5 5-5z"></path>
                 </svg>
-                <fieldset class="form-control-outline"></fieldset>
+                <fieldset class="form-control-outline <?php echo isset($errors['type']) && $errors['type'] !== '' ? 'error' : ''; ?>"></fieldset>
             </div>
+            <?php
+            if (isset($errors['type']) && $errors['type'] !== '') {
+                echo '<span class="error-message">' . $errors['type'] . '</span>';
+            }
+            ?>
 
             <!-- Dropdown -->
             <div class="dropdown-select-menu">
-                <ul class="dropdown-select-list">
-                    <?php foreach ($types as $type) : ?>
-                        <li class="dropdown-select-item">
-                            <span class="dropdown-select-item-checkbox-wrapper">
-                                <input
-                                    class="dropdown-select-item-checkbox"
-                                    data-indeterminate="false"
-                                    type="checkbox">
+                <div class="dropdown-select-list-wrapper">
+                    <ul class="dropdown-select-list">
+                        <?php foreach ($types as $type) : ?>
+                            <li class="dropdown-select-item">
+                                <span class="dropdown-select-item-checkbox-wrapper">
+                                    <input
+                                        class="dropdown-select-item-checkbox"
+                                        data-indeterminate="false"
+                                        type="checkbox">
 
-                                <svg class="dropdown-select-icon" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="CheckBoxOutlineBlankIcon">
-                                    <path d="M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"></path>
-                                </svg>
-                            </span>
-
-                            <div class="dropdown-select-item-text">
-                                <span class="dropdown-select-item-text-primary">
-                                    <?php echo $type['name']; ?>
+                                    <svg class="dropdown-select-icon" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="CheckBoxOutlineBlankIcon">
+                                        <path d="M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"></path>
+                                    </svg>
                                 </span>
-                            </div>
-                        </li>
-                    <?php endforeach; ?>
-                </ul>
+
+                                <div class="dropdown-select-item-text">
+                                    <span class="dropdown-select-item-text-primary">
+                                        <?php echo $type['name']; ?>
+                                    </span>
+                                </div>
+                            </li>
+                        <?php endforeach; ?>
+                    </ul>
+                </div>
             </div>
         </div>
 
         <!-- Description -->
         <div class="form-group">
             <label for="description" class="form-label">
-                Description
+                Description <span class="required">*</span>
             </label>
             <div class="form-control-wrapper">
                 <textarea class="form-control"
@@ -176,11 +193,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     name="description"
                     placeholder="Enter description"><?php echo $txtDescription ?? ''; ?></textarea>
 
-                <fieldset class="form-control-outline"></fieldset>
+                <fieldset class="form-control-outline <?php echo isset($errors['description']) && $errors['description'] !== '' ? 'error' : ''; ?>"></fieldset>
             </div>
 
             <?php
-            if (isset($errors['description'])) {
+            if (isset($errors['description']) && $errors['description'] !== '') {
                 echo '<span class="error-message">' . $errors['description'] . '</span>';
             }
             ?>
@@ -191,7 +208,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <!-- Price -->
             <div class="form-group form-group-price">
                 <label for="price" class="form-label">
-                    Price
+                    Price <span class="required">*</span>
                 </label>
                 <div class="form-control-wrapper">
                     <input class="form-control"
@@ -202,11 +219,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         placeholder="Enter price"
                         value="<?php echo $txtPrice ?? ''; ?>">
 
-                    <fieldset class="form-control-outline"></fieldset>
+                    <fieldset class="form-control-outline <?php echo isset($errors['price']) && $errors['price'] !== '' ? 'error' : ''; ?>"></fieldset>
                 </div>
 
                 <?php
-                if (isset($errors['price'])) {
+                if (isset($errors['price']) && $errors['price'] !== '') {
                     echo '<span class="error-message">' . $errors['price'] . '</span>';
                 }
                 ?>
@@ -215,7 +232,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <!-- Discount -->
             <div class="form-group form-group-discount">
                 <label for="discount" class="form-label">
-                    Discount
+                    Discount <span class="required">*</span>
                 </label>
                 <div class="form-control-wrapper">
                     <input class="form-control"
@@ -227,11 +244,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         placeholder="Enter discount"
                         value="<?php echo $txtDiscount ?? ''; ?>">
 
-                    <fieldset class="form-control-outline"></fieldset>
+                    <fieldset class="form-control-outline <?php echo isset($errors['discount']) && $errors['discount'] !== '' ? 'error' : ''; ?>"></fieldset>
                 </div>
 
                 <?php
-                if (isset($errors['discount'])) {
+                if (isset($errors['discount']) && $errors['discount'] !== '') {
                     echo '<span class="error-message">' . $errors['discount'] . '</span>';
                 }
                 ?>
@@ -257,11 +274,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         placeholder="Enter discount start date"
                         value="<?php echo $txtDiscountStartDate ?? ''; ?>">
 
-                    <fieldset class="form-control-outline"></fieldset>
+                    <fieldset class="form-control-outline <?php echo isset($errors['discount-start-date']) && $errors['discount-start-date'] !== '' ? 'error' : ''; ?>"></fieldset>
                 </div>
 
                 <?php
-                if (isset($errors['discount-start-date'])) {
+                if (isset($errors['discount-start-date']) && $errors['discount-start-date'] !== '') {
                     echo '<span class="error-message">' . $errors['discount-start-date'] . '</span>';
                 }
                 ?>
@@ -284,7 +301,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         placeholder="Enter discount end date"
                         value="<?php echo $txtDiscountEndDate ?? ''; ?>">
 
-                    <fieldset class="form-control-outline"></fieldset>
+                    <fieldset class="form-control-outline <?php echo isset($errors['discount-end-date']) && $errors['discount-end-date'] !== '' ? 'error' : ''; ?>"></fieldset>
                 </div>
 
                 <?php
@@ -326,7 +343,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <!-- Release Date -->
         <div class="form-group">
             <label for="release-date" class="form-label ">
-                Release Date
+                Release Date <span class="required">*</span>
             </label>
             <div class="form-control-wrapper">
                 <input class="form-control form-control-datetime"
@@ -336,8 +353,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     placeholder="Enter release date"
                     value="<?php echo $txtReleaseDate ?? ''; ?>">
 
-                <fieldset class="form-control-outline"></fieldset>
+                <fieldset class="form-control-outline <?php echo isset($errors['release-date']) && $errors['release-date'] !== '' ? 'error' : ''; ?>"></fieldset>
             </div>
+
+            <?php
+            if (isset($errors['release-date']) && $errors['release-date'] !== '') {
+                echo '<span class="error-message">' . $errors['release-date'] . '</span>';
+            }
+            ?>
         </div>
 
         <!-- Developer and Publisher -->
@@ -407,26 +430,28 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             <!-- Dropdown -->
             <div class="dropdown-select-menu">
-                <ul class="dropdown-select-list">
-                    <?php foreach ($platforms as $platform) : ?>
-                        <li class="dropdown-select-item">
-                            <span class="dropdown-select-item-checkbox-wrapper">
-                                <input
-                                    class="dropdown-select-item-checkbox"
-                                    data-indeterminate="false"
-                                    type="checkbox">
+                <div class="dropdown-select-list-wrapper">
+                    <ul class="dropdown-select-list">
+                        <?php foreach ($platforms as $platform) : ?>
+                            <li class="dropdown-select-item">
+                                <span class="dropdown-select-item-checkbox-wrapper">
+                                    <input
+                                        class="dropdown-select-item-checkbox"
+                                        data-indeterminate="false"
+                                        type="checkbox">
 
-                                <svg class="dropdown-select-icon" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="CheckBoxOutlineBlankIcon">
-                                    <path d="M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"></path>
-                                </svg>
-                            </span>
+                                    <svg class="dropdown-select-icon" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="CheckBoxOutlineBlankIcon">
+                                        <path d="M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"></path>
+                                    </svg>
+                                </span>
 
-                            <div class="dropdown-select-item-text">
-                                <span class="dropdown-select-item-text-primary"><?php echo $platform['name']; ?></span>
-                            </div>
-                        </li>
-                    <?php endforeach; ?>
-                </ul>
+                                <div class="dropdown-select-item-text">
+                                    <span class="dropdown-select-item-text-primary"><?php echo $platform['name']; ?></span>
+                                </div>
+                            </li>
+                        <?php endforeach; ?>
+                    </ul>
+                </div>
             </div>
         </div>
 
@@ -469,26 +494,28 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 </div>
 
                 <!-- List -->
-                <ul class="dropdown-select-list">
-                    <?php foreach ($genres as $genre) : ?>
-                        <li class="dropdown-select-item">
-                            <span class="dropdown-select-item-checkbox-wrapper">
-                                <input
-                                    class="dropdown-select-item-checkbox"
-                                    data-indeterminate="false"
-                                    type="checkbox">
+                <div class="dropdown-select-list-wrapper">
+                    <ul class="dropdown-select-list">
+                        <?php foreach ($genres as $genre) : ?>
+                            <li class="dropdown-select-item">
+                                <span class="dropdown-select-item-checkbox-wrapper">
+                                    <input
+                                        class="dropdown-select-item-checkbox"
+                                        data-indeterminate="false"
+                                        type="checkbox">
 
-                                <svg class="dropdown-select-icon" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="CheckBoxOutlineBlankIcon">
-                                    <path d="M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"></path>
-                                </svg>
-                            </span>
+                                    <svg class="dropdown-select-icon" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="CheckBoxOutlineBlankIcon">
+                                        <path d="M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"></path>
+                                    </svg>
+                                </span>
 
-                            <div class="dropdown-select-item-text">
-                                <span class="dropdown-select-item-text-primary"><?php echo $genre['name']; ?></span>
-                            </div>
-                        </li>
-                    <?php endforeach; ?>
-                </ul>
+                                <div class="dropdown-select-item-text">
+                                    <span class="dropdown-select-item-text-primary"><?php echo $genre['name']; ?></span>
+                                </div>
+                            </li>
+                        <?php endforeach; ?>
+                    </ul>
+                </div>
             </div>
         </div>
 
@@ -531,26 +558,28 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 </div>
 
                 <!-- List -->
-                <ul class="dropdown-select-list">
-                    <?php foreach ($tags as $tag) : ?>
-                        <li class="dropdown-select-item">
-                            <span class="dropdown-select-item-checkbox-wrapper">
-                                <input
-                                    class="dropdown-select-item-checkbox"
-                                    data-indeterminate="false"
-                                    type="checkbox">
+                <div class="dropdown-select-list-wrapper">
+                    <ul class="dropdown-select-list">
+                        <?php foreach ($tags as $tag) : ?>
+                            <li class="dropdown-select-item">
+                                <span class="dropdown-select-item-checkbox-wrapper">
+                                    <input
+                                        class="dropdown-select-item-checkbox"
+                                        data-indeterminate="false"
+                                        type="checkbox">
 
-                                <svg class="dropdown-select-icon" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="CheckBoxOutlineBlankIcon">
-                                    <path d="M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"></path>
-                                </svg>
-                            </span>
+                                    <svg class="dropdown-select-icon" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="CheckBoxOutlineBlankIcon">
+                                        <path d="M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"></path>
+                                    </svg>
+                                </span>
 
-                            <div class="dropdown-select-item-text">
-                                <span class="dropdown-select-item-text-primary"><?php echo $tag['name']; ?></span>
-                            </div>
-                        </li>
-                    <?php endforeach; ?>
-                </ul>
+                                <div class="dropdown-select-item-text">
+                                    <span class="dropdown-select-item-text-primary"><?php echo $tag['name']; ?></span>
+                                </div>
+                            </li>
+                        <?php endforeach; ?>
+                    </ul>
+                </div>
             </div>
         </div>
 
@@ -593,26 +622,28 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 </div>
 
                 <!-- List -->
-                <ul class="dropdown-select-list">
-                    <?php foreach ($features as $feature) : ?>
-                        <li class="dropdown-select-item">
-                            <span class="dropdown-select-item-checkbox-wrapper">
-                                <input
-                                    class="dropdown-select-item-checkbox"
-                                    data-indeterminate="false"
-                                    type="checkbox">
+                <div class="dropdown-select-list-wrapper">
+                    <ul class="dropdown-select-list">
+                        <?php foreach ($features as $feature) : ?>
+                            <li class="dropdown-select-item">
+                                <span class="dropdown-select-item-checkbox-wrapper">
+                                    <input
+                                        class="dropdown-select-item-checkbox"
+                                        data-indeterminate="false"
+                                        type="checkbox">
 
-                                <svg class="dropdown-select-icon" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="CheckBoxOutlineBlankIcon">
-                                    <path d="M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"></path>
-                                </svg>
-                            </span>
+                                    <svg class="dropdown-select-icon" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="CheckBoxOutlineBlankIcon">
+                                        <path d="M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"></path>
+                                    </svg>
+                                </span>
 
-                            <div class="dropdown-select-item-text">
-                                <span class="dropdown-select-item-text-primary"><?php echo $feature['name']; ?></span>
-                            </div>
-                        </li>
-                    <?php endforeach; ?>
-                </ul>
+                                <div class="dropdown-select-item-text">
+                                    <span class="dropdown-select-item-text-primary"><?php echo $feature['name']; ?></span>
+                                </div>
+                            </li>
+                        <?php endforeach; ?>
+                    </ul>
+                </div>
             </div>
         </div>
 

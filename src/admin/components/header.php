@@ -112,7 +112,7 @@
                                         alt="Image Description">
                                 </div>
                                 <div class="dropdown-account-info">
-                                    <span class="card-title h5"><?php echo $user['name'] ?></span>
+                                    <span class="card-title h5"><?php echo $user['userName'] ?></span>
                                     <span class="card-text"><?php echo $user['email'] ?></span>
                                 </div>
                             </div>

@@ -328,8 +328,35 @@ function saveFormData() {
     });
 }
 
+
+function removeErrorMessagesOnInput() {
+    // Lấy ra tất cả các form-group
+    const formElements = document.querySelectorAll('.form-group:not(.form-group-flex):not(.form-group-submit)');
+
+    formElements.forEach(formElement => {
+        // Lấy ra tất cả các input có class bắt đầu form-control-
+        const formControl = formElement.querySelector('input[class^="form-control"], textarea[class^="form-control"]');
+
+        // Xoá element error-message khi nhập liệu
+        formControl.addEventListener('input', function () {
+            const errorMessage = formElement.querySelector('.error-message');
+            if (errorMessage) {
+                errorMessage.remove();
+            }
+
+            // Xoá class error cho form-control-outline
+            const formControlOutLine = formElement.querySelector('.form-control-outline');
+            if (formControlOutLine) {
+                formControlOutLine.classList.remove('error');
+            }
+        });
+    });
+}
+
+// Sử dụng DOMContentLoaded để chờ tất cả các element được load xong
 document.addEventListener('DOMContentLoaded', () => {
     dropdownSelect();
     dropdownSelectMultiple();
     saveFormData();
+    removeErrorMessagesOnInput();
 });
