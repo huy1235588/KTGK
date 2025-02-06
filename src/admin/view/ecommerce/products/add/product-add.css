@@ -821,7 +821,7 @@ Author       : LeThienHuy.
 }
 
 .form-control-url-btn:hover {
-    color: #377DFE;
+    color: #377dfe;
     background-color: #377dff1a;
 }
 
@@ -995,4 +995,37 @@ Author       : LeThienHuy.
 }
 /*===================================*
     14.END FILE
+*===================================*/
+/*
+
+
+
+
+
+
+
+
+
+
+*/
+/*===================================*
+    15.START QUILL
+*===================================*/
+.form-group-quill .form-control-wrapper {
+    display: block;
+    color: #020202;
+}
+
+.form-group-quill .form-control-wrapper ul,
+.form-group-quill .form-control-wrapper ol,
+.form-group-quill .form-control-wrapper li {
+    color: #020202;
+}
+
+#quill-editor .ql-editor {
+    /* 7 dòng x 1.5em mỗi dòng */
+    min-height: 10.5em;
+}
+/*===================================*
+    15.END QUILL
 *===================================*/

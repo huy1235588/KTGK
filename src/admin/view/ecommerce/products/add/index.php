@@ -8,6 +8,8 @@ ob_start();
 ?>
 <link rel="stylesheet" href="product-add.css">
 <link rel="stylesheet" href="/components/popupInput.css">
+<link rel="stylesheet" href="/assets/css/quill.snow.css">
+<link rel="stylesheet" href="/assets/css/quill.bubble.css">
 
 <?php
 // Nạp file ProductController.php
@@ -42,6 +44,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $txtTitle = htmlspecialchars($_POST['title']);
     $txtType = htmlspecialchars($_POST['type']);
     $txtDescription = htmlspecialchars($_POST['description']);
+
+    $txtDetails = '';
+    // Xử lý details
+    if (isset($_POST['details'])) {
+        $txtDetails = htmlspecialchars($_POST['details']);
+    }
+
     $txtPrice = htmlspecialchars($_POST['price']);
     $txtDiscount = htmlspecialchars($_POST['discount']);
 
@@ -63,8 +72,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (isset($_FILES['headerImage'])) {
         $txtHeaderImage = htmlspecialchars($_FILES['headerImage']['name']);
         $txtHeaderImage = 'uploads/' . $txtHeaderImage;
-    }
-    else{
+    } else {
         $txtHeaderImage = htmlspecialchars($_POST['headerImage']);
     }
 
@@ -86,6 +94,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     echo 'Title: ' . $txtTitle . '<br/>';
     echo 'Type:' . $txtType . '<br/>';
     echo 'Description: ' . $txtDescription . '<br/>';
+    echo 'Details: ' . $txtDetails . '<br/>';
     echo 'Price: ' . $txtPrice . '<br/>';
     echo 'Discount: ' . $txtDiscount . '<br/>';
     echo 'Discount Start Date: ' . $txtDiscountStartDate . '<br/>';
@@ -215,6 +224,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 echo '<span class="error-message">' . $errors['description'] . '</span>';
             }
             ?>
+        </div>
+
+        <!-- Details -->
+        <div class="form-group form-group-quill">
+            <label for="details" class="form-label">
+                Details
+            </label>
+
+            <input class="form-control-quill"
+                type="text"
+                id="details"
+                name="details"
+                hidden>
+
+            <div class="form-control-wrapper">
+                <!-- Quill -->
+                <div id="quill-editor"></div>
+                <!-- End Quill -->
+            </div>
         </div>
 
         <!-- Price and Discount -->
@@ -755,6 +783,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 </article>
 
 <script src="/components/popupInput.js"></script>
+<script src="/assets/js/quill.js"></script>
 <script src="product-add.js"></script>
 
 <?php

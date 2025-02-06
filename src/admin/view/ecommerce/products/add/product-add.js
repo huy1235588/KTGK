@@ -357,6 +357,133 @@ function handleFileUpload() {
     });
 }
 
+
+/***************************************
+
+    Custom textarea
+
+***************************************/
+// Khai báo biến quill
+let quill;
+
+// Hàm custom textarea
+function textareaCustom() {
+    const toolbarQuill = [
+        ['bold', 'italic', 'underline', 'strike'], // Chữ đậm, nghiêng, gạch chân, gạch ngang
+        [{
+            'color': []
+        }, {
+            'background': []
+        }], // Màu chữ và màu nền
+        [{
+            'script': 'sub'
+        }, {
+            'script': 'super'
+        }], // Chỉ số dưới và chỉ số trên
+        [{
+            'header': [1, 2, 3, 4, 5, 6, false]
+        }], // Tiêu đề
+        [{
+            'align': []
+        }], // Căn lề
+        [{
+            'list': 'ordered'
+        }, {
+            'list': 'bullet'
+        }], // Danh sách có thứ tự và không thứ tự
+        [{
+            'indent': '-1'
+        }, {
+            'indent': '+1'
+        }], // Thụt lề
+        ['blockquote', 'code-block'], // Trích dẫn và khối mã
+        ['link', 'image', 'video', 'customImage'], // Chèn liên kết, hình ảnh, video, hình ảnh từ URL
+        ['clean'] // Xóa định dạng
+    ]
+
+    // Hàm xử lý custom image
+    function imageHandler() {
+        const tooltip = this.quill.theme.tooltip;
+        const originalSave = tooltip.save;
+        const originalHide = tooltip.hide;
+
+        tooltip.save = function () {
+            const range = this.quill.getSelection(true);
+            const value = this.textbox.value;
+            if (value) {
+                this.quill.insertEmbed(range.index, 'image', value, 'user');
+            }
+        };
+        // Called on hide and save.
+        tooltip.hide = function () {
+            tooltip.save = originalSave;
+            tooltip.hide = originalHide;
+            tooltip.hide();
+        };
+        tooltip.edit('image');
+        tooltip.textbox.placeholder = 'Image URL';
+    }
+
+    // Khởi tạo quill editor
+    quill = new Quill('#quill-editor', {
+        placeholder: 'Type your details...', // Placeholder
+        theme: 'snow', // Theme
+        modules: {
+            // Toolbar
+            toolbar: {
+                container: toolbarQuill, // Toolbar
+                handlers: {
+                    customImage: imageHandler // Custom image
+                }
+            }
+        }
+    });
+
+    // Chờ Quill khởi tạo xong
+    setTimeout(() => {
+        // Chọn nút customImage trong toolbar
+        const customImageButton = document.querySelector('.ql-customImage');
+
+        if (customImageButton) {
+            // Xóa nội dung mặc định của nút
+            customImageButton.innerHTML = '';
+
+            // Thêm SVG vào nút
+            customImageButton.innerHTML = `
+            <svg stroke="currentColor" fill="currentColor" stroke-width="0" version="1" 
+                viewBox="0 0 48 48" enable-background="new 0 0 48 48" height="18px" width="18px" 
+                xmlns="http://www.w3.org/2000/svg">
+                <path fill="#8CBCD6" d="M40,41H8c-2.2,0-4-1.8-4-4V11c0-2.2,1.8-4,4-4h32c2.2,0,4,1.8,4,4v26C44,39.2,42.2,41,40,41z"></path>
+                <circle fill="#B3DDF5" cx="35" cy="16" r="3"></circle>
+                <polygon fill="#9AC9E3" points="20,16 9,32 31,32"></polygon>
+                <polygon fill="#B3DDF5" points="31,22 23,32 39,32"></polygon>
+                <circle fill="#43A047" cx="38" cy="38" r="10"></circle>
+                <g fill="#fff">
+                    <rect x="36" y="32" width="4" height="12"></rect>
+                    <rect x="32" y="36" width="12" height="4"></rect>
+                </g>
+            </svg>
+        `;
+        }
+    }, 10);
+
+    // Lắng nghe sự kiện input để lưu dữ liệu
+    quill.on('text-change', function () {
+        // Lấy ra nội dung của quill editor
+        const quillContent = quill.root.innerHTML;
+
+        // Lấy ra formControl
+        const formGroup = document.querySelector('.form-group-quill');
+        const formControl = formGroup.querySelector('.form-control-quill');
+
+        // Cập nhật value cho formControl
+        formControl.value = quillContent;
+        
+        // Trigger event input
+        formControl.dispatchEvent(new Event('input'));
+    });
+}
+
 /***************************************
  
     Lưu dữ liệu form vào localStorage
@@ -455,6 +582,12 @@ function saveFormData() {
 
             }
 
+            // Xử lý riêng cho quill editor
+            else if (inputForm.classList.contains('form-control-quill')) {
+                // Hiển thị dữ liệu đã lưu
+                quill.root.innerHTML = savedData[selectedName];
+            }
+
             else {
                 // Hiển thị dữ liệu đã lưu
                 inputForm.value = savedData[selectedName];
@@ -504,6 +637,7 @@ function removeErrorMessagesOnInput() {
         const formControl = formElement.querySelector('input[class^="form-control"], textarea[class^="form-control"]');
 
         // Xoá element error-message khi nhập liệu
+        if (!formControl) return;
         formControl.addEventListener('input', function () {
             const errorMessage = formElement.querySelector('.error-message');
             if (errorMessage) {
@@ -525,6 +659,7 @@ document.addEventListener('DOMContentLoaded', () => {
     dropdownSelectMultiple();
     handleCheckbox();
     handleFileUpload();
+    textareaCustom();
     saveFormData();
     removeErrorMessagesOnInput();
 });
