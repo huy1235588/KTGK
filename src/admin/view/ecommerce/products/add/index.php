@@ -7,6 +7,7 @@ $activeSidebarLink = ['Pages', 'E-commerce', 'Products', 'Add Product'];
 ob_start();
 ?>
 <link rel="stylesheet" href="product-add.css">
+<link rel="stylesheet" href="/components/popupInput.css">
 
 <?php
 // Nạp file ProductController.php
@@ -57,6 +58,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $txtGenres = htmlspecialchars($_POST['genres']);
     $txtTags = htmlspecialchars($_POST['tags']);
     $txtFeatures = htmlspecialchars($_POST['features']);
+
+    // Xử lý ảnh headerImage
+    if (isset($_FILES['headerImage'])) {
+        $txtHeaderImage = htmlspecialchars($_FILES['headerImage']['name']);
+        $txtHeaderImage = 'uploads/' . $txtHeaderImage;
+    }
+    else{
+        $txtHeaderImage = htmlspecialchars($_POST['headerImage']);
+    }
+
     $txtIsActive = isset($_POST['isActive']) ? 1 : 0;
 
     // Nếu discount < 0 thì discountStart và discountEnd phải bằng null
@@ -86,6 +97,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     echo 'Genres: ' . $txtGenres . '<br/>';
     echo 'Tags: ' . $txtTags . '<br/>';
     echo 'Features: ' . $txtFeatures . '<br/>';
+    echo 'Header Image: ' . $txtHeaderImage . '<br/>';
     echo 'Is Active: ' . $txtIsActive . '<br/>';
 }
 ?>
@@ -649,6 +661,74 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             </div>
         </div>
 
+        <!-- Header image -->
+        <div class="form-group form-group-file">
+            <div class="form-group-header">
+                <label for="header-image" class="form-label">
+                    Header Image
+                </label>
+
+                <!-- Add image from url -->
+                <button class="form-control-url-btn" type="button" id="addImageFromUrl">
+                    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 512 512" height="16px" width="16px" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M280 341.1l-1.2.1c-3.6.4-7 2-9.6 4.5l-64.6 64.6c-13.7 13.7-32 21.2-51.5 21.2s-37.8-7.5-51.5-21.2c-13.7-13.7-21.2-32-21.2-51.5s7.5-37.8 21.2-51.5l68.6-68.6c3.5-3.5 7.3-6.6 11.4-9.3 4.6-3 9.6-5.6 14.8-7.5 4.8-1.8 9.9-3 15-3.7 3.4-.5 6.9-.7 10.2-.7 1.4 0 2.8.1 4.6.2 17.7 1.1 34.4 8.6 46.8 21 7.7 7.7 13.6 17.1 17.1 27.3 2.8 8 11.2 12.5 19.3 10.1.1 0 .2-.1.3-.1.1 0 .2 0 .2-.1 8.1-2.5 12.8-11 10.5-19.1-4.4-15.6-12.2-28.7-24.6-41-15.6-15.6-35.9-25.8-57.6-29.3-1.9-.3-3.8-.6-5.7-.8-3.7-.4-7.4-.6-11.1-.6-2.6 0-5.2.1-7.7.3-5.4.4-10.8 1.2-16.2 2.5-1.1.2-2.1.5-3.2.8-6.7 1.8-13.3 4.2-19.5 7.3-10.3 5.1-19.6 11.7-27.7 19.9l-68.6 68.6C58.9 304.4 48 330.8 48 359c0 28.2 10.9 54.6 30.7 74.4C98.5 453.1 124.9 464 153 464c28.2 0 54.6-10.9 74.4-30.7l65.3-65.3c10.4-10.5 2-28.3-12.7-26.9z"></path>
+                        <path d="M433.3 78.7C413.5 58.9 387.1 48 359 48s-54.6 10.9-74.4 30.7l-63.7 63.7c-9.7 9.7-3.6 26.3 10.1 27.4 4.7.4 9.3-1.3 12.7-4.6l63.8-63.6c13.7-13.7 32-21.2 51.5-21.2s37.8 7.5 51.5 21.2c13.7 13.7 21.2 32 21.2 51.5s-7.5 37.8-21.2 51.5l-68.6 68.6c-3.5 3.5-7.3 6.6-11.4 9.3-4.6 3-9.6 5.6-14.8 7.5-4.8 1.8-9.9 3-15 3.7-3.4.5-6.9.7-10.2.7-1.4 0-2.9-.1-4.6-.2-17.7-1.1-34.4-8.6-46.8-21-7.3-7.3-12.8-16-16.4-25.5-2.9-7.7-11.1-11.9-19.1-9.8-8.9 2.3-14.1 11.7-11.3 20.5 4.5 14 12.1 25.9 23.7 37.5l.2.2c16.9 16.9 39.4 27.6 63.3 30.1 3.7.4 7.4.6 11.1.6 2.6 0 5.2-.1 7.8-.3 6.5-.5 13-1.6 19.3-3.2 6.7-1.8 13.3-4.2 19.5-7.3 10.3-5.1 19.6-11.7 27.7-19.9l68.6-68.6c19.8-19.8 30.7-46.2 30.7-74.4s-11.1-54.6-30.9-74.4z"></path>
+                    </svg>
+                    Add image from URL
+                </button>
+            </div>
+            <div class="form-control-wrapper form-control-wrapper-file">
+                <!-- Uploader -->
+                <div class="file-uploader-container">
+                    <!-- Input -->
+                    <input class="form-control-file"
+                        type="file"
+                        id="headerImage"
+                        name="headerImage"
+                        accept="image/*">
+
+                    <!-- Label -->
+                    <label for="headerImage" class="dropzone">
+                        <!-- Icon -->
+                        <svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="17 8 12 3 7 8"></polyline>
+                            <line x1="12" y1="3" x2="12" y2="15"></line>
+                        </svg>
+
+                        <!-- Text -->
+                        <span class="dropzone-text">
+                            Choose a file…
+                        </span>
+                    </label>
+                </div>
+
+                <!-- Preview -->
+                <div class="file-preview" style="display: none;">
+                    <!-- Image -->
+                    <img src="https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/621830/header.jpg?t=1725354050"
+                        alt="Header Image"
+                        class="file-preview-image">
+
+                    <!-- Info -->
+                    <div class="file-preview-info">
+                        <!-- Name -->
+                        <p class="file-preview-name"></p>
+
+                        <!-- Size -->
+                        <p class="file-preview-size"></p>
+                    </div>
+
+                    <!-- Button -->
+                    <button class="file-preview-remove" type="button">
+                        <svg class="file-preview-remove-icon" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="DeleteIcon">
+                            <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
         <!-- Is active -->
         <label class="form-group form-group-checkbox" for="isActive">
             <div class="form-control-wrapper">
@@ -674,6 +754,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </form>
 </article>
 
+<script src="/components/popupInput.js"></script>
 <script src="product-add.js"></script>
 
 <?php

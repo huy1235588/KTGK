@@ -258,12 +258,110 @@ function handleCheckbox() {
     });
 }
 
+/********************
+ 
+    File Upload
+ 
+*********************/
+// Hàm hiển thị file preview
+function displayFilePreview(formGroup, file, uploaderContainer, formControl) {
+    // Lấy ra các element cần thiết
+    const filePreview = formGroup.querySelector('.file-preview');
+    const filePreviewImage = formGroup.querySelector('.file-preview-image');
+    const filePreviewRemove = formGroup.querySelector('.file-preview-remove');
+    const filePreviewName = formGroup.querySelector('.file-preview-name');
+    const filePreviewSize = formGroup.querySelector('.file-preview-size');
+
+    // Hiển thị file preview
+    uploaderContainer.style.display = 'none';
+    filePreview.style.display = 'flex';
+    filePreviewName.textContent = file.name;
+    filePreviewSize.textContent = `${(file.size / 1024).toFixed(2)} KB`;
+
+    // Nếu file là url 
+    if (typeof file === 'string') {
+        filePreviewName.textContent = file.split('/').pop();
+        filePreviewImage.src = file;
+
+        // Đổi formControl thành text
+        formControl.type = 'text';
+        formControl.value = file;
+    }
+
+    // Hiển thị file preview image nếu file là hình ảnh
+    else if (file.type && file.type.includes('image')) {
+        // Tạo đường dẫn cho file preview image
+        const reader = new FileReader();
+
+        // Hiển thị file preview image
+        reader.onload = function (event) {
+            filePreviewImage.src = event.target.result;
+        };
+        reader.readAsDataURL(file);
+    }
+
+    // Xử lý sự kiện khi click vào nút xoá file
+    filePreviewRemove.addEventListener('click', function () {
+        formControl.value = '';
+        filePreview.style.display = 'none';
+        uploaderContainer.style.display = 'block';
+
+        // Đổi formControl thành file
+        formControl.type = 'file';
+    });
+}
+
+// Hàm xử lý file upload
+function handleFileUpload() {
+    // Lặp qua từng formGroup
+    document.querySelectorAll('.form-group-file').forEach(formGroup => {
+        const uploaderContainer = formGroup.querySelector('.file-uploader-container');
+        const formControl = formGroup.querySelector('.form-control-file');
+
+        // Hiển thị file đã chọn
+        formControl.addEventListener('change', function () {
+            const file = formControl.files[0];
+
+            // Hiển thị file preview
+            if (file) {
+                displayFilePreview(formGroup, file, uploaderContainer, formControl);
+            }
+        });
+
+        // Hàm xử lý submit popup
+        async function handelSubmitPopup(value) {
+            // Hiển thị file preview
+            if (value) {
+                // Hiển thị file preview
+                displayFilePreview(formGroup, value, uploaderContainer, formControl);
+
+                // Đóng popup
+                myPopup.close();
+            }
+        }
+
+        // Tạo popup
+        const myPopup = new PopupInput({
+            header: "Add image from URL",
+            label: "Paste image URL",
+            inputName: "imageUrl",
+            inputType: "text",
+            buttonText: "Add image",
+            placeholder: "Enter image URL",
+            onSubmit: handelSubmitPopup
+        });
+
+        // Lấy ra nút add image from URL
+        const addImageFromUrlBtn = formGroup.querySelector('.form-control-url-btn');
+        addImageFromUrlBtn.addEventListener('click', () => myPopup.open());
+    });
+}
+
 /***************************************
  
     Lưu dữ liệu form vào localStorage
 
 **************************************/
-
 // Hàm lưu dữ liệu form vào localStorage
 function saveFormData() {
     const form = document.getElementById('productAddForm');
@@ -333,12 +431,12 @@ function saveFormData() {
             }
 
             // Xử lý riêng cho checkbox
-            else if (inputForm.classList.contains('form-control-checkbox')) {                
+            else if (inputForm.classList.contains('form-control-checkbox')) {
                 // Hiển thị dữ liệu đã lưu
                 if (savedData[selectedName]) {
                     // Cập nhật checked cho inputForm
                     inputForm.checked = savedData[selectedName] === 1;
-                    
+
                     // Lấy ra formGroupCheckbox
                     const formGroupCheckbox = inputForm.closest('.form-group-checkbox');
 
@@ -352,6 +450,11 @@ function saveFormData() {
                 }
             }
 
+            // Xử lý riêng cho file upload
+            else if (inputForm.classList.contains('form-control-file')) {
+
+            }
+
             else {
                 // Hiển thị dữ liệu đã lưu
                 inputForm.value = savedData[selectedName];
@@ -363,10 +466,15 @@ function saveFormData() {
             inputForm.addEventListener('change', function () {
                 // Cập nhật object với dữ liệu mới
                 savedData[selectedName] = inputForm.type === 'checkbox' ? (inputForm.checked ? 1 : 0) : inputForm.value;
-    
+
                 // Lưu dữ liệu vào localStorage
                 localStorage.setItem('productFormData', JSON.stringify(savedData));
             });
+        }
+
+        // Sự kiện change để lưu dữ liệu ngay khi người dùng chọn giá trị
+        else if (inputForm.type === 'file') {
+
         }
 
         else {
@@ -374,7 +482,7 @@ function saveFormData() {
             inputForm.addEventListener('input', function () {
                 // Cập nhật object với dữ liệu mới
                 savedData[selectedName] = inputForm.value;
-    
+
                 // Lưu dữ liệu vào localStorage
                 localStorage.setItem('productFormData', JSON.stringify(savedData));
             });
@@ -415,7 +523,8 @@ function removeErrorMessagesOnInput() {
 document.addEventListener('DOMContentLoaded', () => {
     dropdownSelect();
     dropdownSelectMultiple();
+    handleCheckbox();
+    handleFileUpload();
     saveFormData();
     removeErrorMessagesOnInput();
-    handleCheckbox();
 });
