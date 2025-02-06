@@ -212,33 +212,56 @@ class ProductController
 
     // Hàm để insert sản phẩm
     public function addProduct(
-        $name,
-        $price,
-        $quantity,
+        $title,
+        $type,
         $description,
-        $image
+        $detail,
+        $price,
+        $discount,
+        $discount_start_date,
+        $discount_end_date,
+        $release_date,
+        $header_image,
+        $is_active
     ) {
         $stmt = $this->conn->prepare("INSERT INTO products (
-            name,
-            price,
-            quantity,
+            title,
+            type_id,
             description,
-            image
-        ) VALUES (
-            :name,
-            :price,
-            :quantity,
-            :description,
-            :image
-        )");
+            detail,
+            price,
+            discount,
+            discountStartDate,
+            discountEndDate,
+            releaseDate,
+            headerImage,
+            isActive
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
-        $stmt->bindParam(':name', $name);
-        $stmt->bindParam(':price', $price);
-        $stmt->bindParam(':quantity', $quantity);
-        $stmt->bindParam(':description', $description);
-        $stmt->bindParam(':image', $image);
+        $stmt->bind_param(
+            "sisssddsssi",
+            $title,           // String
+            $type,            // Integer (type)
+            $description,     // String
+            $detail,          // String
+            $price,           // Float
+            $discount,        // Float
+            $discount_start_date,  // String
+            $discount_end_date,    // String
+            $release_date,    // String
+            $header_image,    // String
+            $is_active        // Integer (active status)
+        );
 
-        $stmt->execute();
+        // Thực thi câu lệnh
+        $result =  $stmt->execute();
+
+        // Trả về ID của sản phẩm vừa thêm
+        if ($result) {
+            return $this->conn->insert_id;
+        } else {
+            return false;
+        }
     }
 
     // Hàm để update sản phẩm

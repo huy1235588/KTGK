@@ -31,11 +31,15 @@ $features = $productController->getFeatures();
 // Khởi tạo mảng lỗi
 $errors = [
     'title' => '',
-    'description' => '',
     'type' => '',
+    'description' => '',
+    'details' => '',
     'price' => '',
     'discount' => '',
+    'discount-start-date' => '',
+    'discount-end-date' => '',
     'release-date' => '',
+    'headerImage' => '',
 ];
 
 // Xử lý form
@@ -45,10 +49,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $txtType = htmlspecialchars($_POST['type']);
     $txtDescription = htmlspecialchars($_POST['description']);
 
-    $txtDetails = '';
     // Xử lý details
+    $txtDetails = '';
     if (isset($_POST['details'])) {
-        $txtDetails = htmlspecialchars($_POST['details']);
+        $txtDetails = $_POST['details'];
     }
 
     $txtPrice = htmlspecialchars($_POST['price']);
@@ -69,9 +73,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $txtFeatures = htmlspecialchars($_POST['features']);
 
     // Xử lý ảnh headerImage
+    $txtHeaderImage = '';
     if (isset($_FILES['headerImage'])) {
         $txtHeaderImage = htmlspecialchars($_FILES['headerImage']['name']);
-        $txtHeaderImage = 'uploads/' . $txtHeaderImage;
+        if (isset($txtHeaderImage) && $txtHeaderImage !== '') {
+            $txtHeaderImage = 'uploads/' . $txtHeaderImage;
+        }
     } else {
         $txtHeaderImage = htmlspecialchars($_POST['headerImage']);
     }
@@ -86,28 +93,39 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Kiểm tra dữ liệu không được để trống
     foreach ($_POST as $key => $value) {
-        if (empty($value)) {
+        if (!isset($value) || trim($value) === "") {
             $errors[$key] = 'This field is required';
         }
     }
 
-    echo 'Title: ' . $txtTitle . '<br/>';
-    echo 'Type:' . $txtType . '<br/>';
-    echo 'Description: ' . $txtDescription . '<br/>';
-    echo 'Details: ' . $txtDetails . '<br/>';
-    echo 'Price: ' . $txtPrice . '<br/>';
-    echo 'Discount: ' . $txtDiscount . '<br/>';
-    echo 'Discount Start Date: ' . $txtDiscountStartDate . '<br/>';
-    echo 'Discount End Date: ' . $txtDiscountEndDate . '<br/>';
-    echo 'Release Date: ' . $txtReleaseDate . '<br/>';
-    echo 'Developer: ' . $txtDeveloper . '<br/>';
-    echo 'Publisher: ' . $txtPublisher . '<br/>';
-    echo 'Platform: ' . $txtPlatform . '<br/>';
-    echo 'Genres: ' . $txtGenres . '<br/>';
-    echo 'Tags: ' . $txtTags . '<br/>';
-    echo 'Features: ' . $txtFeatures . '<br/>';
-    echo 'Header Image: ' . $txtHeaderImage . '<br/>';
-    echo 'Is Active: ' . $txtIsActive . '<br/>';
+    // Kiểm tra headerImage file không được để trống
+    if ($txtHeaderImage === '') {
+        $errors['headerImage'] = 'This field is required';
+    }
+
+    // Kiểm tra title đã tồn tại
+    $result_title = $conn->query("SELECT * FROM products WHERE title = '$txtTitle'");
+    if ($result_title->num_rows > 0) {
+        $errors['title'] = 'Title already exists';
+    }
+
+    // Nếu không có lỗi thì hiển thị dữ liệu
+    if (empty(array_filter($errors))) {
+        // Thực hiện thêm sản phẩm
+        $productController->addProduct(
+            $txtTitle,
+            $txtType,
+            $txtDescription,
+            $txtDetails,
+            $txtPrice,
+            $txtDiscount,
+            $txtDiscountStartDate,
+            $txtDiscountEndDate,
+            $txtReleaseDate,
+            $txtHeaderImage,
+            $txtIsActive
+        );
+    }
 }
 ?>
 
@@ -181,7 +199,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <div class="dropdown-select-list-wrapper">
                     <ul class="dropdown-select-list">
                         <?php foreach ($types as $type) : ?>
-                            <li class="dropdown-select-item">
+                            <li class="dropdown-select-item" data-value="<?php echo $type['id']; ?>">
                                 <span class="dropdown-select-item-checkbox-wrapper">
                                     <input
                                         class="dropdown-select-item-checkbox"
@@ -408,8 +426,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <!-- Developer and Publisher -->
         <div class="form-group form-group-flex">
             <!-- Developer -->
-            <div class="form-group
-                form-group-developer">
+            <div class="form-group form-group-developer">
                 <label for="developer" class="form-label">
                     Developer
                 </label>
@@ -421,13 +438,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         placeholder="Enter developer"
                         value="<?php echo $txtDeveloper ?? ''; ?>">
 
-                    <fieldset class="form-control-outline"></fieldset>
+                    <fieldset class="form-control-outline <?php echo isset($errors['developer']) && $errors['developer'] !== '' ? 'error' : ''; ?>"></fieldset>
                 </div>
+
+                <?php
+                if (isset($errors['developer']) && $errors['developer'] !== '') {
+                    echo '<span class="error-message">' . $errors['developer'] . '</span>';
+                }
+                ?>
             </div>
 
             <!-- Publisher -->
-            <div class="form-group
-                form-group-publisher">
+            <div class="form-group form-group-publisher">
                 <label for="publisher" class="form-label">
                     Publisher
                 </label>
@@ -439,8 +461,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         placeholder="Enter publisher"
                         value="<?php echo $txtPublisher ?? ''; ?>">
 
-                    <fieldset class="form-control-outline"></fieldset>
+                    <fieldset class="form-control-outline <?php echo isset($errors['publisher']) && $errors['publisher'] !== '' ? 'error' : ''; ?>"></fieldset>
                 </div>
+
+                <?php
+                if (isset($errors['publisher']) && $errors['publisher'] !== '') {
+                    echo '<span class="error-message">' . $errors['publisher'] . '</span>';
+                }
+                ?>
             </div>
         </div>
 
@@ -467,8 +495,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <path d="M7 10l5 5 5-5z"></path>
                 </svg>
 
-                <fieldset class="form-control-outline"></fieldset>
+                <fieldset class="form-control-outline <?php echo isset($errors['platform']) && $errors['platform'] !== '' ? 'error' : ''; ?>"></fieldset>
             </div>
+
+            <?php
+            if (isset($errors['platform']) && $errors['platform'] !== '') {
+                echo '<span class="error-message">' . $errors['platform'] . '</span>';
+            }
+            ?>
 
             <!-- Dropdown -->
             <div class="dropdown-select-menu">
@@ -520,8 +554,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <path d="M7 10l5 5 5-5z"></path>
                 </svg>
 
-                <fieldset class="form-control-outline"></fieldset>
+                <fieldset class="form-control-outline <?php echo isset($errors['genres']) && $errors['genres'] !== '' ? 'error' : ''; ?>"></fieldset>
             </div>
+
+            <?php
+            if (isset($errors['genres']) && $errors['genres'] !== '') {
+                echo '<span class="error-message">' . $errors['genres'] . '</span>';
+            }
+            ?>
 
             <!-- Dropdown -->
             <div class="dropdown-select-menu">
@@ -584,8 +624,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <path d="M7 10l5 5 5-5z"></path>
                 </svg>
 
-                <fieldset class="form-control-outline"></fieldset>
+                <fieldset class="form-control-outline <?php echo isset($errors['tags']) && $errors['tags'] !== '' ? 'error' : ''; ?>"></fieldset>
             </div>
+
+            <?php
+            if (isset($errors['tags']) && $errors['tags'] !== '') {
+                echo '<span class="error-message">' . $errors['tags'] . '</span>';
+            }
+            ?>
 
             <!-- Dropdown -->
             <div class="dropdown-select-menu">
@@ -648,8 +694,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <path d="M7 10l5 5 5-5z"></path>
                 </svg>
 
-                <fieldset class="form-control-outline"></fieldset>
+                <fieldset class="form-control-outline <?php echo isset($errors['features']) && $errors['features'] !== '' ? 'error' : ''; ?>"></fieldset>
             </div>
+
+            <?php
+            if (isset($errors['features']) && $errors['features'] !== '') {
+                echo '<span class="error-message">' . $errors['features'] . '</span>';
+            }
+            ?>
 
             <!-- Dropdown -->
             <div class="dropdown-select-menu">
@@ -705,7 +757,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     Add image from URL
                 </button>
             </div>
-            <div class="form-control-wrapper form-control-wrapper-file">
+
+            <!-- Add image from url -->
+            <div class="form-control-wrapper form-control-wrapper-file <?php echo isset($errors['headerImage']) && $errors['headerImage'] !== '' ? 'error' : ''; ?>">
                 <!-- Uploader -->
                 <div class="file-uploader-container">
                     <!-- Input -->
@@ -734,7 +788,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <!-- Preview -->
                 <div class="file-preview" style="display: none;">
                     <!-- Image -->
-                    <img src="https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/621830/header.jpg?t=1725354050"
+                    <img src=""
                         alt="Header Image"
                         class="file-preview-image">
 
@@ -755,6 +809,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     </button>
                 </div>
             </div>
+
+            <?php
+            if (isset($errors['headerImage']) && $errors['headerImage'] !== '') {
+                echo '<span class="error-message">' . $errors['headerImage'] . '</span>';
+            }
+            ?>
         </div>
 
         <!-- Is active -->

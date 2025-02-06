@@ -16,8 +16,12 @@ function updateSelection(formGroupSelect, value) {
     const selectBox = formGroupSelect.querySelector('.select-box');
     const dropdownItems = [...formGroupSelect.querySelectorAll('.dropdown-select-menu .dropdown-select-item')];
 
-    // Hiển thị value đã chọn
-    selectBox.textContent = value;
+    // Lấy element có text trùng với text đã chọn
+    const selectedElement = dropdownItems.find(item => item.dataset.value === value);
+    const text = selectedElement.textContent.trim();
+
+    // Hiển thị text đã chọn
+    selectBox.textContent = text;
     formControl.value = value;
 
     // Trigger event input
@@ -26,7 +30,7 @@ function updateSelection(formGroupSelect, value) {
     // Cập nhật icon cho các item
     dropdownItems.forEach(item => {
         // Kiểm tra xem item đã chọn chưa
-        const isSelected = item.textContent.trim() === value;
+        const isSelected = item.dataset.value === value;
 
         // Thêm class selected cho item đã chọn
         item.classList.toggle('selected', isSelected);
@@ -40,7 +44,6 @@ function updateSelection(formGroupSelect, value) {
 function dropdownSelect() {
     document.querySelectorAll('.form-group-select').forEach(formGroupSelect => {
         // Lấy ra các element cần thiết
-        const formControl = formGroupSelect.querySelector('.form-control-select');
         const dropdownButton = formGroupSelect.querySelector('.form-control-wrapper.select');
         const dropdownMenu = formGroupSelect.querySelector('.dropdown-select-menu');
         const dropdownItems = [...formGroupSelect.querySelectorAll('.dropdown-select-menu .dropdown-select-item')];
@@ -60,7 +63,7 @@ function dropdownSelect() {
             // Xử lý sự kiện khi click vào item
             item.addEventListener('click', function () {
                 // Lấy ra value của item đã chọn
-                const value = item.textContent.trim();
+                const value = item.dataset.value;
 
                 // Cập nhật giá trị đã chọn
                 updateSelection(formGroupSelect, value);
@@ -308,6 +311,11 @@ function displayFilePreview(formGroup, file, uploaderContainer, formControl) {
 
         // Đổi formControl thành file
         formControl.type = 'file';
+
+        // Xoá localStorage khi xoá file
+        const savedData = JSON.parse(localStorage.getItem('productFormData')) || {};
+        delete savedData[formControl.name];
+        localStorage.setItem('productFormData', JSON.stringify(savedData));
     });
 }
 
@@ -478,7 +486,7 @@ function textareaCustom() {
 
         // Cập nhật value cho formControl
         formControl.value = quillContent;
-        
+
         // Trigger event input
         formControl.dispatchEvent(new Event('input'));
     });
@@ -579,7 +587,11 @@ function saveFormData() {
 
             // Xử lý riêng cho file upload
             else if (inputForm.classList.contains('form-control-file')) {
+                // Lấy ra formGroup
+                const formGroup = inputForm.closest('.form-group-file');
 
+                // Hiển thị dữ liệu đã lưu
+                displayFilePreview(formGroup, savedData[selectedName], formGroup.querySelector('.file-uploader-container'), inputForm);
             }
 
             // Xử lý riêng cho quill editor
@@ -607,7 +619,17 @@ function saveFormData() {
 
         // Sự kiện change để lưu dữ liệu ngay khi người dùng chọn giá trị
         else if (inputForm.type === 'file') {
+            const formGroup = inputForm.closest('.form-group-file');
+            const imageSrc = formGroup.querySelector('.file-preview-image');
 
+            // Nếu imageSrc thay đổi thì lưu dữ liệu
+            imageSrc.addEventListener('load', function () {
+                // Cập nhật object với dữ liệu mới
+                savedData[selectedName] = imageSrc.src;
+
+                // Lưu dữ liệu vào localStorage
+                localStorage.setItem('productFormData', JSON.stringify(savedData));
+            });
         }
 
         else {

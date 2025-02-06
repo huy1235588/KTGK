@@ -850,6 +850,10 @@ Author       : LeThienHuy.
     margin: 0px auto;
 }
 
+.form-group-file .form-control-wrapper-file.error{
+    border-color: #f44336;
+}
+
 .form-group-file .form-control-wrapper-file:hover {
     border: 2px solid #1b63a7;
 }
