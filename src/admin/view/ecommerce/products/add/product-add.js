@@ -16,8 +16,6 @@ function updateSelection(formGroupSelect, value) {
     const selectBox = formGroupSelect.querySelector('.select-box');
     const dropdownItems = [...formGroupSelect.querySelectorAll('.dropdown-select-menu .dropdown-select-item')];
 
-    console.log(value);
-
     // Hiển thị value đã chọn
     selectBox.textContent = value;
     formControl.value = value;
@@ -237,6 +235,29 @@ function dropdownSelectMultiple() {
     });
 }
 
+
+
+/***************
+ 
+    Checkbox
+ 
+***************/
+function handleCheckbox() {
+    const formGroupCheckbox = document.querySelectorAll('.form-group-checkbox');
+
+    formGroupCheckbox.forEach(formGroup => {
+        const formControl = formGroup.querySelector('.form-control-checkbox');
+        const checkboxIcon = formGroup.querySelector('.checkbox-icon');
+        const formControlWrapper = formGroup.querySelector('.form-control-wrapper');
+
+        // Hiển thị icon checkbox và thêm class checked cho formControlWrapper khi checked
+        formControl.addEventListener('change', function () {
+            checkboxIcon.innerHTML = formControl.checked ? CHECKBOX_ICON : CHECKBOX_OUTLINE_ICON;
+            formControlWrapper.classList.toggle('checked', formControl.checked);
+        });
+    });
+}
+
 /***************************************
  
     Lưu dữ liệu form vào localStorage
@@ -311,24 +332,61 @@ function saveFormData() {
                 updateSelectedItems(formGroupSelect);
             }
 
+            // Xử lý riêng cho checkbox
+            else if (inputForm.classList.contains('form-control-checkbox')) {                
+                // Hiển thị dữ liệu đã lưu
+                if (savedData[selectedName]) {
+                    // Cập nhật checked cho inputForm
+                    inputForm.checked = savedData[selectedName] === 1;
+                    
+                    // Lấy ra formGroupCheckbox
+                    const formGroupCheckbox = inputForm.closest('.form-group-checkbox');
+
+                    // Cập nhật icon checkbox và class checked cho formControlWrapper
+                    const checkboxIcon = formGroupCheckbox.querySelector('.checkbox-icon');
+                    const formControlWrapper = formGroupCheckbox.querySelector('.form-control-wrapper');
+                    checkboxIcon.innerHTML = savedData[selectedName] ? CHECKBOX_ICON : CHECKBOX_OUTLINE_ICON;
+
+                    // Thêm class checked cho formControlWrapper
+                    formControlWrapper.classList.toggle('checked', savedData[selectedName]);
+                }
+            }
+
             else {
                 // Hiển thị dữ liệu đã lưu
                 inputForm.value = savedData[selectedName];
             }
         }
 
-        // Sử dụng sự kiện input để lấy dữ liệu ngay khi người dùng nhập liệu
-        inputForm.addEventListener('input', function () {
-            // Cập nhật object với dữ liệu mới
-            savedData[selectedName] = inputForm.value;
+        // Sự kiện change để lưu dữ liệu ngay khi người dùng chọn giá trị
+        if (inputForm.type === 'checkbox') {
+            inputForm.addEventListener('change', function () {
+                // Cập nhật object với dữ liệu mới
+                savedData[selectedName] = inputForm.type === 'checkbox' ? (inputForm.checked ? 1 : 0) : inputForm.value;
+    
+                // Lưu dữ liệu vào localStorage
+                localStorage.setItem('productFormData', JSON.stringify(savedData));
+            });
+        }
 
-            // Lưu dữ liệu vào localStorage
-            localStorage.setItem('productFormData', JSON.stringify(savedData));
-        });
+        else {
+            // Sử dụng sự kiện input để lấy dữ liệu ngay khi người dùng nhập liệu
+            inputForm.addEventListener('input', function () {
+                // Cập nhật object với dữ liệu mới
+                savedData[selectedName] = inputForm.value;
+    
+                // Lưu dữ liệu vào localStorage
+                localStorage.setItem('productFormData', JSON.stringify(savedData));
+            });
+        }
     });
 }
 
+/***************************************
+ 
+    Xoá error message khi nhập liệu
 
+**************************************/
 function removeErrorMessagesOnInput() {
     // Lấy ra tất cả các form-group
     const formElements = document.querySelectorAll('.form-group:not(.form-group-flex):not(.form-group-submit)');
@@ -359,4 +417,5 @@ document.addEventListener('DOMContentLoaded', () => {
     dropdownSelectMultiple();
     saveFormData();
     removeErrorMessagesOnInput();
+    handleCheckbox();
 });

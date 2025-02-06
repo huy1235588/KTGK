@@ -57,6 +57,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $txtGenres = htmlspecialchars($_POST['genres']);
     $txtTags = htmlspecialchars($_POST['tags']);
     $txtFeatures = htmlspecialchars($_POST['features']);
+    $txtIsActive = isset($_POST['isActive']) ? 1 : 0;
 
     // Nếu discount < 0 thì discountStart và discountEnd phải bằng null
     if ($txtDiscount < 0) {
@@ -85,6 +86,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     echo 'Genres: ' . $txtGenres . '<br/>';
     echo 'Tags: ' . $txtTags . '<br/>';
     echo 'Features: ' . $txtFeatures . '<br/>';
+    echo 'Is Active: ' . $txtIsActive . '<br/>';
 }
 ?>
 
@@ -646,6 +648,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 </div>
             </div>
         </div>
+
+        <!-- Is active -->
+        <label class="form-group form-group-checkbox" for="isActive">
+            <div class="form-control-wrapper">
+                <input class="form-control-checkbox"
+                    type="checkbox"
+                    id="isActive"
+                    name="isActive"
+                    value="1">
+
+                <svg class="checkbox-icon" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="CheckBoxOutlineBlankIcon">
+                    <path d="M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"></path>
+                </svg>
+            </div>
+            <span class="form-label">
+                Active
+            </span>
+        </label>
 
         <!-- Submit -->
         <div class="form-group form-group-submit">
