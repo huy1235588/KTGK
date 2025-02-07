@@ -1,6 +1,5 @@
 <?php
 include '../utils/db_connect.php';
-include '../components/notification.php';
 include '../controller/ProductController.php';
 
 // Mở kết nối
@@ -24,11 +23,6 @@ if ($method === 'POST') {
     $sort = $data['sort'];
     $order = $data['order'];
     $columns = $data['columns'];
-
-    // Bỏ cột "headerImage" vì không cần tìm kiếm theo cột này
-    $columns = array_filter($columns, function ($column) {
-        return $column !== 'headerImage';
-    });
 
     // Khởi tạo ProductController
     $productController = new ProductController($conn);

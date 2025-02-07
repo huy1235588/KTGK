@@ -33,20 +33,25 @@ class ProductController
     public function getProductsByPage($offset, $limit, $columns, $query, $sort = 'id', $order = 'ASC')
     {
         // Xử lý query
-        $query = $this->conn->real_escape_string($query);
+        $query = '%' . $this->conn->real_escape_string($query) . '%';
 
-        // Thêm ký tự % vào trước và sau query
-        $query = '%' . $query . '%';
+        // Đảm bảo các cột là hợp lệ (chứa các tên cột)
+        $columns = array_map(function ($col) {
+            return "`" . str_replace("`", "``", $col) . "`"; // Tránh SQL Injection
+        }, $columns);
+        $columnsList = implode(', ', $columns); // Chuyển thành chuỗi cột
 
         // Xây dựng điều kiện WHERE
-        $whereClause = [];
-        foreach ($columns as $column) {
-            $whereClause[] = "$column LIKE ?";
-        }
-        $whereClause = implode(' OR ', $whereClause);
+        $searchableColumns  = [
+            'title',
+            'description',
+            'price',
+            'discount'
+        ];
+        $whereClause = implode(' OR ', array_map(fn($col) => "$col LIKE ?", $searchableColumns));
 
         // Xây dựng câu lệnh SQL
-        $sql = "SELECT * 
+        $sql = "SELECT $columnsList 
             FROM products
             WHERE $whereClause
             ORDER BY $sort $order 
@@ -57,8 +62,8 @@ class ProductController
         $stmt = $this->conn->prepare($sql);
 
         // Tạo mảng các tham số
-        $types = str_repeat('s', count($columns)) . 'ii';
-        $params = array_merge(array_fill(0, count($columns), $query), [$offset, $limit]);
+        $types = str_repeat('s', count($searchableColumns)) . 'ii';
+        $params = array_merge(array_fill(0, count($searchableColumns), $query), [$offset, $limit]);
 
         // Gọi hàm bind_param với các tham số động
         $stmt->bind_param($types, ...$params);
@@ -203,8 +208,16 @@ class ProductController
     public function getTotalProducts($query)
     {
         $query = '%' . $query . '%';
-        $stmt = $this->conn->prepare("SELECT COUNT(*) as total FROM products WHERE title LIKE ?");
-        $stmt->bind_param("s", $query);
+
+        // Xây dựng điều kiện WHERE (tìm kiếm trên nhiều cột)
+        $searchableColumns = ['title', 'description', 'price', 'discount'];
+        $whereClause = implode(' OR ', array_map(fn($col) => "$col LIKE ?", $searchableColumns));
+
+        // Câu lệnh SQL
+        $countSql = "SELECT COUNT(*) as total FROM products WHERE $whereClause";
+
+        $stmt = $this->conn->prepare($countSql);
+        $stmt->bind_param(str_repeat('s', count($searchableColumns)), ...array_fill(0, count($searchableColumns), $query));
         $stmt->execute();
         $result = $stmt->get_result()->fetch_assoc();
         return $result['total'];
