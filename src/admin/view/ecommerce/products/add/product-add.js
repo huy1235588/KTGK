@@ -1,9 +1,21 @@
+// Hàm chuyển đổi kích thước file
+function convertFileSize(fileSizeInBytes) {
+    if (fileSizeInBytes < 1024) {
+        return fileSizeInBytes + " Bytes";
+    } else if (fileSizeInBytes < 1024 * 1024) {
+        return (fileSizeInBytes / 1024).toFixed(2) + " KB";
+    } else if (fileSizeInBytes < 1024 * 1024 * 1024) {
+        return (fileSizeInBytes / (1024 * 1024)).toFixed(2) + " MB";
+    } else {
+        return (fileSizeInBytes / (1024 * 1024 * 1024)).toFixed(2) + " GB";
+    }
+}
+
 /*********************************
  
     Dropdown Select Single
 
 *********************************/
-
 // Icon của checkbox
 const CHECKBOX_ICON = '<path d="M19 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.11 0 2-.9 2-2V5c0-1.1-.89-2-2-2zm-9 14l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"></path>';
 const CHECKBOX_OUTLINE_ICON = '<path d="M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"></path>';
@@ -299,7 +311,7 @@ function displayFilePreview(
     uploaderContainer.style.display = 'none';
     filePreview.style.display = 'flex';
     filePreviewName.textContent = file.name;
-    filePreviewSize.textContent = `${(file.size / 1024).toFixed(2)} KB`;
+    filePreviewSize.textContent = convertFileSize(size);
 
     // Hiển thị file preview image nếu file là hình ảnh
     if (file.type && file.type.includes('image')) {
@@ -332,11 +344,11 @@ function displayFilePreview(
 
             // Hierna thị file preview name
             filePreviewName.textContent = value.split('/').pop();
-            filePreviewSize.textContent = `${(size / 1024).toFixed(2)} KB`;
+            filePreviewSize.textContent = convertFileSize(size);
         }
         else {
             filePreviewName.textContent = value;
-            filePreviewSize.textContent = `${(size / 1024).toFixed(2)} KB`;
+            filePreviewSize.textContent = convertFileSize(size);
             filePreviewImage.src = file;
         }
 
@@ -570,17 +582,49 @@ async function fetchFileFromUrl(url) {
     }
 }
 
+// Hàm tạo thumbnail từ video
+function generateVideoThumbnail(file) {
+    return new Promise((resolve) => {
+        const video = document.createElement('video');
+        video.src = URL.createObjectURL(file);
+
+        // Xử lý sự kiện khi video được load
+        video.onloadedmetadata = () => {
+            video.currentTime = 1; // Lấy frame tại giây thứ 1
+        };
+
+        // Xử lý sự kiện khi video đã seek đến frame cần lấy
+        video.onseeked = () => {
+            const canvas = document.createElement('canvas');
+            const context = canvas.getContext('2d');
+            canvas.width = video.videoWidth / 2; // Giảm kích thước để tối ưu
+            canvas.height = video.videoHeight / 2;
+
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+            resolve(canvas.toDataURL('image/png')); // Chuyển thành DataURL
+        };
+    });
+}
+
 // Hàm render file preview
-function renderPreviewImage(file) {
+async function renderPreviewImage(file) {
+    const fileExtension = file.name.split('.').pop().toLowerCase();
+    const isVideo = fileExtension.includes('mp4') || fileExtension.includes('webm');
+
+    let thumbnailSrc = URL.createObjectURL(file);
+    if (isVideo) {
+        thumbnailSrc = await generateVideoThumbnail(file);
+    }
+
     return `
         <div class="file-preview">
-            <img class="file-preview-image" data-dz-thumbnail="" alt="${file.name}" src="${URL.createObjectURL(file)}">
+            <img class="file-preview-image" data-dz-thumbnail="" alt="${file.name}" src="${thumbnailSrc}">
             <div class="file-preview-info">
                 <div class="file-preview-name">
                     ${file.name.split('/').pop()}
                 </div>
                 <div class="file-preview-size">
-                    ${(file.size / 1024).toFixed(2)} KB
+                    ${convertFileSize(file.size)}
                 </div>
             </div>
             <button data-dz-remove class="file-preview-remove" type="button">
@@ -592,14 +636,15 @@ function renderPreviewImage(file) {
     `;
 }
 
-function handleAddedFile(file, jsDropzone) {
+// Hàm xử lý file được thêm vào Dropzone
+async function handleAddedFile(file, dropzone, jsDropzone) {
     const dzMessage = jsDropzone.querySelector('.dz-message');
 
     // Tạo previewContainer nếu chưa có
     const previewContainer = jsDropzone.querySelector('.dz-preview-container') || createPreviewContainer();
     const previewElement = document.createElement('div');
     previewElement.className = 'dz-preview dz-file-preview';
-    previewElement.innerHTML = renderPreviewImage(file);
+    previewElement.innerHTML = await renderPreviewImage(file);
 
     // Xử lý sự kiện khi click vào nút xoá file
     previewElement.querySelector('.file-preview-remove').addEventListener('click', e => removeFile(e, file, previewElement));
@@ -628,27 +673,33 @@ function handleAddedFile(file, jsDropzone) {
     }
 }
 
-// Biến dropzone
-let dropzone;
-
 // Hàm custom dropzone
 function dropzoneCustom() {
     document.querySelectorAll('.form-group-dropzone').forEach(function (formGroup) {
-        const jsDropzone = formGroup.querySelector('.js-dropzone');
         const formControl = formGroup.querySelector('.form-control-file');
+        const jsDropzone = formGroup.querySelector('.js-dropzone');
+        const typeFile = jsDropzone.getAttribute('data-type-file');
 
         // Khởi tạo dropzone với element có id là element.id
-        dropzone = new Dropzone('#' + jsDropzone.id, {
+        const dropzone = new Dropzone('#' + jsDropzone.id, {
             url: "/uploads/images", // Đường dẫn upload file
-            acceptedFiles: 'image/*', // Chấp nhận file có định dạng là hình ảnh
+            acceptedFiles: `${typeFile}/*`, // Loại file cho phép
             maxFiles: 20, // Số file tối đa
             addRemoveLinks: true, // Hiển thị nút xoá file
-            clickable: '.js-dropzone', // Chọn element để kích hoạt dropzone
+            clickable: jsDropzone, // Chọn element để kích hoạt dropzone
+
+            dragover: function () {
+                jsDropzone.classList.add('drag-over');
+            },
+
+            dragleave: function () {
+                jsDropzone.classList.remove('drag-over');
+            },
 
             // Xử lý khi có file được thêm vào Dropzone
             addedfile: function (file) {
                 // Xử lý khi có file được thêm vào Dropzone
-                handleAddedFile(file, jsDropzone);
+                handleAddedFile(file, dropzone, jsDropzone);
 
                 // Xoá class error cho jsDropzone
                 jsDropzone.classList.remove('error');
@@ -658,12 +709,9 @@ function dropzoneCustom() {
                 if (errorMessage) {
                     errorMessage.remove();
                 }
-            },
 
-            // Xử lý khi có file được thêm vào Dropzone
-            success: function (file, response) {
                 formControl.value = formControl.value ? `${formControl.value}|${file.name}` : file.name;
-            }
+            },
         });
 
         // Hàm xử lý submit popup
@@ -683,12 +731,12 @@ function dropzoneCustom() {
 
         // Tạo popup
         const myPopup = new PopupInput({
-            header: "Add image from URL",
-            label: "Paste image URL",
-            inputName: "imageUrlDropzone",
+            header: `Add ${typeFile} from URL`,
+            label: `Paste ${typeFile} URL`,
+            inputName: `${typeFile}UrlDropzone`,
             inputType: "text",
-            buttonText: "Add image",
-            placeholder: "Enter image URL",
+            buttonText: `Add ${typeFile}`,
+            placeholder: `Enter ${typeFile} URL`,
             onSubmit: handelSubmitPopup
         });
 
