@@ -379,7 +379,7 @@ DongKetNoi($conn);
                     </h2>
 
                     <div class="tag-container">
-                        <?php for ($i = 0; $i < 6; $i++): ?>
+                        <?php for ($i = 0; $i < min(count($tags), 6); $i++) : ?>
                             <a href="tags.php?tag=<?= htmlspecialchars($tags[$i]['id']) ?>" class="tag">
                                 <?= htmlspecialchars($tags[$i]['tag']) ?>
                             </a>

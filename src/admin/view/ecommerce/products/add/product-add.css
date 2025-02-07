@@ -1060,6 +1060,10 @@ Author       : LeThienHuy.
     transition: 0.3s;
 }
 
+.dropzone-custom.error {
+    border: 2px dashed #f44336;
+}
+
 .dropzone-custom:hover {
     border: 2px solid #0052ea;
 }

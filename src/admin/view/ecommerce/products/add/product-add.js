@@ -647,7 +647,17 @@ function dropzoneCustom() {
 
             // Xử lý khi có file được thêm vào Dropzone
             addedfile: function (file) {
+                // Xử lý khi có file được thêm vào Dropzone
                 handleAddedFile(file, jsDropzone);
+
+                // Xoá class error cho jsDropzone
+                jsDropzone.classList.remove('error');
+
+                // Xoá element error-message
+                const errorMessage = formGroup.querySelector('.error-message');
+                if (errorMessage) {
+                    errorMessage.remove();
+                }
             },
 
             // Xử lý khi có file được thêm vào Dropzone

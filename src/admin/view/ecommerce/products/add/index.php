@@ -41,6 +41,7 @@ $errors = [
     'discount-end-date' => '',
     'release-date' => '',
     'headerImage' => '',
+    'screenshots' => '',
 ];
 
 // Xử lý form
@@ -90,7 +91,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $txtHeaderImage = 'uploads/images/' . htmlspecialchars($_POST['headerImage']);
     }
 
-    $txtImages = htmlspecialchars($_POST['images']);
+    $txtScreenshots = explode('|', htmlspecialchars($_POST['screenshots']));
 
     // Xử lý isActive
     $txtIsActive = isset($_POST['isActive']) ? 1 : 0;
@@ -113,10 +114,32 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $errors['title'] = 'Title already exists';
     }
 
-    echo 'Images: ' . $txtImages;
+    // Kiểm tra Screenshot có ít nhất 2 ảnh
+    if (count($txtScreenshots) < 2) {
+        $errors['screenshots'] = 'At least 2 screenshots';
+    }
 
     // Nếu không có lỗi thì hiển thị dữ liệu
     if (empty(array_filter($errors))) {
+        echo 'title: ' . $txtTitle . '<br>';
+        echo 'type: ' . $txtType . '<br>';
+        echo 'description: ' . $txtDescription . '<br>';
+        echo 'details: ' . $txtDetails . '<br>';
+        echo 'price: ' . $txtPrice . '<br>';
+        echo 'discount: ' . $txtDiscount . '<br>';
+        echo 'discount-start-date: ' . $txtDiscountStartDate . '<br>';
+        echo 'discount-end-date: ' . $txtDiscountEndDate . '<br>';
+        echo 'release-date: ' . $txtReleaseDate . '<br>';
+        echo 'developer: ' . $txtDeveloper . '<br>';
+        echo 'publisher: ' . $txtPublisher . '<br>';
+        echo 'platform: ' . $txtPlatform . '<br>';
+        echo 'genres: ' . $txtGenres . '<br>';
+        echo 'tags: ' . $txtTags . '<br>';
+        echo 'features: ' . $txtFeatures . '<br>';
+        echo 'headerImage: ' . $txtHeaderImage . '<br>';
+        echo 'isActive: ' . $txtIsActive . '<br>';
+        echo 'screenshots: ' . implode('|', $txtScreenshots) . '<br>';
+
         // Thực hiện thêm sản phẩm
         $productId =  $productController->addProduct(
             $txtTitle,
@@ -139,7 +162,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             'product_platforms',
             'product_genres',
             'product_tags',
-            'product_features'
+            'product_features',
+            'product_screenshots'
         ];
 
         $data = [
@@ -160,6 +184,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             ],
             'product_features' => [
                 'feature_id' => explode(',', $txtFeatures)
+            ],
+            'product_screenshots' => [
+                'screenshot' => $txtScreenshots
             ]
         ];
 
@@ -856,11 +883,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             ?>
         </div>
 
-        <!-- Images -->
+        <!-- Screenshots -->
         <div class="form-group form-group-dropzone">
             <div class="form-group-header">
-                <label for="header-image" class="form-label">
-                    Images
+                <label for="screenshots" class="form-label">
+                    Screenshots
                 </label>
 
                 <!-- Add image from url -->
@@ -875,12 +902,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             <input class="form-control-file"
                 type="text"
-                id="images"
-                name="images"
+                id="screenshots"
+                name="screenshots"
                 style="display: none;">
 
             <!-- Dropzone -->
-            <div id="addImages" class="js-dropzone dropzone-custom">
+            <div id="addScreenshots" class="js-dropzone dropzone-custom <?php echo isset($errors['screenshots']) && $errors['screenshots'] !== '' ? 'error' : ''; ?>">
                 <div class="dropzone-custom-wrapper dz-message">
                     <img class="dropzone-custom-icon" src="/admin/assets/icon/browse.svg" alt="Image Description">
 
@@ -893,8 +920,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             </div>
 
             <?php
-            if (isset($errors['headerImage']) && $errors['headerImage'] !== '') {
-                echo '<span class="error-message">' . $errors['headerImage'] . '</span>';
+           if (isset($errors['screenshots']) && $errors['screenshots'] !== '') {
+                echo '<span class="error-message">' . $errors['screenshots'] . '</span>';
             }
             ?>
         </div>
