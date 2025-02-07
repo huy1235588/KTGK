@@ -843,13 +843,13 @@ Author       : LeThienHuy.
     gap: 16px;
     -webkit-box-align: center;
     align-items: center;
-    border: 2px dashed gray;
+    border: 2px dashed #6e6e6e;
     border-radius: 8px;
     width: 100%;
     margin: 0px auto;
 }
 
-.form-group-file .form-control-wrapper-file.error{
+.form-group-file .form-control-wrapper-file.error {
     border-color: #f44336;
 }
 
@@ -861,12 +861,12 @@ Author       : LeThienHuy.
     display: none;
 }
 
-/* Dropzone */
+/* File uploader */
 .form-control-wrapper-file .file-uploader-container {
     width: 100%;
 }
 
-.form-group-file .dropzone {
+.form-group-file .file-uploader {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -878,7 +878,7 @@ Author       : LeThienHuy.
     cursor: pointer;
 }
 
-.form-group-file .dropzone .dropzone-text {
+.form-group-file .file-uploader .file-uploader-text {
     margin: 8px 0px 0px;
     font-family: Roboto, Helvetica, Arial, sans-serif;
     font-weight: 400;
@@ -1031,4 +1031,184 @@ Author       : LeThienHuy.
 }
 /*===================================*
     15.END QUILL
+*===================================*/
+/*
+
+
+
+
+
+
+
+
+
+
+*/
+/*===================================*
+    16.START DROPZONE
+*===================================*/
+.dropzone-custom {
+    position: relative;
+    width: 100%;
+    text-align: center;
+    border: 2px dashed #6e6e6e;
+    cursor: pointer;
+    padding: 1.5rem;
+    border-radius: 0.3125rem;
+    transition: 0.3s;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.dropzone-custom:hover {
+    border: 2px solid #0052ea;
+}
+
+.dropzone-custom .dropzone-custom-wrapper {
+    width: 100%;
+    text-align: center;
+    margin-bottom: 0;
+}
+
+.dropzone-custom .dropzone-custom-wrapper .dropzone-custom-icon {
+    width: 6.5625rem;
+    height: 4.92188rem;
+    position: relative;
+    display: inline-block;
+    border-radius: 0.3125rem;
+    margin-bottom: 1rem;
+}
+
+.dropzone-custom .dropzone-custom-wrapper .dropzone-custom-btn {
+    padding: 0.4375rem 0.65625rem;
+    font-size: 0.8125rem;
+    line-height: 1.5;
+    border-radius: 0.25rem;
+    color: #677788;
+    text-align: center;
+    vertical-align: middle;
+    border: 0.0625rem solid #e7eaf3;
+}
+
+.dropzone-custom .dropzone-custom-wrapper .dropzone-custom-btn:hover {
+    color: #0052ea;
+    box-shadow: 0 3px 6px -2px rgba(140, 152, 164, 0.25);
+}
+
+/* Preview */
+.form-group-dropzone .dz-preview{
+    margin-bottom: 0.5rem;
+    padding: 0.5rem;
+}
+
+.form-group-dropzone .file-preview {
+    --Paper-shadow: 0px 2px 1px -1px rgba(0, 0, 0, 0.2),
+        0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 1px 3px 0px rgba(0, 0, 0, 0.12);
+    --Paper-overlay: linear-gradient(
+        rgba(255, 255, 255, 0.051),
+        rgba(255, 255, 255, 0.051)
+    );
+
+    background-color: rgb(18, 18, 18);
+    color: rgb(255, 255, 255);
+    background-image: var(--Paper-overlay);
+    display: flex;
+    -webkit-box-align: center;
+    align-items: center;
+    -webkit-box-pack: justify;
+    justify-content: space-between;
+    width: 100%;
+    box-shadow: rgba(0, 0, 0, 0.2) 0px 3px 3px -2px,
+        rgba(0, 0, 0, 0.14) 0px 3px 4px 0px, rgba(0, 0, 0, 0.12) 0px 1px 8px 0px;
+    transition: box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 4px;
+    overflow: hidden;
+    cursor: default;
+}
+
+.form-group-dropzone .file-preview .file-preview-image {
+    display: block;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center center;
+    width: 300px;
+    object-fit: cover;
+}
+
+.form-group-dropzone .file-preview .file-preview-info {
+    flex: 1 1 0%;
+    margin-left: 8px;
+}
+
+.form-group-dropzone .file-preview .file-preview-info .file-preview-name {
+    margin: 0px 0px 4px 8px;
+    font-family: Roboto, Helvetica, Arial, sans-serif;
+    font-weight: 400;
+    line-height: 1.66;
+    letter-spacing: 0.03333em;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 1.5rem;
+    text-align: start;
+}
+
+.form-group-dropzone .file-preview .file-preview-info .file-preview-size {
+    margin: 0px 0px 0px 8px;
+    font-family: Roboto, Helvetica, Arial, sans-serif;
+    font-weight: 400;
+    line-height: 1.66;
+    letter-spacing: 0.03333em;
+    color: rgb(102, 102, 102);
+    display: block;
+    font-size: 0.75rem;
+    text-align: start;
+}
+
+.form-group-dropzone .file-preview .file-preview-remove {
+    display: inline-flex;
+    -webkit-box-align: center;
+    align-items: center;
+    -webkit-box-pack: center;
+    justify-content: center;
+    position: relative;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+    background-color: transparent;
+    cursor: pointer;
+    user-select: none;
+    vertical-align: middle;
+    appearance: none;
+    text-align: center;
+    font-size: 1.5rem;
+    color: rgb(244, 67, 54);
+    --IconButton-hoverBg: rgba(244, 67, 54, 0.08);
+    height: 100%;
+    outline: 0px;
+    border-width: 0px;
+    border-style: initial;
+    border-color: initial;
+    border-image: initial;
+    margin: 0px 8px 0px 0px;
+    text-decoration: none;
+    flex: 0 0 auto;
+    padding: 8px;
+    border-radius: 50%;
+    transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.form-group-dropzone .file-preview .file-preview-remove:hover {
+    background-color: rgba(244, 67, 54, 0.08);
+}
+
+.form-group-dropzone .file-preview .file-preview-remove svg {
+    user-select: none;
+    width: 1em;
+    height: 1em;
+    display: inline-block;
+    flex-shrink: 0;
+    fill: currentcolor;
+    font-size: 1.5rem;
+    transition: fill 200ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+/*===================================*
+    16.END DROPZONE
 *===================================*/

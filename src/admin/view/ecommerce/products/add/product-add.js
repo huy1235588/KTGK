@@ -280,7 +280,7 @@ function handleCheckbox() {
  
 *********************/
 // Hàm hiển thị file preview
-function displayFilePreview(formGroup, file, uploaderContainer, formControl) {
+function displayFilePreview(formGroup, file, uploaderContainer, formControl, value) {
     // Lấy ra các element cần thiết
     const filePreview = formGroup.querySelector('.file-preview');
     const filePreviewImage = formGroup.querySelector('.file-preview-image');
@@ -309,9 +309,12 @@ function displayFilePreview(formGroup, file, uploaderContainer, formControl) {
         // Tạo đường dẫn cho file preview image
         const reader = new FileReader();
 
+
         // Hiển thị file preview image
         reader.onload = function (event) {
+            // Hiển thị file preview image
             filePreviewImage.src = event.target.result;
+
         };
         reader.readAsDataURL(file);
     }
@@ -328,6 +331,7 @@ function displayFilePreview(formGroup, file, uploaderContainer, formControl) {
         // Xoá localStorage khi xoá file
         const savedData = JSON.parse(localStorage.getItem('productFormData')) || {};
         delete savedData[formControl.name];
+        delete savedData[`${formControl.name}_url`];
         localStorage.setItem('productFormData', JSON.stringify(savedData));
     });
 }
@@ -345,7 +349,8 @@ function handleFileUpload() {
 
             // Hiển thị file preview
             if (file) {
-                displayFilePreview(formGroup, file, uploaderContainer, formControl);
+                const fileName = file.name;
+                displayFilePreview(formGroup, file, uploaderContainer, formControl, fileName);
             }
         });
 
@@ -353,8 +358,11 @@ function handleFileUpload() {
         async function handelSubmitPopup(value) {
             // Hiển thị file preview
             if (value) {
+                // Tạo file từ URL
+                const file = await fetchFileFromUrl(value);
+
                 // Hiển thị file preview
-                displayFilePreview(formGroup, value, uploaderContainer, formControl);
+                displayFilePreview(formGroup, file, uploaderContainer, formControl, value);
 
                 // Đóng popup
                 myPopup.close();
@@ -506,6 +514,140 @@ function textareaCustom() {
 }
 
 /***************************************
+
+    Custom Dropzone
+
+***************************************/
+// Hàm tạo file từ URL
+async function fetchFileFromUrl(url) {
+    try {
+        const response = await fetch(url);
+        const blob = await response.blob();
+        // Tạo file từ blob
+        const file = new File([blob], url.split('/').pop(), {
+            type: blob.type
+        });
+        return file;
+    } catch (error) {
+        console.error('Error fetching file:', error);
+    }
+}
+
+// Hàm render file preview
+function renderPreviewImage(file) {
+    return `
+        <div class="file-preview">
+            <img class="file-preview-image" data-dz-thumbnail="" alt="${file.name}" src="${URL.createObjectURL(file)}">
+            <div class="file-preview-info">
+                <div class="file-preview-name">
+                    ${file.name}
+                </div>
+                <div class="file-preview-size">
+                    ${(file.size / 1024).toFixed(2)} KB
+                </div>
+            </div>
+            <button data-dz-remove class="file-preview-remove" type="button">
+                <svg class="file-preview-remove-icon" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="DeleteIcon">
+                    <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path>
+                </svg>
+            </button>
+        </div>
+    `;
+}
+
+// Hàm custom dropzone
+function dropzoneCustom() {
+    document.querySelectorAll('.form-group-dropzone').forEach(function (formGroup) {
+        const jsDropzone = formGroup.querySelector('.js-dropzone');
+        const dzMessage = jsDropzone.querySelector('.dz-message');
+
+        // Khởi tạo dropzone với element có id là element.id
+        var dropzone = new Dropzone('#' + jsDropzone.id, {
+            url: "/uploads/images", // Đường dẫn upload file
+            acceptedFiles: 'image/*', // Chấp nhận file có định dạng là hình ảnh
+            maxFiles: 20, // Số file tối đa
+            addRemoveLinks: true, // Hiển thị nút xoá file
+            clickable: '.js-dropzone', // Chọn element để kích hoạt dropzone
+
+            addedfile: handleAddedFile,
+
+            // Xử lý khi có file được thêm vào Dropzone
+            success: function (file, response) {
+            }
+        });
+
+        // Hàm xử lý khi có file được thêm vào Dropzone
+        function handleAddedFile(file) {
+            // Tạo previewContainer nếu chưa có
+            const previewContainer = jsDropzone.querySelector('.dz-preview-container') || createPreviewContainer();
+            const previewElement = createPreviewElement(file);
+            previewContainer.appendChild(previewElement);
+            dzMessage.style.display = 'none';
+        }
+
+        // Hàm tạo previewContainer
+        function createPreviewContainer() {
+            const container = document.createElement('div');
+            container.className = 'dz-preview-container';
+            jsDropzone.appendChild(container);
+            return container;
+        }
+
+        // Hàm tạo previewElement
+        function createPreviewElement(file) {
+            const previewElement = document.createElement('div');
+            previewElement.className = 'dz-preview dz-file-preview';
+            previewElement.innerHTML = renderPreviewImage(file);
+
+            // Xử lý sự kiện khi click vào nút xoá file
+            previewElement.querySelector('.file-preview-remove').addEventListener('click', e => removeFile(e, file, previewElement));
+            return previewElement;
+        }
+
+        // Hàm xoá file khỏi Dropzone
+        function removeFile(event, file, previewElement) {
+            event.preventDefault();
+            event.stopPropagation();
+            dropzone.removeFile(file);
+            previewElement.remove();
+
+            // Kiểm tra xem Dropzone có còn file nào không
+            if (!dropzone.files.length) dzMessage.style.display = 'block';
+        }
+
+        // Hàm xử lý submit popup
+        async function handelSubmitPopup(value) {
+            // Hiển thị file preview
+            if (value) {
+                // Tạo file từ URL
+                const file = await fetchFileFromUrl(value);
+
+                // Thêm file vào Dropzone
+                dropzone.addFile(file);
+
+                // Đóng popup
+                myPopup.close();
+            }
+        }
+
+        // Tạo popup
+        const myPopup = new PopupInput({
+            header: "Add image from URL",
+            label: "Paste image URL",
+            inputName: "imageUrlDropzone",
+            inputType: "text",
+            buttonText: "Add image",
+            placeholder: "Enter image URL",
+            onSubmit: handelSubmitPopup
+        });
+
+        // Lấy ra nút add image from URL
+        const addImageFromUrlBtn = formGroup.querySelector('.form-control-url-btn');
+        addImageFromUrlBtn.addEventListener('click', () => myPopup.open());
+    });
+}
+
+/***************************************
  
     Lưu dữ liệu form vào localStorage
 
@@ -604,7 +746,7 @@ function saveFormData() {
                 const formGroup = inputForm.closest('.form-group-file');
 
                 // Hiển thị dữ liệu đã lưu
-                displayFilePreview(formGroup, savedData[selectedName], formGroup.querySelector('.file-uploader-container'), inputForm);
+                displayFilePreview(formGroup, savedData[`${selectedName}_url`], formGroup.querySelector('.file-uploader-container'), inputForm);
             }
 
             // Xử lý riêng cho quill editor
@@ -695,6 +837,7 @@ document.addEventListener('DOMContentLoaded', () => {
     handleCheckbox();
     handleFileUpload();
     textareaCustom();
+    dropzoneCustom();
     saveFormData();
     removeErrorMessagesOnInput();
 });
