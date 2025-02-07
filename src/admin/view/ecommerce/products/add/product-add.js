@@ -561,7 +561,7 @@ async function fetchFileFromUrl(url) {
         const response = await fetch(url);
         const blob = await response.blob();
         // Tạo file từ blob
-        const file = new File([blob], url.split('/').pop(), {
+        const file = new File([blob], url, {
             type: blob.type
         });
         return file;
@@ -577,7 +577,7 @@ function renderPreviewImage(file) {
             <img class="file-preview-image" data-dz-thumbnail="" alt="${file.name}" src="${URL.createObjectURL(file)}">
             <div class="file-preview-info">
                 <div class="file-preview-name">
-                    ${file.name}
+                    ${file.name.split('/').pop()}
                 </div>
                 <div class="file-preview-size">
                     ${(file.size / 1024).toFixed(2)} KB
@@ -592,65 +592,69 @@ function renderPreviewImage(file) {
     `;
 }
 
+function handleAddedFile(file, jsDropzone) {
+    const dzMessage = jsDropzone.querySelector('.dz-message');
+
+    // Tạo previewContainer nếu chưa có
+    const previewContainer = jsDropzone.querySelector('.dz-preview-container') || createPreviewContainer();
+    const previewElement = document.createElement('div');
+    previewElement.className = 'dz-preview dz-file-preview';
+    previewElement.innerHTML = renderPreviewImage(file);
+
+    // Xử lý sự kiện khi click vào nút xoá file
+    previewElement.querySelector('.file-preview-remove').addEventListener('click', e => removeFile(e, file, previewElement));
+
+    // Thêm previewElement vào previewContainer
+    previewContainer.appendChild(previewElement);
+    dzMessage.style.display = 'none';
+
+    // Hàm tạo previewContainer
+    function createPreviewContainer() {
+        const container = document.createElement('div');
+        container.className = 'dz-preview-container';
+        jsDropzone.appendChild(container);
+        return container;
+    }
+
+    // Hàm xoá file khỏi Dropzone
+    function removeFile(event, file, previewElement) {
+        event.preventDefault();
+        event.stopPropagation();
+        dropzone.removeFile(file);
+        previewElement.remove();
+
+        // Kiểm tra xem Dropzone có còn file nào không
+        if (!dropzone.files.length) dzMessage.style.display = 'block';
+    }
+}
+
+// Biến dropzone
+let dropzone;
+
 // Hàm custom dropzone
 function dropzoneCustom() {
     document.querySelectorAll('.form-group-dropzone').forEach(function (formGroup) {
         const jsDropzone = formGroup.querySelector('.js-dropzone');
-        const dzMessage = jsDropzone.querySelector('.dz-message');
+        const formControl = formGroup.querySelector('.form-control-file');
 
         // Khởi tạo dropzone với element có id là element.id
-        var dropzone = new Dropzone('#' + jsDropzone.id, {
+        dropzone = new Dropzone('#' + jsDropzone.id, {
             url: "/uploads/images", // Đường dẫn upload file
             acceptedFiles: 'image/*', // Chấp nhận file có định dạng là hình ảnh
             maxFiles: 20, // Số file tối đa
             addRemoveLinks: true, // Hiển thị nút xoá file
             clickable: '.js-dropzone', // Chọn element để kích hoạt dropzone
 
-            addedfile: handleAddedFile,
+            // Xử lý khi có file được thêm vào Dropzone
+            addedfile: function (file) {
+                handleAddedFile(file, jsDropzone);
+            },
 
             // Xử lý khi có file được thêm vào Dropzone
             success: function (file, response) {
+                formControl.value = formControl.value ? `${formControl.value}|${file.name}` : file.name;
             }
         });
-
-        // Hàm xử lý khi có file được thêm vào Dropzone
-        function handleAddedFile(file) {
-            // Tạo previewContainer nếu chưa có
-            const previewContainer = jsDropzone.querySelector('.dz-preview-container') || createPreviewContainer();
-            const previewElement = createPreviewElement(file);
-            previewContainer.appendChild(previewElement);
-            dzMessage.style.display = 'none';
-        }
-
-        // Hàm tạo previewContainer
-        function createPreviewContainer() {
-            const container = document.createElement('div');
-            container.className = 'dz-preview-container';
-            jsDropzone.appendChild(container);
-            return container;
-        }
-
-        // Hàm tạo previewElement
-        function createPreviewElement(file) {
-            const previewElement = document.createElement('div');
-            previewElement.className = 'dz-preview dz-file-preview';
-            previewElement.innerHTML = renderPreviewImage(file);
-
-            // Xử lý sự kiện khi click vào nút xoá file
-            previewElement.querySelector('.file-preview-remove').addEventListener('click', e => removeFile(e, file, previewElement));
-            return previewElement;
-        }
-
-        // Hàm xoá file khỏi Dropzone
-        function removeFile(event, file, previewElement) {
-            event.preventDefault();
-            event.stopPropagation();
-            dropzone.removeFile(file);
-            previewElement.remove();
-
-            // Kiểm tra xem Dropzone có còn file nào không
-            if (!dropzone.files.length) dzMessage.style.display = 'block';
-        }
 
         // Hàm xử lý submit popup
         async function handelSubmitPopup(value) {
@@ -817,19 +821,7 @@ function saveFormData() {
         }
 
         // Sự kiện change để lưu dữ liệu ngay khi người dùng chọn giá trị
-        else if (inputForm.type === 'file') {
-            const formGroup = inputForm.closest('.form-group-file');
-            const imageSrc = formGroup.querySelector('.file-preview-image');
-
-            // Nếu imageSrc thay đổi thì lưu dữ liệu
-            imageSrc.addEventListener('load', function () {
-                // Cập nhật object với dữ liệu mới
-                savedData[`${selectedName}_url`] = imageSrc.src;
-
-                // Lưu dữ liệu vào localStorage
-                // localStorage.setItem('productFormData', JSON.stringify(savedData));
-            });
-        }
+        else if (inputForm.type === 'file') { }
 
         else {
             // Sử dụng sự kiện input để lấy dữ liệu ngay khi người dùng nhập liệu

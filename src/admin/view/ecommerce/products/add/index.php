@@ -83,13 +83,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Nếu có headerImage có https:// hoặc http:// thì lấy luôn
     else if (strpos($_POST['headerImage'], 'https://') !== false || strpos($_POST['headerImage'], 'http://') !== false) {
         $txtHeaderImage = htmlspecialchars($_POST['headerImage']);
-    } 
+    }
     // Nếu headerImage không rỗng
     else if ($_POST['headerImage'] !== '') {
         // Nếu không có thì thêm uploads/images vào trước
         $txtHeaderImage = 'uploads/images/' . htmlspecialchars($_POST['headerImage']);
     }
 
+    $txtImages = htmlspecialchars($_POST['images']);
+
+    // Xử lý isActive
     $txtIsActive = isset($_POST['isActive']) ? 1 : 0;
 
     // Kiểm tra dữ liệu không được để trống
@@ -109,6 +112,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if ($result_title->num_rows > 0) {
         $errors['title'] = 'Title already exists';
     }
+
+    echo 'Images: ' . $txtImages;
 
     // Nếu không có lỗi thì hiển thị dữ liệu
     if (empty(array_filter($errors))) {
@@ -867,6 +872,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     Add image from URL
                 </button>
             </div>
+
+            <input class="form-control-file"
+                type="text"
+                id="images"
+                name="images"
+                style="display: none;">
 
             <!-- Dropzone -->
             <div id="addImages" class="js-dropzone dropzone-custom">
