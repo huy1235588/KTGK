@@ -33,32 +33,18 @@ if ($method === 'POST') {
     // Lấy tổng số sản phẩm
     $totalProducts = $productController->getTotalProducts($query);
 
+    // Encode UTF-8
+    foreach ($products as &$product) {
+        foreach ($product as $key => $value) {
+            if (is_string($value)) {
+                $product[$key] = mb_convert_encoding($value, 'UTF-8', 'UTF-8');
+            }
+        }
+    }
+
     // Trả về JSON
     echo json_encode([
         'data' => $products,
         'total' => $totalProducts,
     ]);
 }
-
-// Nếu là GET
-// else if ($method === 'GET') {
-//     // Lấy offset và limit
-//     $offset = $_GET['offset'];
-//     $limit = $_GET['limit'];
-//     $query = $_GET['q'];
-
-//     // Khởi tạo ProductController
-//     $productController = new ProductController($conn);
-
-//     // Lấy 10 sản phẩm
-//     $products = $productController->getProductsByPage($offset, $limit, $query);
-
-//     // Lấy tổng số sản phẩm
-//     $totalProducts = $productController->getTotalProducts($query);
-
-//     // Trả về JSON
-//     echo json_encode([
-//         'data' => $products,
-//         'total' => $totalProducts,
-//     ]);
-// }

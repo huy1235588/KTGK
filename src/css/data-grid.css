@@ -125,7 +125,7 @@
     font-size: 1rem;
     line-height: 1.4375em;
     letter-spacing: 0.00938em;
-    padding: 0.5rem;
+    padding-right: 0.5rem;
     padding-left: 1rem;
     color: rgb(0, 0, 0);
     box-sizing: border-box;
@@ -140,7 +140,7 @@
     font: inherit;
     letter-spacing: inherit;
     color: currentColor;
-    padding: 4px 0 5px;
+    padding: 0.5rem 0;
     margin-left: 5px;
     border: 0;
     box-sizing: content-box;
