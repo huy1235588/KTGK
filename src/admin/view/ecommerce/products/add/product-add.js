@@ -280,7 +280,14 @@ function handleCheckbox() {
  
 *********************/
 // Hàm hiển thị file preview
-function displayFilePreview(formGroup, file, uploaderContainer, formControl, value) {
+function displayFilePreview(
+    formGroup,
+    file,
+    uploaderContainer,
+    formControl,
+    value,
+    size = 'NaN'
+) {
     // Lấy ra các element cần thiết
     const filePreview = formGroup.querySelector('.file-preview');
     const filePreviewImage = formGroup.querySelector('.file-preview-image');
@@ -294,29 +301,44 @@ function displayFilePreview(formGroup, file, uploaderContainer, formControl, val
     filePreviewName.textContent = file.name;
     filePreviewSize.textContent = `${(file.size / 1024).toFixed(2)} KB`;
 
-    // Nếu file là url 
-    if (typeof file === 'string') {
-        filePreviewName.textContent = file.split('/').pop();
-        filePreviewImage.src = file;
-
-        // Đổi formControl thành text
-        formControl.type = 'text';
-        formControl.value = file;
-    }
-
     // Hiển thị file preview image nếu file là hình ảnh
-    else if (file.type && file.type.includes('image')) {
+    if (file.type && file.type.includes('image')) {
         // Tạo đường dẫn cho file preview image
         const reader = new FileReader();
-
 
         // Hiển thị file preview image
         reader.onload = function (event) {
             // Hiển thị file preview image
             filePreviewImage.src = event.target.result;
 
+            // Lưu dữ liệu vào localStorage
+            const savedData = JSON.parse(localStorage.getItem('productFormData')) || {};
+            savedData[`${formControl.name}_url`] = event.target.result;
+            savedData[`${formControl.name}_size`] = file.size;
+            localStorage.setItem('productFormData', JSON.stringify(savedData));
         };
         reader.readAsDataURL(file);
+    }
+
+    // Nếu file là url 
+    else if (typeof file === 'string') {
+        if (value.includes('http')) {
+            // Hiển thị file preview image
+            filePreviewImage.src = value;
+
+            // Hierna thị file preview name
+            filePreviewName.textContent = value.split('/').pop();
+            filePreviewSize.textContent = `${(size / 1024).toFixed(2)} KB`;
+        }
+        else {
+            filePreviewName.textContent = value;
+            filePreviewSize.textContent = `${(size / 1024).toFixed(2)} KB`;
+            filePreviewImage.src = file;
+        }
+
+        // Đổi formControl thành text
+        formControl.type = 'text';
+        formControl.value = file;
     }
 
     // Xử lý sự kiện khi click vào nút xoá file
@@ -352,6 +374,11 @@ function handleFileUpload() {
                 const fileName = file.name;
                 displayFilePreview(formGroup, file, uploaderContainer, formControl, fileName);
             }
+
+            // Lưu dữ liệu vào localStorage
+            const savedData = JSON.parse(localStorage.getItem('productFormData')) || {};
+            savedData[formControl.name] = file.name;
+            localStorage.setItem('productFormData', JSON.stringify(savedData));
         });
 
         // Hàm xử lý submit popup
@@ -366,6 +393,11 @@ function handleFileUpload() {
 
                 // Đóng popup
                 myPopup.close();
+
+                // Lưu dữ liệu vào localStorage
+                const savedData = JSON.parse(localStorage.getItem('productFormData')) || {};
+                savedData[formControl.name] = value;
+                localStorage.setItem('productFormData', JSON.stringify(savedData));
             }
         }
 
@@ -746,7 +778,14 @@ function saveFormData() {
                 const formGroup = inputForm.closest('.form-group-file');
 
                 // Hiển thị dữ liệu đã lưu
-                displayFilePreview(formGroup, savedData[`${selectedName}_url`], formGroup.querySelector('.file-uploader-container'), inputForm);
+                displayFilePreview(
+                    formGroup,
+                    savedData[`${selectedName}_url`],
+                    formGroup.querySelector('.file-uploader-container'),
+                    inputForm,
+                    savedData[selectedName],
+                    savedData[`${selectedName}_size`]
+                );
             }
 
             // Xử lý riêng cho quill editor
@@ -780,10 +819,10 @@ function saveFormData() {
             // Nếu imageSrc thay đổi thì lưu dữ liệu
             imageSrc.addEventListener('load', function () {
                 // Cập nhật object với dữ liệu mới
-                savedData[selectedName] = imageSrc.src;
+                savedData[`${selectedName}_url`] = imageSrc.src;
 
                 // Lưu dữ liệu vào localStorage
-                localStorage.setItem('productFormData', JSON.stringify(savedData));
+                // localStorage.setItem('productFormData', JSON.stringify(savedData));
             });
         }
 
