@@ -311,6 +311,10 @@ function displayFilePreview(
             // Hiển thị file preview image
             filePreviewImage.src = event.target.result;
 
+            // Đổi formControl thành text
+            formControl.type = 'text';
+            formControl.value = value;
+
             // Lưu dữ liệu vào localStorage
             const savedData = JSON.parse(localStorage.getItem('productFormData')) || {};
             savedData[`${formControl.name}_url`] = event.target.result;
@@ -322,7 +326,7 @@ function displayFilePreview(
 
     // Nếu file là url 
     else if (typeof file === 'string') {
-        if (value.includes('http')) {
+        if (value.includes('https://') || value.includes('http://')) {
             // Hiển thị file preview image
             filePreviewImage.src = value;
 
@@ -338,7 +342,7 @@ function displayFilePreview(
 
         // Đổi formControl thành text
         formControl.type = 'text';
-        formControl.value = file;
+        formControl.value = value;
     }
 
     // Xử lý sự kiện khi click vào nút xoá file
@@ -354,6 +358,7 @@ function displayFilePreview(
         const savedData = JSON.parse(localStorage.getItem('productFormData')) || {};
         delete savedData[formControl.name];
         delete savedData[`${formControl.name}_url`];
+        delete savedData[`${formControl.name}_size`];
         localStorage.setItem('productFormData', JSON.stringify(savedData));
     });
 }

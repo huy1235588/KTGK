@@ -78,12 +78,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Xử lý ảnh headerImage
     $txtHeaderImage = '';
     if (isset($_FILES['headerImage'])) {
-        $txtHeaderImage = htmlspecialchars($_FILES['headerImage']['name']);
-        if (isset($txtHeaderImage) && $txtHeaderImage !== '') {
-            $txtHeaderImage = 'uploads/' . $txtHeaderImage;
-        }
-    } else {
+        $txtHeaderImage = '';
+    }
+    // Nếu có headerImage có https:// hoặc http:// thì lấy luôn
+    else if (strpos($_POST['headerImage'], 'https://') !== false || strpos($_POST['headerImage'], 'http://') !== false) {
         $txtHeaderImage = htmlspecialchars($_POST['headerImage']);
+    } 
+    // Nếu headerImage không rỗng
+    else if ($_POST['headerImage'] !== '') {
+        // Nếu không có thì thêm uploads/images vào trước
+        $txtHeaderImage = 'uploads/images/' . htmlspecialchars($_POST['headerImage']);
     }
 
     $txtIsActive = isset($_POST['isActive']) ? 1 : 0;
