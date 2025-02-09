@@ -1,9 +1,15 @@
+/* game.js */
+/*
+  Trò chơi Snake với tính năng tăng tốc khi nhấn giữ phím space.
+  Giao diện sử dụng tiếng Anh, nhưng các comment bằng tiếng Việt.
+*/
+
 //==========================
 // Khai báo các biến cài đặt và khởi tạo từ localStorage nếu có
 //==========================
-let defaultSpeed = 4;    // Mặc định tốc độ = 4
-let defaultGridSize = 20; // Mặc định kích thước grid = 20
-let defaultWalls = false; // Mặc định không bật tường
+let defaultSpeed = 4;      // Tốc độ mặc định = 4
+let defaultGridSize = 20;  // Kích thước grid mặc định = 20
+let defaultWalls = false;  // Mặc định không bật tường
 
 // Lấy cài đặt từ localStorage nếu tồn tại
 let speedSetting = localStorage.getItem('speedSetting') ? parseInt(localStorage.getItem('speedSetting')) : defaultSpeed;
@@ -11,8 +17,10 @@ let grid = localStorage.getItem('gridSize') ? parseInt(localStorage.getItem('gri
 let wallsEnabled = localStorage.getItem('wallsEnabled') ? (localStorage.getItem('wallsEnabled') === 'true') : defaultWalls;
 
 // Tính toán frameInterval dựa trên tốc độ (càng nhanh: frameInterval càng nhỏ)
-// Ví dụ: nếu speedSetting = 10 => frameInterval = 1, nếu speedSetting = 1 => frameInterval = 10
 let frameInterval = 11 - speedSetting;
+
+// Biến để kiểm tra chế độ tăng tốc (boost)
+let isBoosting = false;
 
 //==========================
 // Khai báo các biến trò chơi
@@ -20,9 +28,9 @@ let frameInterval = 11 - speedSetting;
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 
-let count = 0;       // Biến đếm frame
-let score = 0;       // Điểm số
-let gameOver = false; // Cờ báo game over
+let count = 0;        // Biến đếm frame
+let score = 0;        // Điểm số
+let gameOver = false; // Cờ báo game kết thúc
 
 // Đối tượng snake (rắn)
 let snake = {
@@ -65,7 +73,7 @@ function resetGame() {
     document.getElementById('restartBtn').style.display = 'none';
     gameOver = false;
     count = 0;
-    // Bắt đầu vòng lặp game lại
+    // Bắt đầu lại vòng lặp game
     requestAnimationFrame(loop);
 }
 
@@ -73,7 +81,7 @@ function resetGame() {
 // Hàm xử lý thay đổi hướng di chuyển của rắn
 //==========================
 function changeDirection(direction) {
-    // Kiểm tra để không cho rắn quay ngược lại chính nó
+    // Kiểm tra để không cho rắn quay ngược lại
     if (direction === 'left' && snake.dx === 0) {
         snake.dx = -grid;
         snake.dy = 0;
@@ -93,8 +101,11 @@ function changeDirection(direction) {
 // Hàm vòng lặp game chính
 //==========================
 function loop() {
-    // Tăng biến đếm, chỉ chạy logic game khi đạt frameInterval
-    if (++count < frameInterval) {
+    // Điều chỉnh frameInterval khi tăng tốc (boost)
+    let effectiveFrameInterval = isBoosting ? Math.max(1, Math.floor(frameInterval / 2)) : frameInterval;
+
+    // Tăng biến đếm, chỉ chạy logic game khi đạt effectiveFrameInterval
+    if (++count < effectiveFrameInterval) {
         requestAnimationFrame(loop);
         return;
     }
@@ -107,9 +118,9 @@ function loop() {
     snake.x += snake.dx;
     snake.y += snake.dy;
 
-    // Kiểm tra va chạm với tường hoặc wrap nếu tường không bật
+    // Kiểm tra va chạm với tường hoặc thực hiện wrap nếu tường không bật
     if (wallsEnabled) {
-        // Nếu bật tường, va chạm với tường sẽ kết thúc game
+        // Nếu bật tường, va chạm với tường kết thúc game
         if (snake.x < 0 || snake.x >= canvas.width || snake.y < 0 || snake.y >= canvas.height) {
             gameOver = true;
             document.getElementById('gameOverText').style.display = 'block';
@@ -156,25 +167,25 @@ function loop() {
 
     // Kiểm tra nếu rắn ăn được táo
     if (snake.x === apple.x && snake.y === apple.y) {
-        snake.maxCells++; // Tăng độ dài rắn
+        snake.maxCells++; // Tăng độ dài của rắn
         score++;          // Tăng điểm
         document.getElementById('score').innerText = score;
-        // Đặt lại vị trí táo theo vị trí ngẫu nhiên
+        // Đặt lại vị trí của táo một cách ngẫu nhiên
         apple.x = getRandomInt(0, canvas.width / grid) * grid;
         apple.y = getRandomInt(0, canvas.height / grid) * grid;
     }
 
-    // Tiếp tục vòng lặp nếu game chưa kết thúc
+    // Nếu game chưa kết thúc, tiếp tục vòng lặp
     if (!gameOver) {
         requestAnimationFrame(loop);
     }
 }
 
-// Bắt đầu vòng lặp game
+// Bắt đầu vòng lặp game ban đầu
 requestAnimationFrame(loop);
 
 //==========================
-// Xử lý sự kiện bàn phím (mũi tên và WSDA)
+// Xử lý sự kiện bàn phím (mũi tên, WSDA và tăng tốc khi giữ space)
 //==========================
 document.addEventListener('keydown', function (e) {
     // Sử dụng các phím mũi tên
@@ -196,6 +207,17 @@ document.addEventListener('keydown', function (e) {
         changeDirection('right');
     } else if (e.key === 's' || e.key === 'S') {
         changeDirection('down');
+    }
+    // Nếu nhấn giữ phím space, bật chế độ tăng tốc (boost)
+    else if (e.key === ' ' || e.key === 'Spacebar' || e.code === 'Space') {
+        isBoosting = true;
+    }
+});
+
+// Lắng nghe sự kiện nhả phím để tắt chế độ tăng tốc
+document.addEventListener('keyup', function (e) {
+    if (e.key === ' ' || e.key === 'Spacebar' || e.code === 'Space') {
+        isBoosting = false;
     }
 });
 
