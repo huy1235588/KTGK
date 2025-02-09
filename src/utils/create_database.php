@@ -210,6 +210,36 @@ function TaoDatabaseVaTable()
         FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
     )";
 
+    // Bảng hoá đơn
+    $sqlOrder = "CREATE TABLE IF NOT EXISTS orders (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        user_id INT NOT NULL,
+        totalAmount DECIMAL(10, 2) NOT NULL,
+        paymentMethod ENUM('credit_card', 'paypal', 'zalo_pay', 'momo') NOT NULL,
+        status ENUM('pending', 'completed', 'cancelled') DEFAULT 'pending',
+        createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+    )";
+
+    // Bảng chi tiết hoá đơn
+    $sqlOrderDetail = "CREATE TABLE IF NOT EXISTS order_details (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        order_id INT NOT NULL,
+        product_id INT NOT NULL,
+        FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE,
+        FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
+    )";
+
+    // Bảng thư viện
+    $sqlLibrary = "CREATE TABLE IF NOT EXISTS library (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        user_id INT NOT NULL,
+        product_id INT NOT NULL,
+        purchased_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+        FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
+    )";
+
     // Mảng chứa các câu lệnh SQL
     $sqlArray = [
         $sqlUsers,
@@ -232,7 +262,10 @@ function TaoDatabaseVaTable()
         $sqlProductAchievements,
         $sqlLanguages,
         $sqlProductLanguages,
-        $sqlCart
+        $sqlCart,
+        $sqlOrder,
+        $sqlOrderDetail,
+        $sqlLibrary
     ];
 
     foreach ($sqlArray as $sql) {

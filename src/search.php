@@ -79,6 +79,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     foreach ($products as $product) {
         $productDetails[$product['id']] = $productController->getProductDetailsById($product['id'], $tables);
     }
+
+    // Lấy thông tin giỏ hàng từ database
+    $stmt = $conn->prepare("SELECT product_id FROM cart WHERE user_id = ?");
+    $stmt->bind_param("i", $_SESSION['user']['id']);
+    $stmt->execute();
+    $cartResult = $stmt->get_result();
+
+    // Đóng kết nối
+    DongKetNoi($conn);
 }
 ?>
 
@@ -116,7 +125,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     ?>
 
     <script>
-        var sessionCart = <?= json_encode($_SESSION['cart'] ?? []) ?>;
+        var sessionCart = <?= json_encode($cartResult->fetch_all(MYSQLI_ASSOC)) ?>;
         var sessionUsername = <?= json_encode($_SESSION['user']['username'] ?? '') ?>;
         var sessionRole = <?= json_encode($_SESSION['user']['role'] ?? '') ?>;
 
@@ -395,13 +404,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
                     <!-- Discount -->
                     <div class="fancy-range">
                         <label for="js-input-discount">Discount: <span id="js-value-discount"><?php
-                                                                        if (isset($_GET['min_discount']) && $_GET['min_discount'] > 0) {
-                                                                            echo "≥";
-                                                                        } else {
-                                                                            echo ">";
-                                                                        }
-                                                                        echo htmlspecialchars($_GET['min_discount'] ?? 0);
-                                                                        ?></span>%</label>
+                                                                                                if (isset($_GET['min_discount']) && $_GET['min_discount'] > 0) {
+                                                                                                    echo "≥";
+                                                                                                } else {
+                                                                                                    echo ">";
+                                                                                                }
+                                                                                                echo htmlspecialchars($_GET['min_discount'] ?? 0);
+                                                                                                ?></span>%</label>
                         <input type="range"
                             class="fancy-range-input"
                             id="js-input-discount"

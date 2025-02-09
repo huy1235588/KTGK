@@ -267,13 +267,19 @@ DongKetNoi($conn);
         }
     }
 
+    // Lấy thông tin giỏ hàng từ database
+    $stmt = $conn->prepare("SELECT product_id FROM cart WHERE user_id = ?");
+    $stmt->bind_param("i", $_SESSION['user']['id']);
+    $stmt->execute();
+    $cartResult = $stmt->get_result();
+
     // Đóng kết nối
     $stmt->close();
     DongKetNoi($conn);
     ?>
 
     <script>
-        const sessionCart = <?php echo json_encode($_SESSION['cart']); ?> || [];
+        const sessionCart = <?php echo json_encode($cartResult->fetch_all(MYSQLI_ASSOC)); ?>;
     </script>
 
     <!-- Content -->

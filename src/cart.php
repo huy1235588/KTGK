@@ -122,13 +122,12 @@ DongKetNoi($conn);
 
     <!-- main -->
     <main class="container">
-        <h1 class="header-title">
-            Your shopping cart
-        </h1>
-
         <div class="cart">
             <?php if (empty($cart)) : ?>
                 <div class="empty-cart">
+                    <h1 class="header-title">
+                        Your shopping cart
+                    </h1>
                     <span class="empty-cart-icon" aria-hidden="true" data-testid="icon">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 45 52">
                             <g fill="none" fill-rule="evenodd">
@@ -151,6 +150,9 @@ DongKetNoi($conn);
                 </div>
             <?php else: ?>
                 <article class="product-cart">
+                    <h1 class="header-title">
+                        Your shopping cart
+                    </h1>
                     <ul class="product-cart-list">
                         <?php foreach ($cart as $item) : ?>
                             <li class="product-cart-item">
@@ -239,7 +241,7 @@ DongKetNoi($conn);
                             </span>
                         </li>
                         <li class="sumray-button">
-                            <button>
+                            <button type="submit" class="checkout-button" onclick="location.href='payment.php'">
                                 CHECK OUT
                             </button>
                         </li>

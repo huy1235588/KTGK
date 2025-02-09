@@ -14,105 +14,91 @@ header('Content-Type: application/json');
 // Lấy thông tin user
 $userId = $_SESSION['user']['id'] ?? null;
 
-// Nếu là POST
+if (!$userId) {
+    http_response_code(401);
+    echo json_encode(['error' => 'Unauthorized']);
+    exit;
+}
+
+function addToCart($conn, $userId, $productId)
+{
+    $stmt = $conn->prepare("SELECT * FROM cart WHERE user_id = ? AND product_id = ?");
+    $stmt->bind_param("ii", $userId, $productId);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result->num_rows === 0) {
+        $stmt = $conn->prepare("INSERT INTO cart (user_id, product_id) VALUES (?, ?)");
+        $stmt->bind_param("ii", $userId, $productId);
+        $stmt->execute();
+
+        return [
+            'user_id' => $userId,
+            'product_id' => $productId
+        ];
+    }
+
+    return null;
+}
+
+function removeFromCart($conn, $userId, $productId)
+{
+    $stmt = $conn->prepare("DELETE FROM cart WHERE user_id = ? AND product_id = ?");
+    $stmt->bind_param("ii", $userId, $productId);
+    $stmt->execute();
+
+    return $stmt->affected_rows > 0;
+}
+
+// Xử lý yêu cầu POST
 if ($method === 'POST') {
-    // Lấy thông tin sản phẩm
     $productId = $_POST['productId'] ?? null;
 
-    if (isset($productId)) {
-        // Nếu chưa có giỏ hàng thì tạo mới
-        if (!isset($_SESSION['cart'])) {
-            $_SESSION['cart'] = [];
-        }
+    if ($productId) {
+        $cart = addToCart($conn, $userId, $productId);
 
-        // Kiểm tra xem sản phẩm đã tồn tại trong giỏ hàng chưa
-        $isExist = false;
-        foreach ($_SESSION['cart'] as $item) {
-            if ($item['productId'] === $productId) {
-                $isExist = true;
-                break;
-            }
-        }
-
-        // Nếu sản phẩm chưa tồn tại trong giỏ hàng
-        if (!$isExist) {
-            // Thêm sản phẩm vào SESSION['cart']
-            array_push($_SESSION['cart'], [
-                'productId' => $productId,
+        if ($cart) {
+            echo json_encode([
+                'message' => 'Product added to cart successfully.',
+                'cart' => $cart,
             ]);
-
-            // Thêm vào database
-            $sql = "INSERT INTO cart (user_id, product_id) 
-            VALUES ('$userId', '$productId')";
-            mysqli_query($conn, $sql);
+        } else {
+            echo json_encode([
+                'message' => 'Product already exists in the cart.',
+            ]);
         }
-
-        // Trả về json
-        echo json_encode(array(
-            'message' => 'Product added to cart successfully.',
-            'cart' => $_SESSION['cart']
-        ));
     } else {
-        echo 'Product ID not provided.';
+        http_response_code(400);
+        echo json_encode(['error' => 'Product ID not provided.']);
     }
-
-    // Đóng kết nối
-    DongKetNoi($conn);
 }
 
-// Xử lý xoá sản phẩm khỏi giỏ hàng
+// Xử lý yêu cầu DELETE
 else if ($method === 'DELETE') {
-    // Lấy thông tin sản phẩm
     $productId = $_GET['productId'] ?? null;
 
-    if (isset($productId)) {
-        // Lấy giỏ hàng từ database
-        $sql = "SELECT * 
-            FROM cart
-            WHERE user_id = {$_SESSION['user']['id']}";
-        $result = mysqli_query($conn, $sql);
-        $carts = mysqli_fetch_all($result, MYSQLI_ASSOC);
+    if ($productId) {
+        $success = removeFromCart($conn, $userId, $productId);
 
-        // Kiểm tra xem sản phẩm đã tồn tại trong giỏ hàng chưa
-        $isExist = false;
-        $index = -1;
-        foreach ($carts as $i => $item) {
-            if ($item['product_id'] === $productId) {
-                $isExist = true;
-                $index = $i;
-                break;
-            }
+        if ($success) {
+            echo json_encode([
+                'message' => 'Product removed from cart successfully.',
+            ]);
+        } else {
+            http_response_code(404);
+            echo json_encode(['error' => 'Product not found in the cart.']);
         }
-
-        // Nếu sản phẩm đã tồn tại trong giỏ hàng
-        if ($isExist) {
-            // Xoá sản phẩm khỏi SESSION['cart']
-            array_splice($_SESSION['cart'], $index, 1);
-
-            // Xoá sản phẩm khỏi database
-            $sql = "DELETE FROM cart 
-            WHERE user_id = '$userId' 
-            AND product_id = '$productId'";
-
-            $result = mysqli_query($conn, $sql);
-        }
-
-        // Trả về json
-        echo json_encode(array(
-            'message' => 'Product removed from cart successfully.',
-            'cart' => $_SESSION['cart'],
-        ));
     } else {
-        echo 'Product ID not provided.';
+        http_response_code(400);
+        echo json_encode(['error' => 'Product ID not provided.']);
     }
-
-    // Đóng kết nối
-    DongKetNoi($conn);
 }
 
-// Nếu không phải POST hoặc DELETE
+// Xử lý yêu cầu không hợp lệ
 else {
-    // Trả về lỗi
     http_response_code(405);
-    echo 'Method not allowed';
+    echo json_encode(['error' => 'Method not allowed']);
 }
+
+// Đóng kết nối
+DongKetNoi($conn);
