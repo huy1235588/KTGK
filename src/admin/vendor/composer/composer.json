@@ -1,0 +1,15 @@
+{
+    "name": "admin/composer",
+    "autoload": {
+        "psr-4": {
+            "Admin\\Composer\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "huy1235588",
+            "email": "viettien4869@gmail.com"
+        }
+    ],
+    "require": {}
+}
