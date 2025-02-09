@@ -227,6 +227,7 @@ main.container {
 }
 
 .library-item {
+    display: block;
     background: #fff;
     /* padding: 10px; */
     border: 1px solid #929292;

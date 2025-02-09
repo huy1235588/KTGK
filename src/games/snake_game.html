@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Snake Game</title>
+    <style>
+        /* CSS Styling */
+        body {
+            background-color: #222;
+            color: #fff;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+
+        h1 {
+            margin-top: 20px;
+        }
+
+        #gameCanvas {
+            background-color: #000;
+            display: block;
+            margin: 20px auto;
+            border: 2px solid #fff;
+        }
+
+        .score {
+            font-size: 20px;
+            margin-top: 10px;
+        }
+
+        .game-over {
+            font-size: 30px;
+            color: red;
+            margin-top: 20px;
+            display: none;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            margin-top: 20px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Snake Game</h1>
+    <canvas id="gameCanvas" width="400" height="400"></canvas>
+    <div class="score">Score: <span id="score">0</span></div>
+    <div class="game-over" id="gameOverText">Game Over!</div>
+    <button id="restartBtn" style="display: none;">Restart</button>
+
+    <script>
+        // JavaScript code for the Snake Game
+
+        // Get canvas and context
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // Game settings
+        const grid = 20; // Size of each grid cell
+        let count = 0;
+        let score = 0;
+        let gameOver = false;
+
+        // Snake object
+        let snake = {
+            x: grid * 5,
+            y: grid * 5,
+            dx: grid,
+            dy: 0,
+            cells: [],
+            maxCells: 4
+        };
+
+        // Apple object (food)
+        let apple = {
+            x: grid * 10,
+            y: grid * 10
+        };
+
+        // Helper function to get a random integer in range [min, max)
+        function getRandomInt(min, max) {
+            return Math.floor(Math.random() * (max - min)) + min;
+        }
+
+        // Main game loop function
+        function loop() {
+            // Throttle the game speed
+            if (++count < 4) {
+                requestAnimationFrame(loop);
+                return;
+            }
+            count = 0;
+
+            // Clear the canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Move snake by updating its position
+            snake.x += snake.dx;
+            snake.y += snake.dy;
+
+            // Wrap snake position on edge of screen
+            if (snake.x < 0) {
+                snake.x = canvas.width - grid;
+            } else if (snake.x >= canvas.width) {
+                snake.x = 0;
+            }
+            if (snake.y < 0) {
+                snake.y = canvas.height - grid;
+            } else if (snake.y >= canvas.height) {
+                snake.y = 0;
+            }
+
+            // Add new head position to the beginning of snake cells array
+            snake.cells.unshift({ x: snake.x, y: snake.y });
+            // Remove cells as we move away if we exceed the maximum length
+            if (snake.cells.length > snake.maxCells) {
+                snake.cells.pop();
+            }
+
+            // Draw the apple
+            ctx.fillStyle = 'red';
+            ctx.fillRect(apple.x, apple.y, grid - 1, grid - 1);
+
+            // Draw the snake and check for collisions
+            ctx.fillStyle = 'lime';
+            for (let i = 0; i < snake.cells.length; i++) {
+                ctx.fillRect(snake.cells[i].x, snake.cells[i].y, grid - 1, grid - 1);
+
+                // Check collision with self (ignore the head by ensuring i > 0)
+                if (i !== 0 && snake.cells[i].x === snake.x && snake.cells[i].y === snake.y) {
+                    // Collision detected: game over
+                    gameOver = true;
+                    document.getElementById('gameOverText').style.display = 'block';
+                    document.getElementById('restartBtn').style.display = 'inline-block';
+                    return; // Exit the loop; do not schedule next frame
+                }
+            }
+
+            // Check if the snake eats the apple
+            if (snake.x === apple.x && snake.y === apple.y) {
+                snake.maxCells++; // Increase snake length
+                score++;          // Increase score
+                document.getElementById('score').innerText = score;
+
+                // Reposition the apple randomly on the grid
+                apple.x = getRandomInt(0, canvas.width / grid) * grid;
+                apple.y = getRandomInt(0, canvas.height / grid) * grid;
+            }
+
+            // Continue the game loop if the game is not over
+            if (!gameOver) {
+                requestAnimationFrame(loop);
+            }
+        }
+
+        // Start the game loop
+        requestAnimationFrame(loop);
+
+        // Listen for keyboard events to control the snake
+        document.addEventListener('keydown', function (e) {
+            // Prevent snake from reversing on itself
+            if (e.key === 'ArrowLeft' && snake.dx === 0) {
+                snake.dx = -grid;
+                snake.dy = 0;
+            } else if (e.key === 'ArrowUp' && snake.dy === 0) {
+                snake.dy = -grid;
+                snake.dx = 0;
+            } else if (e.key === 'ArrowRight' && snake.dx === 0) {
+                snake.dx = grid;
+                snake.dy = 0;
+            } else if (e.key === 'ArrowDown' && snake.dy === 0) {
+                snake.dy = grid;
+                snake.dx = 0;
+            }
+        });
+
+        // Restart button functionality
+        document.getElementById('restartBtn').addEventListener('click', function () {
+            // Reset game state
+            snake.x = grid * 5;
+            snake.y = grid * 5;
+            snake.cells = [];
+            snake.maxCells = 4;
+            snake.dx = grid;
+            snake.dy = 0;
+            apple.x = grid * 10;
+            apple.y = grid * 10;
+            score = 0;
+            document.getElementById('score').innerText = score;
+            document.getElementById('gameOverText').style.display = 'none';
+            document.getElementById('restartBtn').style.display = 'none';
+            gameOver = false;
+            count = 0;
+            // Restart the game loop
+            requestAnimationFrame(loop);
+        });
+    </script>
+</body>
+
+</html>
