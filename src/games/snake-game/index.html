@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Snake Game</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <h1>Snake Game</h1>
+    <!-- Hiển thị điểm số -->
+    <div class="score">Score: <span id="score">0</span></div>
+    <!-- Canvas hiển thị trò chơi -->
+    <canvas id="gameCanvas" width="530" height="530"></canvas>
+    <!-- Thông báo game over -->
+    <div class="game-over" id="gameOverText">Game Over!</div>
+    <!-- Nút Restart -->
+    <button id="restartBtn" style="display: none;">Restart</button>
+    <!-- Nút Settings -->
+    <button id="settingsBtn">Settings</button>
+
+    <!-- Các nút WSDA để điều khiển trò chơi -->
+    <div id="controlButtons">
+        <button id="btn-w">W</button>
+        <div class="horizontal-buttons">
+            <button id="btn-a">A</button>
+            <button id="btn-s">S</button>
+            <button id="btn-d">D</button>
+        </div>
+    </div>
+
+    <!-- Modal popup cài đặt -->
+    <div id="settingsModal" class="modal">
+        <div class="modal-content">
+            <span class="close" id="modalClose">&times;</span>
+            <h2>Game Settings</h2>
+            <form id="settingsForm">
+                <!-- Tốc độ: Người dùng nhập số từ 1 (chậm) đến 10 (nhanh) -->
+                <label for="speed">Speed (1-10):</label>
+                <input type="number" id="speed" name="speed" min="1" max="10" value="4">
+                <!-- Kích thước grid cell -->
+                <label for="gridSize">Grid Size (10-50):</label>
+                <input type="number" id="gridSize" name="gridSize" min="10" max="50" value="20">
+                <!-- Có tường hay không -->
+                <label for="wallsEnabled">Enable Walls:</label>
+                <input type="checkbox" id="wallsEnabled" name="wallsEnabled">
+                <br><br>
+                <button type="submit">Save Settings</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
