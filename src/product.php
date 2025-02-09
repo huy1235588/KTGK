@@ -268,10 +268,21 @@ DongKetNoi($conn);
     }
 
     // Lấy thông tin giỏ hàng từ database
-    $stmt = $conn->prepare("SELECT product_id FROM cart WHERE user_id = ?");
+    $stmt = $conn->prepare("SELECT product_id 
+                            FROM cart 
+                            WHERE user_id = ?");
     $stmt->bind_param("i", $_SESSION['user']['id']);
     $stmt->execute();
     $cartResult = $stmt->get_result();
+
+    // Kiểm tra sản phẩm đã được mua chưa
+    $stmt = $conn->prepare("SELECT product_id 
+                            FROM library 
+                            WHERE user_id = ?
+                            AND product_id = ?");
+    $stmt->bind_param("ii", $_SESSION['user']['id'], $productId);
+    $stmt->execute();
+    $isPurchased = $stmt->get_result()->num_rows > 0;
 
     // Đóng kết nối
     $stmt->close();
@@ -597,15 +608,21 @@ DongKetNoi($conn);
                     <?php endif ?>
                 </div>
 
-                <!-- Nút mua -->
-                <button class="buy-btn">
-                    BUY NOW
-                </button>
+                <?php if ($isPurchased): ?>
+                    <button class="in-library">
+                        IN LIBRARY
+                    </button>
+                <?php else: ?>
+                    <!-- Nút mua -->
+                    <button class="buy-btn">
+                        BUY NOW
+                    </button>
 
-                <!-- Nút giỏ hàng -->
-                <button type="submit" class="cart-btn" data-id="<?= $productId ?>">
-                    ADD TO CART
-                </button>
+                    <!-- Nút giỏ hàng -->
+                    <button type="submit" class="cart-btn" data-id="<?= $productId ?>">
+                        ADD TO CART
+                    </button>
+                <?php endif; ?>
 
                 <!-- Features -->
                 <div class="features">

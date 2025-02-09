@@ -58,12 +58,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         // Xoá giỏ hàng
         unset($_SESSION['cart']);
+        unset($_SESSION['total']);
         $stmt = $conn->prepare("DELETE FROM cart WHERE user_id = ?");
         $stmt->bind_param("i", $userId);
         $stmt->execute();
 
         // Chuyển hướng về thư viện
-        header('Location: library.php');
+        header('Location: ./library.php');
         exit();
     } catch (PDOException $e) {
         $pdo->rollBack();

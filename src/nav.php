@@ -131,6 +131,7 @@ $cartQuantity = $result->fetch_assoc()['quantity'];
                             My Information
                         </h6>
 
+                        <!-- Information Management -->
                         <li class="account-dropdown-item">
                             <a href="profile.php?id=<?= $_SESSION['user']['username'] ?>">
                                 <div class="icon">
@@ -143,8 +144,21 @@ $cartQuantity = $result->fetch_assoc()['quantity'];
                             </a>
                         </li>
 
+                        <!-- Library -->
+                        <li class="account-dropdown-item">
+                            <a href="library.php">
+                                <div class="icon">
+                                    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 24 24" font-size="20px" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M12 2C6.48 2 2 6.48 2 12c0 4.418 2.865 8.14 6.84"></path>
+                                    </svg>
+                                </div>
+                                Library
+                            </a>
+                        </li>
+
                         <hr class="account-dropdown-divider">
 
+                        <!-- Log out -->
                         <li class="account-dropdown-item">
                             <a href="dangxuat.php?redirect=<?= $currentUrl ?>">
                                 <div class="icon">

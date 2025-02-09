@@ -687,6 +687,18 @@ aside.right-content .product-info {
     margin-bottom: 10px;
 }
 
+/* Button in library */
+.in-library {
+    width: 100%;
+    padding: 10px 0;
+    margin-top: 25px;
+    border-radius: 5px;
+    background: #1bc5249a;
+    font-size: 20px;
+    transition: all 0.3s ease-in-out;
+    cursor: not-allowed;
+}
+
 /* Button mua */
 .buy-btn {
     width: 100%;
