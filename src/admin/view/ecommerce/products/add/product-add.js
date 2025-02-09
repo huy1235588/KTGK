@@ -676,22 +676,28 @@ async function handleAddedFile(file, dropzone, jsDropzone) {
 // Hàm custom dropzone
 function dropzoneCustom() {
     document.querySelectorAll('.form-group-dropzone').forEach(function (formGroup) {
-        const formControl = formGroup.querySelector('.form-control-file');
+        const formControl = formGroup.querySelector('.form-control-dropzone');
         const jsDropzone = formGroup.querySelector('.js-dropzone');
         const typeFile = jsDropzone.getAttribute('data-type-file');
 
+        // Tạo DataTransfer để quản lý file
+        let dataTransfer = new DataTransfer();
+
         // Khởi tạo dropzone với element có id là element.id
         const dropzone = new Dropzone('#' + jsDropzone.id, {
-            url: "/uploads/images", // Đường dẫn upload file
+            url: `#`, // Đường dẫn upload file
+            paramName: formControl.name, // Tên của file input
             acceptedFiles: `${typeFile}/*`, // Loại file cho phép
             maxFiles: 20, // Số file tối đa
             addRemoveLinks: true, // Hiển thị nút xoá file
             clickable: jsDropzone, // Chọn element để kích hoạt dropzone
 
+            // Khi file được kéo thả vào Dropzone
             dragover: function () {
                 jsDropzone.classList.add('drag-over');
             },
 
+            // Khi file được kéo thả ra khỏi Dropzone
             dragleave: function () {
                 jsDropzone.classList.remove('drag-over');
             },
@@ -710,8 +716,24 @@ function dropzoneCustom() {
                     errorMessage.remove();
                 }
 
-                formControl.value = formControl.value ? `${formControl.value}|${file.name}` : file.name;
+                // Đọc file và thêm vào DataTransfer
+                dataTransfer.items.add(file);
+                // Gán vào input file
+                formControl.files = dataTransfer.files; 
             },
+
+            // Xử lý khi file bị xoá khỏi Dropzone
+            removedfile: function (file) {
+                // Xoá file khỏi DataTransfer
+                dataTransfer.items.remove(file);
+                formControl.files = dataTransfer.files; // Gán vào input file
+
+                // Kiểm tra xem Dropzone có còn file nào không
+                if (!dropzone.files.length) {
+                    const dzMessage = jsDropzone.querySelector('.dz-message');
+                    dzMessage.style.display = 'block';
+                }
+            }
         });
 
         // Hàm xử lý submit popup

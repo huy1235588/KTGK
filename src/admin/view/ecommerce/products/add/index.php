@@ -16,6 +16,17 @@ ob_start();
 // Nạp file ProductController.php
 require_once '../../../../../controller/ProductController.php';
 require_once '../../../../../utils/db_connect.php';
+require '../../../../vendor/autoload.php';
+
+// Import Dotenv
+use Dotenv\Dotenv;
+
+// Load file .env
+$dotenv = Dotenv::createImmutable(__DIR__ . '/../../../../');
+$dotenv->load();
+
+// Import Cloudinary class
+use Cloudinary\Cloudinary;
 
 // Mở kết nối
 $conn = MoKetNoi();
@@ -46,7 +57,11 @@ $errors = [
 
 // Xử lý form
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Lấy dữ liệu từ form
+    /*===================================================================
+
+                            Lấy dữ liệu
+
+    ===================================================================*/
     $txtTitle = htmlspecialchars($_POST['title']);
     $txtType = htmlspecialchars($_POST['type']);
     $txtDescription = htmlspecialchars($_POST['description']);
@@ -91,9 +106,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $txtHeaderImage = 'uploads/images/' . htmlspecialchars($_POST['headerImage']);
     }
 
-    $txtScreenshots = explode('|', htmlspecialchars($_POST['screenshots']));
-    $txtVideos = explode('|', htmlspecialchars($_POST['videos']));
+    $txtScreenshots = $_FILES['screenshots'];
+    $txtVideos = $_FILES['videos'];
 
+    /*===================================================================
+
+                            Xử lý dữ liệu
+
+    ===================================================================*/
     // Xử lý isActive
     $txtIsActive = isset($_POST['isActive']) ? 1 : 0;
 
@@ -120,8 +140,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $errors['screenshots'] = 'At least 2 screenshots';
     }
 
-    // Nếu không có lỗi thì hiển thị dữ liệu
+    // Kiểm tra không có lỗi
     if (empty(array_filter($errors))) {
+        /*===================================================================
+
+                            Thêm sản phẩm
+
+        ===================================================================*/
+        // Nếu không có lỗi thì hiển thị dữ liệu
         echo 'title: ' . $txtTitle . '<br>';
         echo 'type: ' . $txtType . '<br>';
         echo 'description: ' . $txtDescription . '<br>';
@@ -139,8 +165,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         echo 'features: ' . $txtFeatures . '<br>';
         echo 'headerImage: ' . $txtHeaderImage . '<br>';
         echo 'isActive: ' . $txtIsActive . '<br>';
-        echo 'screenshots: ' . implode('|', $txtScreenshots) . '<br>';
-        echo 'videos: ' . implode('|', $txtVideos) . '<br>';
 
         // Thực hiện thêm sản phẩm
         $productId =  $productController->addProduct(
@@ -157,48 +181,148 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $txtIsActive
         );
 
-        // Thêm developer, publisher, platform, genres, tags, features
-        $tables = [
-            'product_developers',
-            'product_publishers',
-            'product_platforms',
-            'product_genres',
-            'product_tags',
-            'product_features',
-            'product_screenshots',
-            'product_videos'
-        ];
+        // Nếu thêm sản phẩm thành công
+        if (isset($productId)) {
+            /*===================================================================
 
-        $data = [
-            'product_developers' => [
-                'developer' => explode(',', $txtDeveloper)
-            ],
-            'product_publishers' => [
-                'publisher' => explode(',', $txtPublisher)
-            ],
-            'product_platforms' => [
-                'platform_id' => explode(',', $txtPlatform)
-            ],
-            'product_genres' => [
-                'genre_id' => explode(',', $txtGenres)
-            ],
-            'product_tags' => [
-                'tag_id' => explode(',', $txtTags)
-            ],
-            'product_features' => [
-                'feature_id' => explode(',', $txtFeatures)
-            ],
-            'product_screenshots' => [
-                'screenshot' => $txtScreenshots
-            ],
-            'product_videos' => [
-                'mp4' => $txtVideos,
-                'webm' => $txtVideos,
-                'thumbnail' => $txtVideos
-            ]
-        ];
+                                    Upload file
 
-        $productController->addProductDetails($tables, $productId, $data);
+            ===================================================================*/
+            // Khởi tạo Cloudinary
+            $cloudinary = new Cloudinary($_ENV['CLOUDINARY_URL']);
+
+            // Hàm upload file lên Cloudinary
+            function uploadFileToCloudinary($filePath, $folder, $resourceType, $publicId)
+            {
+                global $cloudinary;
+
+                try {
+                    // Upload file lên Cloudinary
+                    $uploadedFile = $cloudinary->uploadApi()->upload($filePath, [
+                        "public_id" => $publicId,
+                        "folder" => $folder,
+                        "resource_type" => $resourceType
+                    ]);
+
+                    // Trả về URL của file đã upload
+                    return [
+                        'public_id' => $uploadedFile['public_id'],
+                        'url' => $uploadedFile['secure_url']
+                    ];
+                } catch (\Cloudinary\Api\Exception\ApiError $e) {
+                    // Xử lý lỗi nếu upload thất bại
+                    return 'Error: ' . $e->getMessage();
+                }
+            }
+
+            //// Xử lý ảnh
+            if (isset($txtScreenshots) && is_array($txtScreenshots)) {
+                $fileCount = count($txtScreenshots['name']);
+
+                for ($i = 0; $i < $fileCount; $i++) {
+                    // Kiểm tra nếu file là URL thì lưu vào database
+                    if (filter_var($txtScreenshots['full_path'][$i], FILTER_VALIDATE_URL)) {
+                        $txtScreenshots['screenshot'][$i] = $txtScreenshots['full_path'][$i];
+                    } else {
+                        // Lấy tên file và đường dẫn
+                        $fileName = $txtScreenshots['name'][$i];
+
+                        // Tạo publicId
+                        $publicId = $productId . '_screenshot_' . $i;
+
+                        // Upload file và lưu kết quả
+                        $uploadedUrl = uploadFileToCloudinary(
+                            $txtScreenshots['tmp_name'][$i],
+                            'KTGK/screenshots',
+                            'image',
+                            $publicId
+                        );
+
+                        // Lưu URL vào mảng
+                        $txtScreenshots['screenshot'][$i] = $uploadedUrl['url'];
+                    }
+                }
+            }
+
+            // Xử lý video
+            if (isset($txtVideos) && is_array($txtVideos)) {
+                $fileCount = count($txtVideos['name']);
+
+                for ($i = 0; $i < $fileCount; $i++) {
+                    // Kiểm tra nếu file là URL thì lưu vào database
+                    if (filter_var($txtVideos['full_path'][$i], FILTER_VALIDATE_URL)) {
+                        // Lưu URL vào mảng
+                        $txtVideos['video'][$i] = $txtVideos['full_path'][$i];
+                        $txtVideos['thumbnail'][$i] = $txtVideos['full_path'][$i];
+                    } else {
+                        // Lấy tên file và đường dẫn
+                        $fileName = $txtVideos['name'][$i];
+
+                        // Tạo publicId
+                        $publicId = $productId . '_video_' . $i;
+
+                        // Upload file và lưu kết quả
+                        $uploadedUrl = uploadFileToCloudinary(
+                            $txtVideos['tmp_name'][$i],
+                            'KTGK/videos',
+                            'video',
+                            $publicId
+                        );
+
+                        // Lưu URL vào mảng
+                        $txtVideos['video'][$i] = $uploadedUrl['url'];
+                        $txtVideos['thumbnail'][$i] = $uploadedUrl['url'];
+                    }
+                }
+            }
+            
+            /*===================================================================
+
+                                    Thêm chi tiết sản phẩm
+
+            ===================================================================*/
+            $tables = [
+                'product_developers',
+                'product_publishers',
+                'product_platforms',
+                'product_genres',
+                'product_tags',
+                'product_features',
+                'product_screenshots',
+                'product_videos'
+            ];
+
+            $data = [
+                'product_developers' => [
+                    'developer' => explode(',', $txtDeveloper)
+                ],
+                'product_publishers' => [
+                    'publisher' => explode(',', $txtPublisher)
+                ],
+                'product_platforms' => [
+                    'platform_id' => explode(',', $txtPlatform)
+                ],
+                'product_genres' => [
+                    'genre_id' => explode(',', $txtGenres)
+                ],
+                'product_tags' => [
+                    'tag_id' => explode(',', $txtTags)
+                ],
+                'product_features' => [
+                    'feature_id' => explode(',', $txtFeatures)
+                ],
+                'product_screenshots' => [
+                    'screenshot' => $txtScreenshots['screenshot']
+                ],
+                'product_videos' => [
+                    'mp4' => $txtVideos['video'],
+                    'webm' => $txtVideos['video'],
+                    'thumbnail' => $txtVideos['thumbnail']
+                ]
+            ];
+
+            $productController->addProductDetails($tables, $productId, $data);
+        }
     }
 }
 ?>
@@ -908,10 +1032,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 </button>
             </div>
 
-            <input class="form-control-file"
-                type="text"
+            <input class="form-control-dropzone"
+                type="file"
                 id="screenshots"
-                name="screenshots"
+                name="screenshots[]"
+                accept="image/*"
+                multiple
                 style="display: none;">
 
             <!-- Dropzone -->
@@ -953,10 +1079,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 </button>
             </div>
 
-            <input class="form-control-file"
-                type="text"
+            <input class="form-control-dropzone"
+                type="file"
                 id="videos"
-                name="videos"
+                name="videos[]"
+                accept="video/*"
+                multiple
                 style="display: none;">
 
             <!-- Dropzone -->

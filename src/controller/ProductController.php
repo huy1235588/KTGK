@@ -279,49 +279,78 @@ class ProductController
     }
 
     // Hàm để insert thông tin khác của sản phẩm
-    public function addProductDetails(
-        $tables,
-        $product_id,
-        $data
-    ) {
-        // Kiểm tra nếu $tables không phải là mảng, thì chuyển nó thành mảng
+    public function addProductDetails($tables, $product_id, $data)
+    {
+        // Kiểm tra dữ liệu của bảng có phải là mảng không
         if (!is_array($tables)) {
             throw new Exception("Tables must be an array.");
         }
 
         // Duyệt qua từng bảng
         foreach ($tables as $table) {
-            // Lấy dữ liệu cho bảng hiện tại
-            $tableData = $data[$table];
-
-            // Lấy tên cột (chỉ có một cột ngoài product_id)
-            $column = key($tableData);
-            $values = $tableData[$column];
-
-            // Nếu không phải mảng, thì báo lỗi
-            if (!is_array($values)) {
+            // Kiểm tra dữ liệu của bảng có phải là mảng không
+            if (!isset($data[$table]) || !is_array($data[$table])) {
                 throw new Exception("Data for $table must be an array.");
             }
 
-            // Xây dựng câu lệnh SQL (INSERT nhiều dòng)
-            $sql = "INSERT INTO $table (product_id, $column) VALUES (?, ?)";
+            // Lấy tên cột và giá trị của bảng
+            $columns = array_keys($data[$table]);
+            // Tạo chuỗi placeholders
+            $placeholders = implode(", ", array_fill(0, count($columns) + 1, "?"));
+            // Tạo chuỗi tên cột
+            $columnNames = implode(", ", array_merge(['product_id'], $columns));
+
+            // Tạo câu lệnh SQL
+            $sql = "INSERT INTO $table ($columnNames) VALUES ($placeholders)";
+            // Chuẩn bị câu lệnh SQL
             $stmt = $this->conn->prepare($sql);
 
+            // Kiểm tra câu lệnh SQL
             if (!$stmt) {
-                throw new Exception("Prepare statement failed for table $table: " . $this->conn->error);
+                throw new Exception("Prepare failed for table $table: " . $this->conn->error);
             }
 
-            // Duyệt qua từng giá trị và thực hiện INSERT
-            foreach ($values as $value) {
-                $stmt->bind_param("is", $product_id, $value);
+            // Duyệt qua từng cột của bảng
+            foreach ($data[$table][$columns[0]] as $index => $value) {
+                $bindValues = [$product_id];
+                $types = "i"; // Kiểu dữ liệu cho product_id là integer
+
+                // Duyệt qua từng cột của bảng
+                foreach ($columns as $column) {
+                    // Lấy kiểu dữ liệu của cột
+                    $columnType = $this->getColumnTypes($table, $column);
+                    // Thêm giá trị vào mảng bindValues
+                    $bindValues[] = $data[$table][$column][$index] ?? null;
+
+                    // Xác định kiểu dữ liệu của cột
+                    switch ($columnType) {
+                        case 'int':
+                            $types .= "i";
+                            break;
+                        case 'float':
+                            $types .= "d";
+                            break;
+                        default:
+                            $types .= "s";
+                            break;
+                    }
+                }
+
+                // Gán tham số cho câu lệnh SQL
+                $stmt->bind_param($types, ...$bindValues);
+                
+                // Thực thi câu lệnh SQL
                 if (!$stmt->execute()) {
                     throw new Exception("Execute failed for table $table: " . $stmt->error);
                 }
             }
+
+            $stmt->close();
         }
 
         return true;
     }
+
 
     // Hàm để update sản phẩm
     public function updateProduct(
