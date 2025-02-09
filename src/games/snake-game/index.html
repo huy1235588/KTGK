@@ -14,10 +14,6 @@
     <div class="score">Score: <span id="score">0</span></div>
     <!-- Canvas hiển thị trò chơi -->
     <canvas id="gameCanvas" width="530" height="530"></canvas>
-    <!-- Thông báo game over -->
-    <div class="game-over" id="gameOverText">Game Over!</div>
-    <!-- Nút Restart -->
-    <button id="restartBtn" style="display: none;">Restart</button>
     <!-- Nút Settings -->
     <button id="settingsBtn">Settings</button>
 
@@ -46,9 +42,20 @@
                 <!-- Có tường hay không -->
                 <label for="wallsEnabled">Enable Walls:</label>
                 <input type="checkbox" id="wallsEnabled" name="wallsEnabled">
+                <!-- Chế độ Multiplayer -->
+                <label for="multiplayerEnabled">Enable Multiplayer:</label>
+                <input type="checkbox" id="multiplayerEnabled" name="multiplayerEnabled">
                 <br><br>
                 <button type="submit">Save Settings</button>
             </form>
+        </div>
+    </div>
+
+    <!-- Modal popup cho Game Over và Reset -->
+    <div id="gameOverModal" class="modal">
+        <div class="modal-content">
+            <h2 id="gameOverTitle">Game Over!</h2>
+            <button id="resetBtn">Reset</button>
         </div>
     </div>
 

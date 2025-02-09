@@ -63,6 +63,7 @@ button {
     background-color: rgba(0, 0, 0, 0.5);
 }
 
+/* Nội dung modal */
 .modal-content {
     background-color: #333;
     margin: 10% auto;
@@ -70,6 +71,16 @@ button {
     border: 1px solid #888;
     width: 300px;
     border-radius: 5px;
+    text-align: center;
+}
+
+/* Nút đóng modal (chỉ dùng cho Settings) */
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
 }
 
 .close {
