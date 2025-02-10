@@ -27,8 +27,6 @@ $dotenv->load();
 
 // Import Cloudinary class
 use Cloudinary\Cloudinary;
-// Import Google YouTube service class
-use Google\Service\YouTube;
 
 // Mở kết nối
 $conn = MoKetNoi();

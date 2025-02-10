@@ -310,11 +310,15 @@ function displayFilePreview(
     // Hiển thị file preview
     uploaderContainer.style.display = 'none';
     filePreview.style.display = 'flex';
-    filePreviewName.textContent = file.name;
-    filePreviewSize.textContent = convertFileSize(size);
+
+    console.log(file);
 
     // Hiển thị file preview image nếu file là hình ảnh
-    if (file.type && file.type.includes('image')) {
+    if (file && file.type && file.type.includes('image')) {
+        // Hiển thị file preview image
+        filePreviewName.textContent = file.name;
+        filePreviewSize.textContent = convertFileSize(size);
+
         // Tạo đường dẫn cho file preview image
         const reader = new FileReader();
 
@@ -339,6 +343,7 @@ function displayFilePreview(
     // Nếu file là url 
     else if (typeof file === 'string') {
         if (value.includes('https://') || value.includes('http://')) {
+
             // Hiển thị file preview image
             filePreviewImage.src = value;
 
@@ -787,9 +792,7 @@ function saveFormData() {
     const formElements = form.querySelectorAll('input[class^="form-control"], textarea[class^="form-control"]');
 
     // Lấy dữ liệu từ localStorage (nếu có)
-    const savedData = JSON.parse(localStorage.getItem('productFormData')) || {};
-
-    console.log(savedData);
+    // const savedData = JSON.parse(localStorage.getItem('productFormData')) || {};
 
     // Lặp qua từng element để lấy dữ liệu
     formElements.forEach(inputForm => {
@@ -878,12 +881,32 @@ function saveFormData() {
                 // Hiển thị dữ liệu đã lưu
                 displayFilePreview(
                     formGroup,
-                    savedData[`${selectedName}_url`],
+                    savedData[selectedName],
                     formGroup.querySelector('.file-uploader-container'),
                     inputForm,
                     savedData[selectedName],
-                    savedData[`${selectedName}_size`]
                 );
+            }
+
+            // Xử lý riêng cho dropzone
+            else if (inputForm.classList.contains('form-control-dropzone')) {
+                // Lấy ra formGroup
+                const formGroup = inputForm.closest('.form-group-dropzone');
+
+                // Lấy ra dropzone
+                const dropzone = formGroup.querySelector('.js-dropzone');
+
+                // Lấy ra các file đã lưu
+                const files = savedData[selectedName].split(', ');
+
+                // Hiển thị dữ liệu đã lưu
+                files.forEach(async file => {
+                    // Tạo file từ URL
+                    const f = await fetchFileFromUrl(file);
+
+                    // Hiển thị file preview
+                    handleAddedFile(f, dropzone.dropzone, dropzone);
+                });
             }
 
             // Xử lý riêng cho quill editor
@@ -896,31 +919,6 @@ function saveFormData() {
                 // Hiển thị dữ liệu đã lưu
                 inputForm.value = savedData[selectedName];
             }
-        }
-
-        // Sự kiện change để lưu dữ liệu ngay khi người dùng chọn giá trị
-        if (inputForm.type === 'checkbox') {
-            inputForm.addEventListener('change', function () {
-                // Cập nhật object với dữ liệu mới
-                savedData[selectedName] = inputForm.type === 'checkbox' ? (inputForm.checked ? 1 : 0) : inputForm.value;
-
-                // Lưu dữ liệu vào localStorage
-                localStorage.setItem('productFormData', JSON.stringify(savedData));
-            });
-        }
-
-        // Sự kiện change để lưu dữ liệu ngay khi người dùng chọn giá trị
-        else if (inputForm.type === 'file') { }
-
-        else {
-            // Sử dụng sự kiện input để lấy dữ liệu ngay khi người dùng nhập liệu
-            inputForm.addEventListener('input', function () {
-                // Cập nhật object với dữ liệu mới
-                savedData[selectedName] = inputForm.value;
-
-                // Lưu dữ liệu vào localStorage
-                localStorage.setItem('productFormData', JSON.stringify(savedData));
-            });
         }
     });
 }

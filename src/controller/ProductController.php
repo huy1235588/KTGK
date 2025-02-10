@@ -132,13 +132,23 @@ class ProductController
         return $results;
     }
 
-    // Hàm lấy kiểu của sản phẩm theo ID
+    // Hàm lấy kiểu của sản phẩm
     public function getTypes()
     {
         $sql = "SELECT * FROM types";
         $stmt = $this->conn->prepare($sql);
         $stmt->execute();
         $result = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+        return $result;
+    }
+
+    // Hàm lấy kiểu của sản phẩm theo ID
+    public function getTypeById($id)
+    {
+        $stmt = $this->conn->prepare("SELECT * FROM types WHERE id = ?");
+        $stmt->bind_param("i", $id);
+        $stmt->execute();
+        $result = $stmt->get_result()->fetch_assoc();
         return $result;
     }
 
@@ -152,6 +162,16 @@ class ProductController
         return $result;
     }
 
+    // Hàm lấy thể loại theo ID
+    public function getGenreById($id)
+    {
+        $stmt = $this->conn->prepare("SELECT * FROM genres WHERE id = ?");
+        $stmt->bind_param("i", $id);
+        $stmt->execute();
+        $result = $stmt->get_result()->fetch_assoc();
+        return $result;
+    }
+
     // Hàm lấy tất cả platform
     public function getPlatforms()
     {
@@ -159,6 +179,16 @@ class ProductController
         $stmt = $this->conn->prepare($sql);
         $stmt->execute();
         $result = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+        return $result;
+    }
+
+    // Hàm lấy platform theo ID
+    public function getPlatformById($id)
+    {
+        $stmt = $this->conn->prepare("SELECT * FROM platforms WHERE id = ?");
+        $stmt->bind_param("i", $id);
+        $stmt->execute();
+        $result = $stmt->get_result()->fetch_assoc();
         return $result;
     }
 
@@ -176,6 +206,16 @@ class ProductController
         return $result;
     }
 
+    // Hàm lấy tag theo ID
+    public function getTagById($id)
+    {
+        $stmt = $this->conn->prepare("SELECT * FROM tags WHERE id = ?");
+        $stmt->bind_param("i", $id);
+        $stmt->execute();
+        $result = $stmt->get_result()->fetch_assoc();
+        return $result;
+    }
+
     // Hàm lấy tất cả features
     public function getFeatures()
     {
@@ -187,6 +227,16 @@ class ProductController
         $stmt = $this->conn->prepare($sql);
         $stmt->execute();
         $result = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+        return $result;
+    }
+
+    // Hàm lấy feature theo ID
+    public function getFeatureById($id)
+    {
+        $stmt = $this->conn->prepare("SELECT * FROM features WHERE id = ?");
+        $stmt->bind_param("i", $id);
+        $stmt->execute();
+        $result = $stmt->get_result()->fetch_assoc();
         return $result;
     }
 
