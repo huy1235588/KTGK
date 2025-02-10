@@ -1,3 +1,5 @@
 database
 .env
 src/admin/.env
+python/upload
+src/admin/view/ecommerce/products/add/uploads/sample_thumbnail.jpg

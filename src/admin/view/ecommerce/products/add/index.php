@@ -27,6 +27,8 @@ $dotenv->load();
 
 // Import Cloudinary class
 use Cloudinary\Cloudinary;
+// Import Google YouTube service class
+use Google\Service\YouTube;
 
 // Mở kết nối
 $conn = MoKetNoi();
@@ -148,23 +150,23 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         ===================================================================*/
         // Nếu không có lỗi thì hiển thị dữ liệu
-        echo 'title: ' . $txtTitle . '<br>';
-        echo 'type: ' . $txtType . '<br>';
-        echo 'description: ' . $txtDescription . '<br>';
-        echo 'details: ' . $txtDetails . '<br>';
-        echo 'price: ' . $txtPrice . '<br>';
-        echo 'discount: ' . $txtDiscount . '<br>';
-        echo 'discount-start-date: ' . $txtDiscountStartDate . '<br>';
-        echo 'discount-end-date: ' . $txtDiscountEndDate . '<br>';
-        echo 'release-date: ' . $txtReleaseDate . '<br>';
-        echo 'developer: ' . $txtDeveloper . '<br>';
-        echo 'publisher: ' . $txtPublisher . '<br>';
-        echo 'platform: ' . $txtPlatform . '<br>';
-        echo 'genres: ' . $txtGenres . '<br>';
-        echo 'tags: ' . $txtTags . '<br>';
-        echo 'features: ' . $txtFeatures . '<br>';
-        echo 'headerImage: ' . $txtHeaderImage . '<br>';
-        echo 'isActive: ' . $txtIsActive . '<br>';
+        // echo 'title: ' . $txtTitle . '<br>';
+        // echo 'type: ' . $txtType . '<br>';
+        // echo 'description: ' . $txtDescription . '<br>';
+        // echo 'details: ' . $txtDetails . '<br>';
+        // echo 'price: ' . $txtPrice . '<br>';
+        // echo 'discount: ' . $txtDiscount . '<br>';
+        // echo 'discount-start-date: ' . $txtDiscountStartDate . '<br>';
+        // echo 'discount-end-date: ' . $txtDiscountEndDate . '<br>';
+        // echo 'release-date: ' . $txtReleaseDate . '<br>';
+        // echo 'developer: ' . $txtDeveloper . '<br>';
+        // echo 'publisher: ' . $txtPublisher . '<br>';
+        // echo 'platform: ' . $txtPlatform . '<br>';
+        // echo 'genres: ' . $txtGenres . '<br>';
+        // echo 'tags: ' . $txtTags . '<br>';
+        // echo 'features: ' . $txtFeatures . '<br>';
+        // echo 'headerImage: ' . $txtHeaderImage . '<br>';
+        // echo 'isActive: ' . $txtIsActive . '<br>';
 
         // Thực hiện thêm sản phẩm
         $productId =  $productController->addProduct(
@@ -191,7 +193,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             // Khởi tạo Cloudinary
             $cloudinary = new Cloudinary($_ENV['CLOUDINARY_URL']);
 
-            // Hàm upload file lên Cloudinary
+            /**
+             * Uploads a file to Cloudinary.
+             *
+             * @param string $filePath Path to the file.
+             * @param string $folder Cloudinary folder name.
+             * @param string $resourceType Type of resource (e.g., 'image').
+             * @param string $publicId Public ID for the uploaded file.
+             * @return array|string Returns an array with 'public_id' and 'url' on success, or an error message.
+             */
             function uploadFileToCloudinary($filePath, $folder, $resourceType, $publicId)
             {
                 global $cloudinary;
@@ -213,6 +223,34 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     // Xử lý lỗi nếu upload thất bại
                     return 'Error: ' . $e->getMessage();
                 }
+            }
+
+            /**
+             * Generates a thumbnail from a video file.
+             *
+             * @param string $videoPath Path to the video file.
+             * @param string $thumbnailPath Path to save the thumbnail.
+             * @param int $timeInSeconds Time in seconds to generate the thumbnail.
+             * @return string Returns the path to the generated thumbnail on success, or an error message.
+             */
+            function generateThumbnail($videoPath, $thumbnailPath, $timeInSeconds = 1)
+            {
+                // Kiểm tra FFmpeg đã cài đặt chưa
+                $ffmpegPath = "ffmpeg"; // Nếu cần, đổi thành đường dẫn đầy đủ của ffmpeg
+                if (!shell_exec("$ffmpegPath -version")) {
+                    return "FFmpeg not installed or not found.";
+                }
+
+                // Lệnh FFmpeg để trích xuất ảnh từ video
+                $cmd = "$ffmpegPath -i $videoPath -ss $timeInSeconds -vframes 1 -q:v 2 $thumbnailPath 2>&1";
+                shell_exec($cmd);
+
+                // Kiểm tra file thumbnail có được tạo hay không
+                if (!file_exists($thumbnailPath)) {
+                    return "Error generating thumbnail.";
+                }
+
+                return $thumbnailPath;
             }
 
             //// Xử lý ảnh
@@ -262,20 +300,35 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         $publicId = $productId . '_video_' . $i;
 
                         // Upload file và lưu kết quả
-                        $uploadedUrl = uploadFileToCloudinary(
+                        $uploadedFile = uploadFileToCloudinary(
                             $txtVideos['tmp_name'][$i],
                             'KTGK/videos',
                             'video',
                             $publicId
                         );
 
+                        // Tạo thunhumbnail từ video
+                        $videoFile = $txtVideos['tmp_name'][$i]; // Đường dẫn file video
+                        $thumbnailFile = "uploads/sample_thumbnail.jpg";  // Ảnh thumbnail
+                        $thumbnailPath = generateThumbnail($videoFile, $thumbnailFile);
+
+                        $publicId = $productId . '_thumbnail_' . $i;
+
+                        // Upload thumbnail lên Cloudinary
+                        $uploadedThumbnail = uploadFileToCloudinary(
+                            $thumbnailPath,
+                            'KTGK/thumbnails',
+                            'image',
+                            $publicId
+                        );
+
                         // Lưu URL vào mảng
-                        $txtVideos['video'][$i] = $uploadedUrl['url'];
-                        $txtVideos['thumbnail'][$i] = $uploadedUrl['url'];
+                        $txtVideos['video'][$i] = $uploadedFile['url'];
+                        $txtVideos['thumbnail'][$i] = $uploadedThumbnail['url'];
                     }
                 }
             }
-            
+
             /*===================================================================
 
                                     Thêm chi tiết sản phẩm
