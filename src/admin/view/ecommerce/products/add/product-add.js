@@ -578,7 +578,8 @@ async function fetchFileFromUrl(url) {
         });
         return file;
     } catch (error) {
-        console.error('Error fetching file:', error);
+        // console.error('Error fetching file:', error);
+        return null;
     }
 }
 
@@ -719,7 +720,7 @@ function dropzoneCustom() {
                 // Đọc file và thêm vào DataTransfer
                 dataTransfer.items.add(file);
                 // Gán vào input file
-                formControl.files = dataTransfer.files; 
+                formControl.files = dataTransfer.files;
             },
 
             // Xử lý khi file bị xoá khỏi Dropzone
@@ -737,17 +738,23 @@ function dropzoneCustom() {
         });
 
         // Hàm xử lý submit popup
-        async function handelSubmitPopup(value) {
+        async function handelSubmitPopup(values) {
             // Hiển thị file preview
-            if (value) {
-                // Tạo file từ URL
-                const file = await fetchFileFromUrl(value);
+            if (values) {
+                const v = values.split(',');
+                v.forEach(async value => {
+                    // Nếu value rỗng thì không làm gì cả
+                    if (value.trim() === '') return;
 
-                // Thêm file vào Dropzone
-                dropzone.addFile(file);
+                    // Tạo file từ URL
+                    let file = await fetchFileFromUrl(value);
 
-                // Đóng popup
-                myPopup.close();
+                    // Thêm file vào Dropzone
+                    dropzone.addFile(file);
+
+                    // Đóng popup
+                    myPopup.close();
+                });
             }
         }
 

@@ -1078,6 +1078,10 @@ Author       : LeThienHuy.
     margin-bottom: 0;
 }
 
+.dropzone-custom .dropzone-custom-wrapper p{
+    margin: 8px 0;
+}
+
 .dropzone-custom .dropzone-custom-wrapper .dropzone-custom-icon {
     width: 6.5625rem;
     height: 4.92188rem;
@@ -1149,6 +1153,10 @@ Author       : LeThienHuy.
 }
 
 .form-group-dropzone .file-preview .file-preview-info .file-preview-name {
+    max-width: 500px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
     margin: 0px 0px 4px 8px;
     font-family: Roboto, Helvetica, Arial, sans-serif;
     font-weight: 400;
