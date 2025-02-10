@@ -4,7 +4,7 @@ include 'utils/db_connect.php';
 $conn = MoKetNoi();
 
 // Lấy thể loại từ URL
-$genre_id = $_GET['genre'];
+$genre_id = $_GET['id'];
 
 // Lấy trang hiện tại
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
@@ -15,17 +15,18 @@ $offset = ($page - 1) * $limit;
 $sqlProducts = "SELECT *
     FROM products p JOIN product_genres pg ON p.id = pg.product_id
                     JOIN genres g ON pg.genre_id = g.id
-    WHERE g.name = '$genre_id' AND p.isActive = 1
+    WHERE g.id = '$genre_id' AND p.isActive = 1
     LIMIT $limit OFFSET $offset
 ";
 
 // Thực thi truy vấn
 $products = $conn->query($sqlProducts);
 
+// Truy vấn tổng số sản phẩm
 $countSql = "SELECT COUNT(*) as total 
     FROM products p JOIN product_genres pg ON p.id = pg.product_id
                     JOIN genres g ON pg.genre_id = g.id
-    WHERE g.name = '$genre_id' AND p.isActive = 1
+    WHERE g.id = '$genre_id' AND p.isActive = 1
 ";
 
 // Thực thi truy vấn
@@ -75,6 +76,7 @@ DongKetNoi($conn);
                     <?= htmlspecialchars($genre_name) ?>
                 </h2>
 
+                <!-- Danh sách sản phẩm -->
                 <ul class="product">
                     <?php if (!empty($products)): ?>
                         <?php foreach ($products as $product): ?>
