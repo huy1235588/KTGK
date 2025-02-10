@@ -220,14 +220,14 @@ class DataGrid {
                 // Kiểm tra xem có renderCell không
                 if (col.renderCell) {
                     return `<td style="${col.width ? `width: ${col.width}` : ''}; ${col.style || ''}">
-                        <div class="data-grid-cell" style="${col.width ? `width: ${col.width}` : ''}; ${col.style || ''}">
+                        <div class="data-grid-cell" style="${col.style || ''};>
                             ${col.renderCell(row[col.key], row)}
                         </div>
                     </td>`;
                 }
                 // Mặc định hiển thị dữ liệu
                 return `<td style="${col.width ? `width: ${col.width}` : ''}; ${col.style || ''}">
-                    <div class="data-grid-cell" style="${col.width ? `width: ${col.width}` : ''}; ${col.style || ''}">
+                    <div class="data-grid-cell" style="${col.style || ''};">
                         ${row[col.key] || ''}
                     </div>
                 </td>`;
