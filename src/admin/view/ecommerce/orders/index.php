@@ -77,7 +77,7 @@ ob_start();
                 orderBy: 'id',
                 onRowClick: (rowId) => {
                     // Chuyển hướng đến trang chi tiết sản phẩm
-                    window.location.href = `product-details?id=${rowId}`;
+                    window.location.href = `order-details?id=${rowId}`;
                 }
             });
         });

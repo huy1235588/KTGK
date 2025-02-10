@@ -220,7 +220,7 @@ class DataGrid {
                 // Kiểm tra xem có renderCell không
                 if (col.renderCell) {
                     return `<td style="${col.width ? `width: ${col.width}` : ''}; ${col.style || ''}">
-                        <div class="data-grid-cell" style="${col.style || ''};>
+                        <div class="data-grid-cell" style="${col.style || ''};">
                             ${col.renderCell(row[col.key], row)}
                         </div>
                     </td>`;

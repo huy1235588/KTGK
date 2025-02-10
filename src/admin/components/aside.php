@@ -340,8 +340,8 @@
                                         <ul class="sidebar-submenu-list nav">
                                             <!-- ORDERS -->
                                             <li class="sidebar-item">
-                                                <a class="sidebar-submenu-item-link sidebar-link" 
-                                                href="/admin/view/ecommerce/orders">
+                                                <a class="sidebar-submenu-item-link sidebar-link"
+                                                    href="/admin/view/ecommerce/orders">
                                                     <span class="sidebar-submenu-item-icon">
                                                         <img src="/admin/assets/icon/circle.svg" alt="">
                                                     </span>
@@ -352,7 +352,8 @@
                                             </li>
                                             <!-- ORDER DETAILS -->
                                             <li class="sidebar-item">
-                                                <a class="sidebar-submenu-item-link sidebar-link" href="">
+                                                <a class="sidebar-submenu-item-link sidebar-link"
+                                                    href="/admin/view/ecommerce/orders/order-details?id=1">
                                                     <span class="sidebar-submenu-item-icon">
                                                         <img src="/admin/assets/icon/circle.svg" alt="">
                                                     </span>

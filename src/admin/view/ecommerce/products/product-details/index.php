@@ -60,8 +60,8 @@ $productDetails = $productController->getProductDetailsById($productId, $tables)
     const savedData = {
         title: '<?php echo $product['title']; ?>',
         type: '<?php echo $product['type_id']; ?>',
-        description: '<?php echo $product['description']; ?>',
-        details: '<?php echo $product['detail']; ?>',
+        description: '<?php echo str_replace("'", "\'", $product['description']); ?>',
+        details: '<?php echo str_replace("'", "`", $product['detail']); ?>',
         price: '<?php echo $product['price']; ?>',
         discount: '<?php echo $product['discount']; ?>',
         discountStartDate: '<?php echo $product['discountStartDate']; ?>',
