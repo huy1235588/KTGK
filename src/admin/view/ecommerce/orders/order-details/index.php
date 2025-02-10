@@ -88,15 +88,6 @@ $orderId = $_GET['id'];
                         // "13.990" => 13.99
                         return `$${parseFloat(value).toFixed(2)}`;
                     }
-                },
-                {
-                    key: 'discount',
-                    label: 'Discount',
-                    width: '90px',
-                    style: 'text-align: center',
-                    renderCell: (value) => {
-                        return `${parseInt(value).toFixed(0)}%`;
-                    }
                 }
             ];
 

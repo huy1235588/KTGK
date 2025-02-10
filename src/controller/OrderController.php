@@ -80,14 +80,13 @@ class OrderController
     {
         $sql = "SELECT *, p.id AS product_id
                 FROM order_details od JOIN products p ON od.product_id = p.id
-                WHERE order_id = $orderId";
+                WHERE order_id = $orderId ";
 
         // Nếu có query
         if ($query) {
-            $sql .= "OR order_id LIKE '%$query%'
-                    OR product_id LIKE '%$query%' 
-                    OR quantity LIKE '%$query%' 
-                    OR price LIKE '%$query%'
+            $sql .= "AND (product_id LIKE '%$query%'
+                    OR title LIKE '%$query%' 
+                    OR price LIKE '%$query%')
             ";
         }
 
@@ -119,14 +118,13 @@ class OrderController
     {
         $sql = "SELECT COUNT(*) AS total 
                 FROM order_details od JOIN products p ON od.product_id = p.id
-                WHERE order_id = $orderId";
+                WHERE order_id = $orderId ";
 
         // Nếu có query
         if ($query) {
-            $sql .= "OR order_id LIKE '%$query%'
-                    OR product_id LIKE '%$query%'
-                    OR quantity LIKE '%$query%'
-                    OR price LIKE '%$query%'
+            $sql .= "AND (product_id LIKE '%$query%'
+                    OR title LIKE '%$query%'
+                    OR price LIKE '%$query%')
             ";
         }
 
