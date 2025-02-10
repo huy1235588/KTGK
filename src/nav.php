@@ -34,8 +34,8 @@ $genres = $productController->getGenres();
     <ul class="menu-list">
         <!-- Home -->
         <li class="menu-item">
-            <a href="index.php" class="menu-link">
-                Store
+            <a href="index.php" class="menu-link" id="logo">
+                <img class="logo" src="assets/logo1.png" alt="" loading="lazy" />
             </a>
         </li>
 
@@ -69,7 +69,7 @@ $genres = $productController->getGenres();
 
         <!-- About us -->
         <li class="menu-item dropdown">
-            <a href="index.php" class="menu-link">
+            <a href="about.php" class="menu-link">
                 About us
 
                 <svg class="chevron-down" stroke="currentColor" fill="currentColor" stroke-width="0"
@@ -127,7 +127,7 @@ $genres = $productController->getGenres();
                     </a>
                 </li>
                 <li class="dropdown-item">
-                    <a href="index.php" class="dropdown-link"> 
+                    <a href="index.php" class="dropdown-link">
                         Shipping
                     </a>
                 </li>
