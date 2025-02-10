@@ -12,6 +12,10 @@ if (!function_exists('MoKetNoi')) {
 }
 $conn = MoKetNoi();
 
+// Khởi tạo ProductController
+require_once 'controller/ProductController.php';
+$productController = new ProductController($conn);
+
 // Lấy số lượng sản phẩm trong giỏ hàng từ database
 $sql = 'SELECT COUNT(*) AS quantity FROM cart WHERE user_id = ?';
 $stmt = $conn->prepare($sql);
@@ -20,29 +24,119 @@ $stmt->execute();
 $result = $stmt->get_result();
 $cartQuantity = $result->fetch_assoc()['quantity'];
 
+// Lấy danh sách thể loại
+$genres = $productController->getGenres();
 ?>
+
+<p class="menu-overlay"></p>
 
 <nav class="menu">
     <ul class="menu-list">
+        <!-- Home -->
         <li class="menu-item">
-            <a href="index.php">
+            <a href="index.php" class="menu-link">
                 Store
             </a>
         </li>
-        <li class="menu-item">
-            <a href="index.php">
-                Product
-            </a>
-        </li>
-        <li class="menu-item">
-            <a href="index.php">
+
+        <!-- Genre -->
+        <li class="menu-item dropdown">
+            <a href="index.php" class="menu-link">
                 Genre
+                <svg class="chevron-down" stroke="currentColor" fill="currentColor" stroke-width="0"
+                    viewBox="0 0 512 512" width="10px" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                        d="M233.4 406.6c12.5 12.5 32.8 12.5 45.3 0l192-192c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L256 338.7 86.6 169.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l192 192z">
+                    </path>
+                </svg>
             </a>
+
+            <!-- triangle -->
+            <span class="menu-triangle"></span>
+
+            <!-- Dropdown -->
+            <ul class="dropdown-list">
+                <?php foreach ($genres as $genre): ?>
+                    <li class="dropdown-item">
+                        <!-- Title -->
+                        <a href="index.php?genre=<?= $genre['id'] ?>" class="dropdown-link">
+                            <?= $genre['name'] ?>
+                        </a>
+                    </li>
+                <?php endforeach; ?>
+            </ul>
         </li>
-        <li class="menu-item">
-            <a href="index.php">
+
+        <!-- About us -->
+        <li class="menu-item dropdown">
+            <a href="index.php" class="menu-link">
                 About us
+
+                <svg class="chevron-down" stroke="currentColor" fill="currentColor" stroke-width="0"
+                    viewBox="0 0 512 512" width="10px" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                        d="M233.4 406.6c12.5 12.5 32.8 12.5 45.3 0l192-192c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L256 338.7 86.6 169.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l192 192z">
+                    </path>
+                </svg>
             </a>
+
+            <!-- Triangle -->
+            <span class="menu-triangle"></span>
+
+            <!-- Dropdown -->
+            <ul class="dropdown-list">
+                <li class="dropdown-item">
+                    <a href="index.php" class="dropdown-link">
+                        Our story
+                    </a>
+                </li>
+                <li class="dropdown-item" class="dropdown-link">
+                    <a href="index.php" class="dropdown-link">
+                        Our team
+                    </a>
+                </li>
+                <li class="dropdown-item">
+                    <a href="index.php" class="dropdown-link">
+                        Contact us
+                    </a>
+                </li>
+            </ul>
+        </li>
+
+        <!-- Help -->
+        <li class="menu-item dropdown">
+            <a href="index.php" class="menu-link">
+                Help
+
+                <svg class="chevron-down" stroke="currentColor" fill="currentColor" stroke-width="0"
+                    viewBox="0 0 512 512" width="10px" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                        d="M233.4 406.6c12.5 12.5 32.8 12.5 45.3 0l192-192c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L256 338.7 86.6 169.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l192 192z">
+                    </path>
+                </svg>
+            </a>
+
+            <!-- Triangle -->
+            <span class="menu-triangle"></span>
+
+            <!-- Dropdown -->
+            <ul class="dropdown-list">
+                <li class="dropdown-item">
+                    <a href="index.php" class="dropdown-link">
+                        FAQ
+                    </a>
+                </li>
+                <li class="dropdown-item">
+                    <a href="index.php" class="dropdown-link"> 
+                        Shipping
+                    </a>
+                </li>
+                <li class="dropdown-item">
+                    <a href="index.php" class="dropdown-link">
+                        Return
+                    </a>
+                </li>
+            </ul>
         </li>
 
         <!-- Search -->
@@ -74,7 +168,7 @@ $cartQuantity = $result->fetch_assoc()['quantity'];
         <?php if (isset($_SESSION['user']['username'])): ?>
             <?php if (isset($_SESSION['user']['role']) && $_SESSION['user']['role'] === 'user'): ?>
                 <li class="menu-item">
-                    <a href="cart.php" class="cart-link">
+                    <a href="cart.php" class="cart-link menu-link">
                         Cart
                         <span class="cart-quantity"> </span>
 
@@ -114,7 +208,7 @@ $cartQuantity = $result->fetch_assoc()['quantity'];
                 </li>
             <?php else: ?>
                 <li class="menu-item">
-                    <a href="/admin">
+                    <a href="/admin" class="menu-link">
                         Website management
                     </a>
                 </li>
@@ -175,7 +269,7 @@ $cartQuantity = $result->fetch_assoc()['quantity'];
             </li>
         <?php else: ?>
             <li class="menu-item">
-                <a href="dangnhap.php?redirect=<?= $currentUrl ?>">
+                <a href="dangnhap.php?redirect=<?= $currentUrl ?>" class="menu-link">
                     Log in
                 </a>
             </li>

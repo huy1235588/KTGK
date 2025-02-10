@@ -396,13 +396,17 @@ class ProductController
         return $result;
     }
 
-    // Hàm để lấy sản phẩm theo ID
-    public function getProductByCategory($category)
+    // Hàm để lấy sản phẩm theo thể loại
+    public function getProductByGenre($genre_id, $offset, $limit)
     {
-        $stmt = $this->conn->prepare("SELECT * FROM products WHERE category = ?");
-        $stmt->bind_param("s", $category);
+        $sql = "SELECT * 
+        FROM products p JOIN product_genres pg ON p.id = pg.product_id
+        WHERE genre_id = ?
+        LIMIT ?, ?";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param("sii", $genre_id, $offset, $limit);
         $stmt->execute();
-        $result = $stmt->get_result()->fetch_assoc();
+        $result = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
         return $result;
     }
 }

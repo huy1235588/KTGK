@@ -1,3 +1,160 @@
+/*=============================================================
+Author       : LeThienHuy.
+==============================================================*/
+
+/*=============================================================
+    CSS INDEX
+===============================================================
+    01.GENERAL STYLE
+    02. MENU
+		
+*=============================================================*/
+
+/*===================================*
+  01.GENERAL STYLE
+*===================================*/
+* {
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+    padding: 0;
+    margin: 0;
+    text-decoration: none;
+}
+
+:root {
+    --primary-color: #d63384;
+    --secondary-color: #acacac;
+    --white-color: #ffffff;
+    --black-color: #000000;
+
+    --body-color: #ddd;
+    --body-bg-color: #161920;
+    --border-color: #394960;
+    --link-color: #00aff4;
+
+    /* Submenu */
+    --submenu-bg: #fff;
+    --submenu-text: #4b4b4b;
+    --dropdown-separator: #e6e6e6;
+    --submenu-bg-hover: #f1f1f1;
+    --submenu-text-hover: #151515;
+}
+
+a,
+ul,
+li {
+    padding: 0;
+    margin: 0;
+    text-decoration: none;
+    list-style: none;
+    color: #fff;
+}
+
+button {
+    border: none;
+    margin: 0;
+    text-decoration: none;
+    background: none;
+    color: #fff;
+    cursor: pointer;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: url("/assets/background.png") no-repeat center center fixed;
+    background-size: cover;
+    margin: 0;
+    padding: 0;
+}
+.container {
+    display: flex;
+    width: 95%;
+    margin: 0 auto;
+}
+
+h1 {
+    text-align: center;
+    color: #d63384;
+}
+
+/* Main title */
+.main-title {
+    color: #000000;
+    font-size: 40px;
+    text-align: start;
+}
+/* Logo */
+.logo {
+    width: 100px;
+}
+
+@keyframes shake {
+    0% {
+        transform: translate(2px, 1px) rotate(0deg);
+    }
+    10% {
+        transform: translate(-1px, -2px) rotate(-1deg);
+    }
+    20% {
+        transform: translate(-3px, 0px) rotate(1deg);
+    }
+    30% {
+        transform: translate(0px, 2px) rotate(0deg);
+    }
+    40% {
+        transform: translate(1px, -1px) rotate(1deg);
+    }
+    50% {
+        transform: translate(-1px, 2px) rotate(-1deg);
+    }
+    60% {
+        transform: translate(-3px, 1px) rotate(0deg);
+    }
+    70% {
+        transform: translate(2px, 1px) rotate(-1deg);
+    }
+    80% {
+        transform: translate(-1px, -1px) rotate(1deg);
+    }
+    90% {
+        transform: translate(2px, 2px) rotate(0deg);
+    }
+    100% {
+        transform: translate(1px, -2px) rotate(-1deg);
+    }
+}
+.shake {
+    -webkit-animation-name: shake;
+    animation-name: shake;
+    -webkit-animation-duration: 0.5s;
+    animation-duration: 0.5s;
+    -webkit-transform-origin: 50% 50%;
+    transform-origin: 50% 50%;
+    -webkit-animation-iteration-count: infinite;
+    animation-iteration-count: infinite;
+}
+
+.container {
+    display: flex;
+    width: 95%;
+    margin: 0 auto;
+}
+
+.main {
+    flex: 1;
+}
+
+@media screen and (max-width: 768px) {
+    .product-container {
+        grid-area: 2 / 1 / 3 / 3;
+    }
+}
+
+/* Logo */
+.logo {
+    width: 100px;
+}
+
 /* Hidden */
 .hs-hidden {
     display: none;
@@ -11,7 +168,24 @@
     visibility: visible;
     opacity: 1;
 }
+/*===================================*
+    01.END GENERAL STYLE
+*===================================*/
+/*
 
+
+
+
+
+
+
+
+
+
+*/
+/*===================================*
+    02. MENU
+*===================================*/
 .menu {
     position: sticky;
     top: 0;
@@ -26,25 +200,185 @@
 }
 
 .menu .menu-list > .menu-item {
+    position: relative;
     display: flex;
     align-items: center;
     color: white;
-}
-
-.menu .menu-list > .menu-item > a {
-    display: inline-block;
-    padding: 12px 14px;
-    color: white;
-}
-
-.menu .menu-list > .menu-item > a:hover {
-    color: #27c6ee;
 }
 
 .menu .menu-list > .menu-item.search {
     margin: 0 auto;
 }
 
+.menu-triangle {
+    position: absolute;
+    display: none;
+    border: 7px solid transparent;
+    border-bottom: 7px solid #fff;
+    top: auto;
+    bottom: 0;
+    left: auto;
+    right: 7px;
+    z-index: 3;
+}
+
+.menu .menu-list > .menu-item > .menu-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    padding: 12px 14px;
+    color: white;
+    transition: color 0.2s ease-in-out;
+}
+
+.menu .menu-list > .menu-item > .menu-link:hover {
+    color: #27c6ee;
+}
+
+.menu .menu-list > .menu-item:hover > .menu-triangle {
+    display: block;
+    animation: 0.3s transformEffect forwards;
+}
+
+/* transform Effect */
+@keyframes transformEffect {
+    0% {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0px);
+    }
+}
+
+.chevron-down {
+    margin-left: 5px;
+}
+
+.menu-overlay {
+    visibility: hidden;
+    position: fixed;
+    z-index: 9;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    opacity: 0;
+    transition: opacity 0.25s ease, visibility 0.25s linear;
+}
+
+.menu-overlay:has(+ nav .menu-item.dropdown:hover) {
+    visibility: inherit;
+    opacity: 1;
+    transition: opacity 0.45s ease 0.1s, visibility 0.45s linear 0.1s;
+}
+/*===================================*
+    02.END MENU
+*===================================*/
+/*
+
+
+
+
+
+
+
+
+
+
+*/
+/*===================================*
+    03. DROPDOWN
+*===================================*/
+.menu-item:hover .dropdown-list {
+    display: block;
+    animation: transformEffect 0.3s forwards;
+}
+
+.dropdown-list {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    display: none;
+    width: 230px;
+    padding: 9px 0;
+    background-color: var(--submenu-bg);
+    border-spacing: 0 10px;
+    transition: all 0.9s;
+    z-index: 10;
+}
+
+
+.dropdown-item .dropdown-link {
+    color: var(--submenu-text);
+}
+
+.dropdown-separator {
+    margin-top: 8px;
+    margin-bottom: 7px;
+    border-top: 0px;
+    border-color: var(--dropdown-separator);
+}
+
+.dropdown-link {
+    position: relative;
+    display: block;
+    max-width: 90%;
+    margin: 0 auto;
+    padding: 8px;
+    font-size: 18px;
+}
+
+/* Icon */
+.dropdown-link:hover {
+    background-color: var(--submenu-bg-hover);
+    color: var(--submenu-text-hover);
+}
+
+.dropdown-icon {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+}
+
+.dropdown-icon path {
+    fill: #9c8181;
+}
+
+.dropdown-icon:first-child {
+    display: none;
+    right: 14px;
+}
+
+.dropdown-link:hover .dropdown-icon:first-child,
+.dropdown-link:hover .dropdown-icon path {
+    display: block;
+    fill: #686868;
+}
+/*===================================*
+    03.END DROPDOWN
+*===================================*/
+/*
+
+
+
+
+
+
+
+
+
+
+*/
+/*===================================*
+    05. START SEARCH
+*===================================*/
 /* Search */
 .search {
     position: relative;
@@ -201,7 +535,24 @@
 .search-result-item .search-result-link.hover .search-price {
     color: #151515;
 }
+/*===================================*
+    05.END SEARCH
+*===================================*/
+/*
 
+
+
+
+
+
+
+
+
+
+*/
+/*===================================*
+    06. CART
+*===================================*/
 /* Cart */
 .menu .cart-link {
     position: relative;
@@ -226,6 +577,24 @@
     font-size: 0.75rem;
 }
 
+/*===================================*
+    06.END CART
+*===================================*/
+/*
+
+
+
+
+
+
+
+
+
+
+*/
+/*===================================*
+    07. ACCOUNT
+*===================================*/
 /* Account dropdown */
 .menu .menu-item.account:hover {
     color: #27c6ee;
@@ -285,3 +654,18 @@
     border-style: solid;
     border-color: rgba(255, 255, 255, 0.12);
 }
+/*===================================*
+    07.END ACCOUNT
+*===================================*/
+/*
+
+
+
+
+
+
+
+
+
+
+*/

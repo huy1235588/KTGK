@@ -9,6 +9,9 @@ function MoKetNoi()
     // Kết nối tới MySQL server (không chỉ định database)
     $conn = new mysqli($host, $username, $password);
 
+    // Cấu hình kết nối
+    $conn->set_charset("utf8mb4");
+
     // Kiểm tra kết nối
     if ($conn->connect_error) {
         die("Kết nối thất bại: " . $conn->connect_error);
