@@ -85,9 +85,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     $stmt->bind_param("i", $_SESSION['user']['id']);
     $stmt->execute();
     $cartResult = $stmt->get_result();
-
-    // Đóng kết nối
-    DongKetNoi($conn);
 }
 ?>
 
@@ -646,6 +643,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     <?php
     include 'footer.php';
     // Đóng kết nối
+    DongKetNoi($conn);
     ?>
 
 </body>

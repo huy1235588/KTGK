@@ -344,8 +344,6 @@ class ProductController
                     throw new Exception("Execute failed for table $table: " . $stmt->error);
                 }
             }
-
-            $stmt->close();
         }
 
         return true;

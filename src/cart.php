@@ -4,6 +4,12 @@ $conn = MoKetNoi();
 
 session_start();
 
+// Nếu không đăng nhập, chuyển hướng về trang đăng nhập
+if (!isset($_SESSION['user']['id'])) {
+    header('Location: dangnhap.php');
+    exit;
+}
+
 // Lấy giỏ hàng từ database
 $sql = "SELECT * 
 FROM cart
