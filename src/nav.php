@@ -101,7 +101,7 @@ $genres = $productController->getGenres();
                     </a>
                 </li>
             </ul>
-        </li>       
+        </li>
 
         <!-- Search -->
         <li class="search">
@@ -206,8 +206,11 @@ $genres = $productController->getGenres();
                         <li class="account-dropdown-item">
                             <a href="library.php">
                                 <div class="icon">
-                                    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 24 24" font-size="20px" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
-                                        <path d="M12 2C6.48 2 2 6.48 2 12c0 4.418 2.865 8.14 6.84"></path>
+                                    <svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="20px" width="20px" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="m16 6 4 14"></path>
+                                        <path d="M12 6v14"></path>
+                                        <path d="M8 8v12"></path>
+                                        <path d="M4 4v16"></path>
                                     </svg>
                                 </div>
                                 Library
