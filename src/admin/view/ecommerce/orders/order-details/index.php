@@ -9,8 +9,25 @@ ob_start();
 <link rel="stylesheet" href="order-details.css">
 
 <?php
+// Mở kết nối
+require_once '../../../../../utils/db_connect.php';
+$conn = MoKetNoi();
+
 // Lấy ID hoá đơn từ URL
 $orderId = $_GET['id'];
+
+// Lấy thông tin người dùng từ hoá đơn
+$sql = "SELECT *
+        FROM orders o
+        JOIN users u ON o.user_id = u.id
+        WHERE o.id = $orderId";
+$result = $conn->query($sql);
+$user = $result->fetch_all(MYSQLI_ASSOC);
+
+// Lấy tổng tiền của hoá đơn
+$sql = "SELECT SUM(total) as totalAmount FROM order_details WHERE order_id = $orderId";
+$result = $conn->query($sql);
+$totalAmount = $result->fetch_assoc()['totalAmount'];
 ?>
 
 <article class="content">
@@ -43,6 +60,7 @@ $orderId = $_GET['id'];
         </div>
     </div>
 
+    <!-- Chi tiết hoá đơn -->
     <div id="data-grid" class="data-grid-container"></div>
 
     <script>
@@ -105,6 +123,33 @@ $orderId = $_GET['id'];
             });
         });
     </script>
+
+    <!-- Thông tin người dùng -->
+    <div class="user-info">
+        <h3>User Information</h3>
+        <div class="user-info-item">
+            <span>User ID:</span>
+            <span><?php echo $user[0]['id'] ?></span>
+        </div>
+        <div class="user-info-item">
+            <span>First Name:</span>
+            <span><?php echo $user[0]['firstName'] ?></span>
+        </div>
+        <div class="user-info-item">
+            <span>Last Name:</span>
+            <span><?php echo $user[0]['lastName'] ?></span>
+        </div>
+        <div class="user-info-item">
+            <span>Email:</span>
+            <span><?php echo $user[0]['email'] ?></span>
+        </div>
+    </div>
+
+    <!-- Tổng tiền -->
+    <div class="total-amount">
+        <span>Total Amount:</span>
+        <span id="total-amount">$<?php echo number_format($totalAmount, 2) ?></span>
+    </div>
 
 </article>
 
