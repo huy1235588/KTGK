@@ -12,7 +12,7 @@ if (!isset($_SESSION['user'])) {
 // Xử lý thanh toán
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $userId = $_SESSION['user']['id'];
-    $paymentMethod = $_POST['paymentMethod'] ?? 'unknown';
+    $paymentMethod = $_POST['paymentMethodForm'] ?? 'unknown';
 
     // Lấy giỏ hàng từ session
     $cartItems = $_SESSION['cart'] ?? [];
@@ -40,9 +40,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         foreach ($cartItems as $item) {            
             // Thêm vào order_details
             $stmt = $conn->prepare("INSERT INTO order_details
-                             (order_id, product_id)
-                             VALUES (?, ?)");
-            $stmt->bind_param("ii", $OrderID, $item['productId']);
+                             (order_id, product_id, total)
+                             VALUES (?, ?, ?)");
+            $stmt->bind_param("iii", $OrderID, $item['productId'], $item['price']);
             $stmt->execute();
 
             // Thêm vào library

@@ -2,6 +2,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     const paymentMethods = document.querySelectorAll('.method-card');
     const paymentDetails = document.querySelectorAll('.payment-details');
+    const formControl = document.getElementById('paymentMethod');
 
     paymentMethods.forEach(method => {
         method.addEventListener('click', () => {
@@ -14,6 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
             method.style.borderColor = '#3498db';
             const selectedMethod = method.dataset.method;
             const details = document.getElementById(`${selectedMethod}Details`);
+            formControl.value = selectedMethod;
             if (details) details.style.display = 'block';
         });
 

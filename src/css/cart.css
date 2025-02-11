@@ -67,7 +67,7 @@ Author       : LeThienHuy.
     --discount-bg: #4c6b22;
     --discount-text: #beee11;
     --final-price-text: #000000;
-    --cart-item-bg: transparent;
+    --cart-item-bg: #f5f5f5;
 }
 
 body {

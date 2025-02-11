@@ -179,6 +179,8 @@ DongKetNoi($conn);
                     </div>
 
                     <form id="paymentForm" action="api/payment.php" method="POST">
+                        <input type="hidden" name="paymentMethodForm" id="paymentMethod" value="credit">
+
                         <!-- Credit Card Fields -->
                         <div class="payment-details" id="creditDetails">
                             <div class="form-group">
