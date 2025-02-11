@@ -16,6 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const selectedMethod = method.dataset.method;
             const details = document.getElementById(`${selectedMethod}Details`);
             formControl.value = selectedMethod;
+            console.log(formControl.value);
             if (details) details.style.display = 'block';
         });
 

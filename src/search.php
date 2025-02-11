@@ -377,14 +377,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
                         <div class="block_rule"></div>
 
                         <label class="filter-checkbox">
-                            <input type="checkbox" name="category" value="<?= htmlspecialchars($genre['genre']) ?>">
+                            <input type="checkbox" name="category">
                             <span class="filter-checkbox-text">
                                 Special Offers
                             </span>
                             <span class="filter-exclude-checkbox"></span>
                         </label>
                         <label class="filter-checkbox">
-                            <input type="checkbox" name="category" value="<?= htmlspecialchars($genre['genre']) ?>">
+                            <input type="checkbox" name="category">
                             <span class="filter-checkbox-text">
                                 Hide free to play items
                             </span>
@@ -643,7 +643,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     <?php
     include 'footer.php';
     // Đóng kết nối
-    DongKetNoi($conn);
+    // DongKetNoi($conn);
     ?>
 
 </body>

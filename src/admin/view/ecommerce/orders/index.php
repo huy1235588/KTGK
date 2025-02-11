@@ -12,8 +12,8 @@ ob_start();
     <!-- Page header -->
     <div class="page-header">
         <?php
-        $breadcrumb = ['Pages', 'E-commerce', 'Products'];
-        $pageHeader = 'Products';
+        $breadcrumb = ['Pages', 'E-commerce', 'Orders'];
+        $pageHeader = 'Orders';
         include '../../../components/page-header.php';
         ?>
 
@@ -59,7 +59,9 @@ ob_start();
                     key: 'status',
                     label: 'status',
                     width: '90px',
-                    style: 'text-align: center',
+                    renderCell: (value) => {
+                        return `<span class="status ${value.toLowerCase()}">${value}</span>`;
+                    }
                 },
                 {
                     key: 'createdAt',

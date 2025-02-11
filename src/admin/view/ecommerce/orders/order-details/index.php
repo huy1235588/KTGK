@@ -17,8 +17,8 @@ $orderId = $_GET['id'];
     <!-- Page header -->
     <div class="page-header">
         <?php
-        $breadcrumb = ['Pages', 'E-commerce', 'Products', 'Product Details'];
-        $pageHeader = 'Product Details';
+        $breadcrumb = ['Pages', 'E-commerce', 'Orders', 'Order Details'];
+        $pageHeader = 'Order Details';
         include '../../../../components/page-header.php';
         ?>
 

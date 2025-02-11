@@ -21,7 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $total = $_SESSION['total'] ?? 0;
 
     // Kiểm tra giỏ hàng
-    if (empty($cartItems) || $total <= 0) {
+    if (empty($cartItems) || $total < 0) {
         die('Invalid cart contents');
     }
 
@@ -29,10 +29,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Bắt đầu transaction
         mysqli_begin_transaction($conn);
 
+        $status = 'completed';
+
         // Tạo hoá đơn
-        $stmt = $conn->prepare("INSERT INTO orders (user_id, totalAmount, paymentMethod) 
-                         VALUES (?, ?, ?)");
-        $stmt->bind_param("ids", $userId, $total, $paymentMethod);
+        $stmt = $conn->prepare("INSERT INTO orders (user_id, totalAmount, paymentMethod, status) 
+                                VALUES (?, ?, ?, ?)");
+                         echo $paymentMethod;
+        $stmt->bind_param("idss", $userId, $total, $paymentMethod, $status);
         $stmt->execute();
         $OrderID = $stmt->insert_id;
 
