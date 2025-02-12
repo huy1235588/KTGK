@@ -59,7 +59,7 @@ $genres = $productController->getGenres();
                 <?php foreach ($genres as $genre): ?>
                     <li class="dropdown-item">
                         <!-- Title -->
-                        <a href="index.php?genre=<?= $genre['id'] ?>" class="dropdown-link">
+                        <a href="genre.php?id=<?= $genre['id'] ?>" class="dropdown-link">
                             <?= $genre['name'] ?>
                         </a>
                     </li>
