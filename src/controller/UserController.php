@@ -29,6 +29,68 @@ class UserController
         return $result;
     }
 
+    // Hàm để lấy toàn bộ user
+    public function getUserByPage($offset, $limit, $columns, $query, $sort, $order)
+    {
+        $sql = "SELECT * FROM users";
+
+        // Nếu có query
+        if ($query) {
+            $sql .= " WHERE Username LIKE '%$query%' 
+                    OR firstName LIKE '%$query%'
+                    OR lastName LIKE '%$query%'
+                    OR phone LIKE '%$query%'
+                    OR Email LIKE '%$query%' 
+                    OR address LIKE '%$query%'
+                    OR birthday LIKE '%$query%'
+                    OR Role LIKE '%$query%'
+            ";
+        }
+
+        // Thêm ORDER BY
+        $sql .= " ORDER BY $sort $order";
+
+        // Thêm LIMIT và OFFSET
+        $sql .= " LIMIT $limit OFFSET $offset";
+
+        // Thực thi truy vấn
+        $result = $this->conn->query($sql);
+
+        // Lấy dữ liệu
+        $users = [];
+        if ($result->num_rows > 0) {
+            while ($row = $result->fetch_assoc()) {
+                $users[] = $row;
+            }
+        }
+
+        return $users;
+    }
+
+    // Hàm để lấy tổng số user
+    public function getTotalUsers($query)
+    {
+        $sql = "SELECT COUNT(*) AS total FROM users";
+
+        // Nếu có query
+        if ($query) {
+            $sql .= " WHERE Username LIKE '%$query%'
+                    OR firstName LIKE '%$query%'
+                    OR lastName LIKE '%$query%'
+                    OR phone LIKE '%$query%'
+                    OR Email LIKE '%$query%'
+                    OR address LIKE '%$query%'
+                    OR birthday LIKE '%$query%'
+                    OR Role LIKE '%$query%'
+            ";
+        }
+
+        // Thực thi truy vấn
+        $result = $this->conn->query($sql);
+
+        return $result->fetch_assoc()['total'];
+    }
+
     // Hàm để insert user
     public function addUser(
         $Username,
