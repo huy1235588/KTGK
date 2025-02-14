@@ -16,6 +16,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = $_POST['email'];
     $phone = $_POST['phone'];
     $country = $_POST['country'];
+    $birthday = $_POST['birthday'];
+    $gender = $_POST['gender'];
     $username = $_POST['username'];
     $password = $_POST['password'];
     $role = $_POST['role'];
@@ -27,6 +29,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     echo 'email: ' . $email . '<br>';
     echo 'phone: ' . $phone . '<br>';
     echo 'country: ' . $country . '<br>';
+    echo 'birthday: ' . $birthday . '<br>';
+    echo 'gender: ' . $gender . '<br>';
     echo 'username: ' . $username . '<br>';
     echo 'password: ' . $password . '<br>';
     echo 'role: ' . $role . '<br>';
@@ -438,6 +442,42 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         </tr>
                         <!-- End COUNTRY -->
 
+                        <!-- BIRTHDAY -->
+                        <tr class="row form-group">
+                            <td class="col-form-label">
+                                <label for="birthdayInput" class="col-sm-3 col-form-label input-label">
+                                    Birthday
+                                </label>
+                            </td>
+
+                            <td class="col-form-input">
+                                <input type="date" class="form-control" name="birthday" id="birthdayInput" aria-label="Birthday">
+                            </td>
+                        </tr>
+
+                        <!-- GENDER -->
+                        <tr class="row form-group">
+                            <td class="col-form-label">
+                                <label class="col-sm-3 col-form-label input-label">
+                                    Gender
+                                </label>
+                            </td>
+
+                            <td class="col-form-input col-form-radio">
+                                <div class="form-control-radio">
+                                    <input type="radio" class="form-control" name="gender" value="male" id="maleInput" checked>
+                                    <label for="maleInput">
+                                        Male
+                                    </label>
+                                </div>
+                                <div class="form-control-radio">
+                                    <input type="radio" class="form-control" name="gender" value="female" id="femaleInput">
+                                    <label for="femaleInput">
+                                        Female
+                                    </label>
+                                </div>
+                            </td>
+                        </tr>
                     </table>
                     <!-- End Body -->
                 </div>
@@ -512,9 +552,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         <!-- ROLE -->
                         <tr class="row form-group">
                             <td class="col-form-label">
-                                <labe class="col-sm-3 col-form-label input-label">
+                                <label class="col-sm-3 col-form-label input-label">
                                     Role
-                                    </label>
+                                </label>
                             </td>
 
                             <td class="col-form-input col-form-radio">
@@ -563,6 +603,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                             <dt class="confirm-term">Country:</dt>
                             <dd id="confirmCountry" class="confirm-value">-</dd>
+
+                            <dt class="confirm-term">Birthday:</dt>
+                            <dd id="confirmBirthday" class="confirm-value">-</dd>
+
+                            <dt class="confirm-term">Gender:</dt>
+                            <dd id="confirmGender" class="confirm-value">-</dd>
 
                             <dt class="confirm-term">Username:</dt>
                             <dd id="confirmUsername" class="confirm-value">-</dd>

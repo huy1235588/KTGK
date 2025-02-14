@@ -344,10 +344,18 @@ const confirmForm = {
         document.getElementById('confirmCountry').textContent = document.getElementById("countryText").textContent;
     },
 
+    birthday: (value) => {
+        document.getElementById('confirmBirthday').textContent = value;
+    },
+
+    gender: (value) => {
+        document.getElementById('confirmGender').textContent = value;
+    },
+
     role: (value, element) => {
         // console.log(element)
         // element.closet(".col-form-radio").querySelectorAll(".form-control").forEach(el => {
-        document.getElementById('confirmRole').textContent = value; 0
+        document.getElementById('confirmRole').textContent = value;
         // });
     },
 
