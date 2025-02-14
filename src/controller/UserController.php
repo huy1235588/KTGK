@@ -19,8 +19,18 @@ class UserController
         return $users->fetchAll();
     }
 
-    // Hàm để lấy toàn bộ user
-    public function getUserById($username)
+    // Hàm để lấy user theo id
+    public function getUserById($id)
+    {
+        $stmt = $this->conn->prepare("SELECT * FROM users WHERE id = ?");
+        $stmt->bind_param("i", $id);
+        $stmt->execute();
+        $result = $stmt->get_result()->fetch_assoc();
+        return $result;
+    }
+
+    // Hàm để lấy user theo username
+    public function getUserByUsername($username)
     {
         $stmt = $this->conn->prepare("SELECT * FROM users WHERE username = ?");
         $stmt->bind_param("i", $username);

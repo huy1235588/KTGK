@@ -135,7 +135,8 @@
                                 <ul class="sidebar-submenu-list nav">
                                     <!-- PROFILE -->
                                     <li class="sidebar-item">
-                                        <a class="sidebar-submenu-item-link sidebar-link" href="">
+                                        <a class="sidebar-submenu-item-link sidebar-link"
+                                            href="/admin/view/user-profile/index.php">
                                             <span class="sidebar-submenu-item-icon">
                                                 <img src="/admin/assets/icon/circle-north.svg" alt="">
                                             </span>

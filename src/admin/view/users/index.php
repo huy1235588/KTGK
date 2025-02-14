@@ -83,7 +83,7 @@ ob_start(); // Bắt đầu lưu nội dung động
                 orderBy: 'id',
                 onRowClick: (rowId) => {
                     // Chuyển hướng đến trang chi tiết sản phẩm
-                    window.location.href = `order-details?id=${rowId}`;
+                    window.location.href = `../user-profile?id=${rowId}`;
                 }
             });
         });
