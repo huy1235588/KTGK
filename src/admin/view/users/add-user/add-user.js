@@ -38,6 +38,8 @@ const showProfile = () => {
     btnPreviousForm.style.display = "none"
     cardFooter.style.justifyContent = "flex-end";
 
+    btnNextForm.textContent = "Next";
+
     profile.classList.add('active');
     confirmation.classList.remove('active');
     securityInformation.classList.remove('active');
@@ -55,6 +57,8 @@ const showSecurityInformation = () => {
     btnPreviousForm.style.display = "block"
     cardFooter.style.justifyContent = "space-between";
 
+    btnNextForm.textContent = "Next";
+
     profile.classList.remove('active');
     securityInformation.classList.add('active');
     confirmation.classList.remove('active');
@@ -71,6 +75,8 @@ const showConfirmation = () => {
 
     btnPreviousForm.style.display = "block"
     cardFooter.style.justifyContent = "space-between";
+
+    btnNextForm.textContent = "Save";
 
     profile.classList.remove('active');
     securityInformation.classList.remove('active');
@@ -215,8 +221,18 @@ document.addEventListener("DOMContentLoaded", () => {
         // Chuyển canvas thành dữ liệu URL (Base64)
         const dataUrl = roundedCanvas.toDataURL('image/png');
 
+        // Hiển thị ảnh đã crop
         avatarImg.src = dataUrl;
 
+        // Chuyển canvas thành blob
+        roundedCanvas.toBlob((blob) => {
+            const file = new File([blob], "avatar.png", { type: "image/png" });
+            const dt = new DataTransfer();
+            dt.items.add(file);
+            avatarUploader.files = dt.files;
+        });
+
+        // Ẩn box cắt
         cropBox.style.display = "none";
 
         // Hủy cropper
@@ -329,10 +345,10 @@ const confirmForm = {
     },
 
     role: (value, element) => {
-        console.log(element)
-        element.closet(".col-form-radio").querySelectorAll(".form-control").forEach(el => {
-            document.getElementById('confirmRole').textContent = el.value;
-        });
+        // console.log(element)
+        // element.closet(".col-form-radio").querySelectorAll(".form-control").forEach(el => {
+        document.getElementById('confirmRole').textContent = value; 0
+        // });
     },
 
     avatar: () => {
@@ -443,18 +459,23 @@ btnNextForm.addEventListener('click', () => {
 
         // Nếu hợp lệ thì chuyển đến form tiếp theo
         else {
-            
+
             const allInputForm = document.querySelectorAll(".col-form-input input");
-            
+
             // Lặp qua từng phần tử và gọi hàm xác nhận thích hợp
             allInputForm.forEach(element => {
                 const handler = confirmForm[element.name] || confirmForm.default;
-                
+
                 handler(element.value, element);
                 confirmForm.country();
             });
-            
+
         }
         showConfirmation();
+    }
+    else if (confirmation.classList.contains('active')) {
+        // Xác nhận form
+        const form = document.getElementById('addUserForm');
+        form.submit();
     }
 });

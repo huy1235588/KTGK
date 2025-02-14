@@ -5,6 +5,40 @@ ob_start(); // Bắt đầu lưu nội dung động
 ?>
 <link rel="stylesheet" href="add-user.css">
 
+<?php
+
+// Xử lý form
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // Lấy dữ liệu từ form
+    $avatar = $_FILES['avatar'];
+    $firstName = $_POST['firstName'];
+    $lastName = $_POST['lastName'];
+    $email = $_POST['email'];
+    $phone = $_POST['phone'];
+    $country = $_POST['country'];
+    $username = $_POST['username'];
+    $password = $_POST['password'];
+    $role = $_POST['role'];
+
+    // Hiển thị dữ liệu
+    echo 'avatar: ' . $avatar['name'] . '<br>';
+    echo 'firstName: ' . $firstName . '<br>';
+    echo 'lastName: ' . $lastName . '<br>';
+    echo 'email: ' . $email . '<br>';
+    echo 'phone: ' . $phone . '<br>';
+    echo 'country: ' . $country . '<br>';
+    echo 'username: ' . $username . '<br>';
+    echo 'password: ' . $password . '<br>';
+    echo 'role: ' . $role . '<br>';
+
+    // Lưu dữ liệu vào database
+    // ...
+
+    // Chuyển hướng về trang danh sách
+    // header('Location: /admin/pages/users/list.php');
+}
+?>
+
 <article class="content">
     <!-- Page header -->
     <div class="page-header">
@@ -16,7 +50,7 @@ ob_start(); // Bắt đầu lưu nội dung động
     </div>
 
     <!-- Form -->
-    <form class="form">
+    <form class="form" method="POST" action="" id="addUserForm" enctype="multipart/form-data">
         <div class="form-container">
             <!-- Step -->
             <ul class="step-list">
@@ -68,7 +102,11 @@ ob_start(); // Bắt đầu lưu nội dung động
                                 <label class="avatar-container" for="avatarUploader">
                                     <img id="avatarImg" class="avatar-img" src="/admin/assets/img/avatar/img1.jpg" alt="Image Description">
 
-                                    <input name="avatar" onclick="this.value=null;" type="file" accept="image/*" class="avatar-uploader-input" id="avatarUploader">
+                                    <input class="avatar-uploader-input"
+                                        id="avatarUploader"
+                                        name="avatar"
+                                        type="file"
+                                        accept="image/*">
 
                                     <span class="avatar-uploader-trigger">
                                         <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 24 24" height="16px" width="16px" xmlns="http://www.w3.org/2000/svg">
@@ -139,7 +177,7 @@ ob_start(); // Bắt đầu lưu nội dung động
                             </td>
 
                             <td class="col-form-input relative">
-                                <select class="select-container" id="countrySelect" tabindex="-1">
+                                <select class="select-container" id="countrySelect" tabindex="-1" name="country">
                                     <option value="Afghanistan">Afghanistan</option>
                                     <option value="Åland Islands">Åland Islands</option>
                                     <option value="Albania">Albania</option>
