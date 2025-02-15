@@ -292,7 +292,7 @@ const validationRules = {
 
     password: (value) => {
         if (value.trim().length === 0) return "Required";
-        if (value.length <= 6) return "Too short";
+        if (value.length <= 1) return "Too short";
         if (!/^(?=.*[a-zA-Z])(?=.*\d)(?!.*\s).+$/.test(value)) return "Invalid format";
         if (value.length >= 255) return "Too long";
         return "";

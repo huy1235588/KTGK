@@ -35,6 +35,9 @@ class ProductController
         // Xử lý query
         $query = '%' . $this->conn->real_escape_string($query) . '%';
 
+        // Lọc các cột rỗng
+        $columns = array_filter($columns, fn($col) => !empty($col));
+
         // Đảm bảo các cột là hợp lệ (chứa các tên cột)
         $columns = array_map(function ($col) {
             return "`" . str_replace("`", "``", $col) . "`"; // Tránh SQL Injection
@@ -434,6 +437,8 @@ class ProductController
         $stmt = $this->conn->prepare("DELETE FROM products WHERE id = ?");
         $stmt->bind_param("i", $id);
         $stmt->execute();
+
+        return $stmt->affected_rows > 0;
     }
 
     // Hàm để tìm kiếm sản phẩm 

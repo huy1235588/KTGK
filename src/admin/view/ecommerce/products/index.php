@@ -83,6 +83,16 @@ ob_start();
                     renderCell: (value) => {
                         return `${parseInt(value).toFixed(0)}%`;
                     }
+                },
+                {
+                    label: 'Action',
+                    width: '100px',
+                    sortAble: false,
+                    renderCell: (value, row) => {
+                        return `
+                            <a href="#" class="delete-btn" onclick="deleteUser(event, ${row.id})">Delete</a>
+                        `;
+                    }
                 }
             ];
 
