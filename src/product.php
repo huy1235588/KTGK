@@ -645,7 +645,7 @@ DongKetNoi($conn);
                                             }
                                             // Nếu có pvp hoặc MMO hoặc multiplayer-> ico_multiplayer.png
                                             else if (stripos($featureLower, 'pvp') !== false || stripos($featureLower, 'mmo') !== false || stripos($featureLower, 'multiplayer') !== false) {
-                                                $featureIcon = 'ico_multiplayer.png';
+                                                $featureIcon = 'ico_multilplayer.png';
                                             }
 
                                             // Nếu có Co-op -> ico_coop.png
