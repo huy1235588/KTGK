@@ -22,10 +22,13 @@ ob_start(); // Bắt đầu lưu nội dung động
         document.addEventListener('DOMContentLoaded', () => {
             // Cột sản phẩm
             const columns = [{
-                    key: 'id',
-                    label: 'ID',
+                    key: 'avatar',
+                    label: '',
+                    sortAble: false,
                     width: '40px',
-                    style: 'text-align: center; margin: 10px auto',
+                    renderCell: (value) => {
+                        return `<img src="/${value}" alt="Avatar" class="avatar">`;
+                    }
                 },
                 {
                     key: 'userName',
@@ -70,6 +73,7 @@ ob_start(); // Bắt đầu lưu nội dung động
                 {
                     label: 'Action',
                     width: '100px',
+                    sortAble: false,
                     renderCell: (value, row) => {
                         return `
                             <a href="#" class="delete-btn" onclick="deleteUser(event, ${row.id})">Delete</a>
