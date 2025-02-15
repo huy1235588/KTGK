@@ -4,3 +4,4 @@ src/admin/.env
 python/upload
 src/admin/view/ecommerce/products/add/uploads/sample_thumbnail.jpg
 src/admin/vendor
+src/uploads/users/avatar

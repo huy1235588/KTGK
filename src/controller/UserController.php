@@ -103,42 +103,50 @@ class UserController
 
     // Hàm để insert user
     public function addUser(
-        $Username,
-        $ProfileName,
+        $Avatar,
+        $FirstName,
+        $LastName,
         $Email,
-        $Password,
+        $Phone,
         $Country,
-        $IsVerified,
+        $Birthday,
+        $Gender,
+        $Username,
+        $Password,
         $Role
     ) {
         $stmt = $this->conn->prepare("INSERT INTO users (
-            Username,
-            ProfileName,
+            Avatar,
+            FirstName,
+            LastName,
             Email,
+            Phone,
+            Address,
+            Birthday,
+            Gender,
+            Username,
             Password,
-            Country,
-            IsVerified,
             Role
-        ) VALUES (
-            :Username,
-            :ProfileName,
-            :Email,
-            :Password,
-            :Country,
-            :IsVerified,
-            :Role
-        )");
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
-        $hashPassword = password_hash($Password, PASSWORD_DEFAULT);
+        $stmt->bind_param(
+            "sssssssssss",
+            $Avatar,
+            $FirstName,
+            $LastName,
+            $Email,
+            $Phone,
+            $Country,
+            $Birthday,
+            $Gender,
+            $Username,
+            $Password,
+            $Role
+        );
 
-        $stmt->bindParam(':Username', $Username);
-        $stmt->bindParam(':ProfileName', $ProfileName);
-        $stmt->bindParam(':Email', $Email);
-        $stmt->bindParam(':Password', $hashPassword);
-        $stmt->bindParam(':Country', $Country);
-        $stmt->bindParam(':IsVerified', $IsVerified);
-        $stmt->bindParam(':Role', $Role);
+        $stmt->execute();
 
-        return $stmt->execute();
+        // Trả về id của user vừa insert
+        return $stmt->insert_id;
     }
 }

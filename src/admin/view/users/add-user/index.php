@@ -6,37 +6,64 @@ ob_start(); // Bắt đầu lưu nội dung động
 <link rel="stylesheet" href="add-user.css">
 
 <?php
+// Nạp file UserController.php
+require_once '../../../../controller/UserController.php';
+require_once '../../../../utils/db_connect.php';
+require '../../../vendor/autoload.php';
+
+// Import Dotenv
+use Dotenv\Dotenv;
+
+// Load file .env
+$dotenv = Dotenv::createImmutable(__DIR__ . '/../../../');
+$dotenv->load();
+
+// Mở kết nối
+$conn = MoKetNoi();
+
+// Khởi tạo UserController
+$userController = new UserController($conn);
 
 // Xử lý form
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Lấy dữ liệu từ form
-    $avatar = $_FILES['avatar'];
-    $firstName = $_POST['firstName'];
-    $lastName = $_POST['lastName'];
-    $email = $_POST['email'];
-    $phone = $_POST['phone'];
-    $country = $_POST['country'];
-    $birthday = $_POST['birthday'];
-    $gender = $_POST['gender'];
-    $username = $_POST['username'];
-    $password = $_POST['password'];
-    $role = $_POST['role'];
+    $txtAvatar = $_FILES['avatar'];
+    $txtFirstName = $_POST['firstName'];
+    $txtLastName = $_POST['lastName'];
+    $txtEmail = $_POST['email'];
+    $txtPhone = $_POST['phone'];
+    $txtCountry = $_POST['country'];
+    $txtBirthday = $_POST['birthday'];
+    $txtGender = $_POST['gender'];
+    $txtUsername = $_POST['username'];
+    $txtPassword = $_POST['password'];
+    $txtRole = $_POST['role'];
 
-    // Hiển thị dữ liệu
-    echo 'avatar: ' . $avatar['name'] . '<br>';
-    echo 'firstName: ' . $firstName . '<br>';
-    echo 'lastName: ' . $lastName . '<br>';
-    echo 'email: ' . $email . '<br>';
-    echo 'phone: ' . $phone . '<br>';
-    echo 'country: ' . $country . '<br>';
-    echo 'birthday: ' . $birthday . '<br>';
-    echo 'gender: ' . $gender . '<br>';
-    echo 'username: ' . $username . '<br>';
-    echo 'password: ' . $password . '<br>';
-    echo 'role: ' . $role . '<br>';
-
+    // Xử lý avatar
+    // Tạo id cho avatar từ thời gian hiện tại
+    $idAvatar = time();
+    // Đổi tên file avatar
+    $txtAvatar['name'] = $idAvatar . '_' . $txtAvatar['name'];
+    // Đường dẫn lưu avatar
+    $txtAvatarPath = 'uploads/users/avatar/' . $txtAvatar['name'];
+    
     // Lưu dữ liệu vào database
-    // ...
+    $userId = $userController->addUser(
+        $txtAvatarPath,
+        $txtFirstName,
+        $txtLastName,
+        $txtEmail,
+        $txtPhone,
+        $txtCountry,
+        $txtBirthday,
+        $txtGender,
+        $txtUsername,
+        $txtPassword,
+        $txtRole
+    );
+
+    // Lưu avatar
+    move_uploaded_file($txtAvatar['tmp_name'], __DIR__ . '/../../../../' . $txtAvatarPath);
 
     // Chuyển hướng về trang danh sách
     // header('Location: /admin/pages/users/list.php');
