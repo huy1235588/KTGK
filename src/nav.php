@@ -180,9 +180,10 @@ $genres = $productController->getGenres();
             <?php endif; ?>
             <li class="menu-item account">
                 <div class="username">
-                    Hello
-                    <?= htmlspecialchars($_SESSION['user']['username']) ?>
+                    <img src="/<?= $_SESSION['user']['avatar'] ?>" alt="Avatar" class="avatar">
                 </div>
+
+                <!-- Dropdown -->
                 <div class="account-dropdown hs-hidden">
                     <ul class="account-dropdown-list">
                         <h6 class="account-dropdown-title">

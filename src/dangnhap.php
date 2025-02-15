@@ -48,6 +48,7 @@ include 'components/notification.php';
             $_SESSION['user']['id'] = $user['id'];
             $_SESSION['user']['username'] = $user['userName'];
             $_SESSION['user']['role'] = $user['role'];
+            $_SESSION['user']['avatar'] = $user['avatar'];
 
             $stmt->close();
             DongKetNoi($conn);
