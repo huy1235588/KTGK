@@ -643,3 +643,111 @@ h1 {
 /*===================================*
     04.END HOT PRODUCT
 *===================================*/
+/*
+
+
+
+
+
+
+
+
+
+
+*/
+/*===================================*
+    05.START EXPLORE
+*===================================*/
+.explore-catalog {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: 433px;
+}
+
+.explore-catalog .explore-catalog-link {
+    position: absolute;
+    z-index: 10;
+    left: 0;
+    width: 100%;
+    height: inherit;
+}
+
+.explore-catalog .explore-catalog-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+    width: 90%;
+    max-width: 1200px;
+    margin: 0 auto;
+    height: inherit;
+    z-index: 1;
+    cursor: pointer;
+}
+
+.explore-catalog .explore-catalog-content .explore-catalog-title {
+    color: #fff;
+    font-size: 32px;
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 16px;
+}
+
+.explore-catalog .explore-catalog-content .explore-catalog-description {
+    color: #fff;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 1;
+    max-width: 527px;
+    line-height: 1.5;
+    margin-bottom: 24px;
+}
+
+.explore-catalog .explore-catalog-content .explore-catalog-button {
+    width: 200px;
+    height: 50px;
+    background: linear-gradient(180deg, rgb(181, 230, 60), rgb(140, 202, 39));
+    color: #000000;
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1.125;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    border: 1px solid transparent;
+    border-radius: 5px;
+    padding: 16px 32px;
+    cursor: pointer;
+    filter: brightness(100%);
+    box-shadow: 0 2px 4px 0 #00000026;
+    text-decoration: none;
+    transition: all 0.125s ease-out;
+}
+
+.explore-catalog:hover .explore-catalog-button {
+    filter: brightness(1.15);
+}
+
+.explore-catalog .explore-catalog-image-wrapper {
+    position: absolute;
+    top: 0;
+    left: 0;
+    overflow: hidden;
+    height: inherit;
+}
+
+.explore-catalog:hover .explore-catalog-image-wrapper {
+    filter: brightness(1.15);
+}
+
+.explore-catalog .explore-catalog-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/*===================================*
+    05.END EXPLORE
+*===================================*/

@@ -35,9 +35,8 @@
     ?>
 
     <!-- Content -->
-    <article class="container">
+    <article class="container article">
         <!-- Menu phụ -->
-        <!-- <?php include 'sidebar.php' ?> -->
 
         <!-- Content chính -->
         <main class="main">
@@ -293,7 +292,7 @@
                                                         };
 
                                                         // Cập nhật chiều cao khi hình ảnh tải xong
-                                                        // productImg.onload = updateSkeletonHeight;
+                                                        productImg.onload = updateSkeletonHeight;
 
                                                         // Cập nhật chiều cao khi kích thước màn hình thay đổi
                                                         window.addEventListener('resize', updateSkeletonHeight);
@@ -362,6 +361,34 @@
         </main>
     </article>
 
+    <!-- Explore catalog -->
+    <section class="explore-catalog">
+        <!-- Content -->
+        <div class="explore-catalog-content">
+            <h3 class="explore-catalog-title">
+                Explore our catalogue
+            </h3>
+            <p class="explore-catalog-description">
+                There are thousands of games waiting for you to explore. Browse by genre, features, price, and more to find your next favorite game.
+            </p>
+            <button class="explore-catalog-button">
+                See all games
+            </button>
+        </div>
+
+        <!-- Image -->
+        <div class="explore-catalog-image-wrapper">
+            <picture>
+                <source media="(max-width: 768px)" srcset="https://images.gog.com/86843ada19050958a1aecf7de9c7403876f74d53230a5a96d7e615c1348ba6a9_explore_catalog_2560x570.webp">
+                <source media="(max-width: 768px)" srcset="https://images.gog.com/86843ada19050958a1aecf7de9c7403876f74d53230a5a96d7e615c1348ba6a9_explore_catalog_2560x570.jpg">
+                <img class="explore-catalog-image"
+                    src="https://images.gog.com/86843ada19050958a1aecf7de9c7403876f74d53230a5a96d7e615c1348ba6a9_explore_catalog_2560x570.webp"
+                    alt="Explore catalog"
+                    loading="lazy">
+            </picture>
+        </div>
+    </section>
+
     <!-- Game hover -->
     <div class="product-hover">
         <div class="product-hover-content"></div>
@@ -373,6 +400,10 @@
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             new GameHover(".product-item", ".product-hover");
+
+            document.querySelector('.explore-catalog').addEventListener('click', function() {
+                window.location.href = 'search.php';
+            });
         });
     </script>
 
