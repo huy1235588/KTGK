@@ -68,9 +68,13 @@ ob_start(); // Bắt đầu lưu nội dung động
                     width: '100px',
                 },
                 {
-                    key: 'created_At',
-                    label: 'Created At',
+                    label: 'Action',
                     width: '100px',
+                    renderCell: (value, row) => {
+                        return `
+                            <a href="#" class="delete-btn" onclick="deleteUser(event, ${row.id})">Delete</a>
+                        `;
+                    }
                 },
             ];
 
@@ -86,6 +90,24 @@ ob_start(); // Bắt đầu lưu nội dung động
                     window.location.href = `../user-profile?id=${rowId}`;
                 }
             });
+
+            window.deleteUser = (event, id) => {
+                event.preventDefault();
+                event.stopPropagation();
+
+                // Hiển thị confirm dialog
+                if (confirm(`Are you sure you want to delete user with id ${id}?`)) {
+                    fetch(`/api/delete_user.php?id=${id}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                window.location.reload();
+                            } else {
+                                alert('Delete user failed');
+                            }
+                        });
+                }
+            }
         });
     </script>
 </article>

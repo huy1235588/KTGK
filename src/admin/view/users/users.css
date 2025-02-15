@@ -44,6 +44,18 @@ Author       : LeThienHuy.
 /*===================================*
     10.START MAIN CONTENT
 *===================================*/
+.delete-btn {
+    background-color: #e74c3c;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.delete-btn:hover {
+    background-color: #c0392b;
+}
 /*===================================*
     10.END MAIN CONTENT
 *===================================*/

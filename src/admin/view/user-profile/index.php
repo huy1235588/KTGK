@@ -109,7 +109,7 @@ $user = $userController->getUserById($userId);
             <!-- Nút xoá -->
             <div class="user-action">
                 <a class="delete-btn"
-                    href="/api/delete_user.php?id=<?php echo $user['id']; ?>">
+                    href="#" onclick="deleteUser(event, <?php echo $user['id']; ?>)">
                     Delete
                 </a>
             </div>
@@ -142,6 +142,24 @@ $user = $userController->getUserById($userId);
         const createdAt = new Date(user.created_at);
         document.getElementById('createdAt').textContent =
             `${createdAt.toLocaleDateString()} ${createdAt.toLocaleTimeString()}`;
+
+        window.deleteUser = (event, id) => {
+            event.preventDefault();
+            event.stopPropagation();
+
+            // Hiển thị confirm dialog
+            if (confirm(`Are you sure you want to delete user with id ${id}?`)) {
+                fetch(`/api/delete_user.php?id=${id}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            window.location.href = '/admin/view/users';
+                        } else {
+                            alert('Delete user failed');
+                        }
+                    });
+            }
+        }
     };
 </script>
 

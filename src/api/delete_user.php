@@ -8,6 +8,9 @@ $conn = MoKetNoi();
 // Khởi tạo UserController
 $userController = new UserController($conn);
 
+// Set Content-Type
+header('Content-Type: application/json');
+
 // Nếu có get param id
 if (isset($_GET['id'])) {
     // Lấy id từ GET param
@@ -18,11 +21,13 @@ if (isset($_GET['id'])) {
 
     // Nếu kết quả trả về là true
     if ($result === true) {
-        // Chuyển hướng về trang danh sách user
-        header('location: /admin/view/users');
+       // tra ve json
+        echo json_encode([
+            'success' => true,
+        ]);
     } else {
-        // Nếu kết quả trả về là false
-        // Hiển thị thông báo lỗi
-        echo 'Xoá user không thành công';
+        echo json_encode([
+            'success' => false,
+        ]);
     }
 }
