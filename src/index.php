@@ -276,33 +276,7 @@
                                                         alt="<?= htmlspecialchars($product['title']) ?>"
                                                         loading="lazy" />
                                                 </div>
-                                                <script>
-                                                    document.addEventListener("DOMContentLoaded", function() {
-                                                        const productImg = document.querySelector('.product-img');
-                                                        const skeletonWrapper = document.querySelectorAll('.skeleton-wrapper.product-img-skeleton');
 
-                                                        // Hàm cập nhật chiều cao của skeleton
-                                                        const updateSkeletonHeight = () => {
-                                                            const imgHeight = productImg.offsetHeight;
-
-                                                            // Set chiều cao cho skeleton loader
-                                                            skeletonWrapper.forEach(function(wrapper) {
-                                                                wrapper.style.setProperty('--skeleton-height', `${imgHeight}px`);
-                                                            });
-                                                        };
-
-                                                        // Cập nhật chiều cao khi hình ảnh tải xong
-                                                        productImg.onload = updateSkeletonHeight;
-
-                                                        // Cập nhật chiều cao khi kích thước màn hình thay đổi
-                                                        window.addEventListener('resize', updateSkeletonHeight);
-
-                                                        // Nếu ảnh đã load xong thì gọi hàm onload
-                                                        if (productImg.complete) {
-                                                            productImg.onload();
-                                                        }
-                                                    });
-                                                </script>
                                             </div>
                                             <!-- Product info -->
                                             <div class="product-info">
@@ -358,6 +332,36 @@
                     </section>
                 <?php endforeach; ?>
             <?php endif; ?>
+            <script>
+                document.addEventListener("DOMContentLoaded", function() {
+                    const productImg = document.querySelector('.product-img');
+                    const skeletonWrapper = document.querySelectorAll('.skeleton-wrapper.product-img-skeleton');
+
+                    // Nếu không có ảnh hoặc không có skeleton thì không cần làm gì
+                    if (!productImg || skeletonWrappers.length === 0) return;
+
+                    // Hàm cập nhật chiều cao của skeleton
+                    const updateSkeletonHeight = () => {
+                        const imgHeight = productImg.offsetHeight;
+
+                        // Set chiều cao cho skeleton loader
+                        skeletonWrapper.forEach(function(wrapper) {
+                            wrapper.style.setProperty('--skeleton-height', `${imgHeight}px`);
+                        });
+                    };
+
+                    // Cập nhật chiều cao khi hình ảnh tải xong
+                    productImg.addEventListener('load', updateSkeletonHeight);
+
+                    // Cập nhật chiều cao khi kích thước màn hình thay đổi
+                    window.addEventListener('resize', updateSkeletonHeight);
+
+                    // Nếu ảnh đã load xong thì gọi hàm onload
+                    if (productImg.complete) {
+                        updateSkeletonHeight();
+                    }
+                });
+            </script>
         </main>
     </article>
 
