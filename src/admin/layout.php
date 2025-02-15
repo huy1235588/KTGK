@@ -16,7 +16,7 @@ $productController = new ProductController($conn);
 $products = $productController->getAllProducts();
 
 // Lấy thông tin của người dùng
-$user = $userController->getUserById($_SESSION['user']['username']);
+$user = $userController->getUserByUsername($_SESSION['user']['username']);
 ?>
 
 <!DOCTYPE html>

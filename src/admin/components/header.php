@@ -99,7 +99,8 @@
                         <!-- Avatar -->
                         <button class="navbar-button">
                             <div class="avatar-btn">
-                                <img class="avatar-img" src="/admin/assets/img/avatar/img2.jpg" alt="">
+                                <img class="avatar-img" src="/<?php echo $user['avatar'] ?>"
+                                    alt="Image Description">
                                 <span class="avatar-status"></span>
                             </div>
                         </button>
@@ -108,7 +109,7 @@
                             <!-- Info -->
                             <div class="dropdown-item-text">
                                 <div class="avatar">
-                                    <img class="avatar-img" src="/admin/assets/img/avatar/img2.jpg"
+                                    <img class="avatar-img" src="/<?php echo $user['avatar'] ?>"
                                         alt="Image Description">
                                 </div>
                                 <div class="dropdown-account-info">
