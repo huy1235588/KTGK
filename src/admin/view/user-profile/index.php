@@ -105,39 +105,45 @@ $user = $userController->getUserById($userId);
                     <span class="info-value" id="createdAt">-</span>
                 </div>
             </div>
+
+            <!-- Nút xoá -->
+            <div class="user-action">
+                <a class="delete-btn"
+                    href="/api/delete_user.php?id=<?php echo $user['id']; ?>">
+                    Delete
+                </a>
+            </div>
         </div>
     </div>
-
-
-    <script>
-        // Populate user data
-        window.onload = function() {
-            const user = <?php echo json_encode($user); ?>;
-
-            // Update user info
-            document.getElementById('username').textContent = user.username;
-            document.getElementById('userId').textContent = user.id;
-            document.getElementById('fullName').textContent = `${user.firstName} ${user.lastName}`;
-            document.getElementById('phone').textContent = user.phone;
-            document.getElementById('email').textContent = user.email;
-            document.getElementById('address').textContent = user.address;
-            document.getElementById('gender').textContent = user.gender;
-            document.getElementById('birthday').textContent = user.birthday;
-            document.getElementById('role').textContent = user.role;
-
-            // Role badge styling
-            const roleBadge = document.getElementById('role');
-            roleBadge.textContent = user.role;
-            roleBadge.classList.add(user.role === 'admin' ? 'badge-admin' : 'badge-user');
-
-            // Format created_at date
-            const createdAt = new Date(user.created_at);
-            document.getElementById('createdAt').textContent =
-                `${createdAt.toLocaleDateString()} ${createdAt.toLocaleTimeString()}`;
-        };
-    </script>
-
 </article>
+
+<script>
+    // Populate user data
+    window.onload = function() {
+        const user = <?php echo json_encode($user); ?>;
+
+        // Update user info
+        document.getElementById('username').textContent = user.username;
+        document.getElementById('userId').textContent = user.id;
+        document.getElementById('fullName').textContent = `${user.firstName} ${user.lastName}`;
+        document.getElementById('phone').textContent = user.phone;
+        document.getElementById('email').textContent = user.email;
+        document.getElementById('address').textContent = user.address;
+        document.getElementById('gender').textContent = user.gender;
+        document.getElementById('birthday').textContent = user.birthday;
+        document.getElementById('role').textContent = user.role;
+
+        // Role badge styling
+        const roleBadge = document.getElementById('role');
+        roleBadge.textContent = user.role;
+        roleBadge.classList.add(user.role === 'admin' ? 'badge-admin' : 'badge-user');
+
+        // Format created_at date
+        const createdAt = new Date(user.created_at);
+        document.getElementById('createdAt').textContent =
+            `${createdAt.toLocaleDateString()} ${createdAt.toLocaleTimeString()}`;
+    };
+</script>
 
 <?php
 $content = ob_get_clean(); // Lấy nội dung và lưu vào biến $content

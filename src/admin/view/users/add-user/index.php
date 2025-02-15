@@ -66,7 +66,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     move_uploaded_file($txtAvatar['tmp_name'], __DIR__ . '/../../../../' . $txtAvatarPath);
 
     // Chuyển hướng về trang danh sách
-    // header('Location: /admin/pages/users/list.php');
+    echo "<script>window.location.href = '/admin/view/users';</script>";
 }
 ?>
 
@@ -586,11 +586,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                             <td class="col-form-input col-form-radio">
                                 <div class="form-control-radio">
-                                    <input type="radio" class="form-control" name="role" value="Admin" id="adminInput">
+                                    <input type="radio" class="form-control" name="role" value="admin" id="adminInput">
                                     <label for="adminInput">Admin</label>
                                 </div>
                                 <div class="form-control-radio">
-                                    <input type="radio" class="form-control" name="role" value="User" id="userInput" checked>
+                                    <input type="radio" class="form-control" name="role" value="user" id="userInput" checked>
                                     <label for="userInput">User</label>
                                 </div>
                             </td>

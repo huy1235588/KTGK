@@ -149,4 +149,14 @@ class UserController
         // Trả về id của user vừa insert
         return $stmt->insert_id;
     }
+
+    // Hàm để xoá user
+    public function deleteUser($id)
+    {
+        $stmt = $this->conn->prepare("DELETE FROM users WHERE id = ?");
+        $stmt->bind_param("i", $id);
+        $stmt->execute();
+
+        return $stmt->affected_rows > 0;
+    }
 }
