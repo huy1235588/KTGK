@@ -23,6 +23,13 @@
     require_once 'utils/db_connect.php';
 
     $userId = $_SESSION['user']['id'];
+    // Nếu chưa đăng nhập thì chuyển hướng về trang đăng nhập
+    if (!$userId) {
+        echo "<script>
+                window.location.href = 'dangnhap.php';
+            </script>";
+        exit();
+    }
     $conn = MoKetNoi();
 
     // Khởi tạo UserController

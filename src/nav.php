@@ -32,7 +32,12 @@ $sql = 'SELECT avatar FROM users WHERE id = ?';
 $stmt = $conn->prepare($sql);
 $stmt->bind_param('i', $_SESSION['user']['id']);
 $stmt->execute();
-$avatar = $stmt->get_result()->fetch_assoc()['avatar'];
+$result = $stmt->get_result();
+if ($result->num_rows > 0) {
+    $avatar = $result->fetch_assoc()['avatar'];
+} else {
+    $avatar = '/uploads/users/avatar/default_avatar.jpg';
+}
 ?>
 
 <p class="menu-overlay"></p>
