@@ -26,6 +26,13 @@ $cartQuantity = $result->fetch_assoc()['quantity'];
 
 // Lấy danh sách thể loại
 $genres = $productController->getGenres();
+
+// Lấy avatar của user
+$sql = 'SELECT avatar FROM users WHERE id = ?';
+$stmt = $conn->prepare($sql);
+$stmt->bind_param('i', $_SESSION['user']['id']);
+$stmt->execute();
+$avatar = $stmt->get_result()->fetch_assoc()['avatar'];
 ?>
 
 <p class="menu-overlay"></p>
@@ -180,7 +187,7 @@ $genres = $productController->getGenres();
             <?php endif; ?>
             <li class="menu-item account">
                 <div class="username">
-                    <img src="/<?= $_SESSION['user']['avatar'] ?>" alt="Avatar" class="avatar">
+                    <img src="/<?= $avatar ?>" alt="Avatar" class="avatar">
                 </div>
 
                 <!-- Dropdown -->

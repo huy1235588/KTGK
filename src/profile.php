@@ -31,6 +31,17 @@
     // Lấy thông tin user theo id
     $user = $userController->getUserById($userId);
 
+    // Khởi tạo mảng lưu lỗi
+    $errors = [
+        'firstName' => '',
+        'lastName' => '',
+        'phone' => '',
+        'email' => '',
+        'birthday' => '',
+        'userName' => '',
+        'password' => ''
+    ];
+
     // Xử lý form
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // Lấy dữ liệu từ form
@@ -42,7 +53,7 @@
         $txtCountry = $_POST['country'];
         $txtBirthday = $_POST['birthday'];
         $txtGender = $_POST['gender'];
-        $txtUsername = $_POST['username'];
+        $txtUsername = $_POST['userName'];
         $txtPassword = $_POST['password'];
 
         // Xử lý avatar
@@ -433,22 +444,30 @@
                         </td>
 
                         <td class="col-form-input col-form-name">
-                            <input
-                                class="form-control form-control-text"
-                                id="firstNameInput"
-                                type="text"
-                                name="firstName"
-                                placeholder="First name"
-                                value="<?php echo $user['firstName']; ?>"
-                                aria-label="Clarice">
-                            <input
-                                class="form-control form-control-text"
-                                id="lastNameInput"
-                                type="text"
-                                name="lastName"
-                                placeholder="Last name"
-                                value="<?php echo $user['lastName']; ?>"
-                                aria-label="Boone">
+                            <div class="form-control-name form-control-wrapper" data-for="firstName">
+                                <input
+                                    class="form-control form-control-text <?php echo $errors['firstName'] ? 'form-input-error' : ''; ?>"
+                                    id="firstNameInput"
+                                    type="text"
+                                    name="firstName"
+                                    placeholder="First name"
+                                    value="<?php echo $user['firstName']; ?>"
+                                    aria-label="Clarice">
+
+                                <span class="error-message-input"><?php echo $errors['firstName'] ?? ''; ?></span>
+                            </div>
+                            <div class="form-control-name form-control-wrapper" data-for="lastName">
+                                <input
+                                    class="form-control form-control-text <?php echo $errors['lastName'] ? 'form-input-error' : ''; ?>"
+                                    id="lastNameInput"
+                                    type="text"
+                                    name="lastName"
+                                    placeholder="Last name"
+                                    value="<?php echo $user['lastName']; ?>"
+                                    aria-label="Boone">
+
+                                <span class="error-message-input"><?php echo $errors['lastName'] ?? ''; ?></span>
+                            </div>
                         </td>
                     </tr>
                     <!-- End FULL NAME -->
@@ -461,15 +480,19 @@
                             </label>
                         </td>
 
-                        <td class="col-form-input">
+                        <td class="col-form-input form-control-wrapper" data-for="email">
                             <input
-                                class="form-control"
+                                class="form-control <?php echo $errors['email'] ? 'form-input-error' : ''; ?>"
                                 id="emailInput"
                                 type="email"
                                 name="email"
                                 placeholder="clarice@example.com"
                                 value="<?php echo $user['email']; ?>"
                                 aria-label="clarice@example.com">
+
+                            <span class="error-message-input">
+                                <?php echo $errors['email'] ?? ''; ?>
+                            </span>
                         </td>
                     </tr>
                     <!-- End EMAIL -->
@@ -485,9 +508,9 @@
                             </label>
                         </td>
 
-                        <td class="col-form-input">
+                        <td class="col-form-input form-control-wrapper" data-for="phone">
                             <input
-                                class="js-masked-input form-control"
+                                class="js-masked-input form-control <?php echo $errors['phone'] ? 'form-input-error' : ''; ?>"
                                 id="phoneInput"
                                 type="text"
                                 name="phone"
@@ -495,6 +518,8 @@
                                 value="<?php echo $user['phone']; ?>"
                                 aria-label="+x(xxx)xxx-xx-xx"
                                 maxlength="13">
+
+                            <span class="error-message-input"><?php echo $errors['phone'] ?? ''; ?></span>
                         </td>
                     </tr>
                     <!-- End PHONE -->
@@ -545,14 +570,16 @@
                             </label>
                         </td>
 
-                        <td class="col-form-input">
+                        <td class="col-form-input form-control-wrapper" data-for="birthday">
                             <input
-                                class="form-control"
+                                class="form-control <?php echo $errors['birthday'] ? 'form-input-error' : ''; ?>"
                                 id="birthdayInput"
                                 type="date"
                                 name="birthday"
                                 value="<?php echo $user['birthday']; ?>"
                                 aria-label="Birthday">
+
+                            <span class="error-message-input"><?php echo $errors['birthday'] ?? ''; ?></span>
                         </td>
                     </tr>
 
@@ -600,15 +627,19 @@
                             </label>
                         </td>
 
-                        <td class="col-form-input">
+                        <td class="col-form-input form-control-wrapper" data-for="userName">
                             <input
-                                class="form-control"
+                                class="form-control <?php echo $errors['userName'] ? 'form-input-error' : ''; ?>"
                                 id="usernameInput"
                                 type="text"
-                                name="username"
+                                name="userName"
                                 value="<?php echo $user['userName']; ?>"
                                 placeholder="Username"
                                 aria-label="Username">
+
+                            <span class="error-message-input">
+                                <?php echo $errors['userName'] ?? ''; ?>
+                            </span>
                         </td>
                     </tr>
                     <!-- End USERNAME -->
@@ -621,15 +652,17 @@
                             </label>
                         </td>
 
-                        <td class="col-form-input form-input-password">
+                        <td class="col-form-input form-input-password form-control-wrapper" data-for="password">
                             <input
-                                class="form-control"
+                                class="form-control <?php echo $errors['password'] ? 'form-input-error' : ''; ?>"
                                 id="passwordInput"
                                 type="password"
                                 name="password"
                                 placeholder="Password"
                                 value="<?php echo $user['password']; ?>"
                                 aria-label="Password">
+
+                            <span class="error-message-input"><?php echo $errors['password'] ?? ''; ?></span>
 
                             <!-- Button show password -->
                             <button class="show-password" type="button">

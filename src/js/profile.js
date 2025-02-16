@@ -1,5 +1,68 @@
-document.addEventListener("DOMContentLoaded", () => {
+/*******************************************
+* 
+*          Valid Form
+* 
+*******************************************/
+const validateForm = async () => {
     const form = document.getElementById("profileForm");
+
+    // Lấy dữ liệu form
+    const formData = new FormData(form);
+
+    // Gửi dữ liệu bằng AJAX
+    try {
+        const response = await fetch('/api/check_valid_user.php', {
+            method: 'POST',
+            body: formData
+        });
+
+        const result = await response.json();
+
+        // Xử lý kết quả
+        if (result.errors) {
+            // Xoá tất cả lỗi cũ
+            const errorMessages = document.querySelectorAll('.error-message-input');
+            errorMessages.forEach(errorMessage => {
+                errorMessage.innerText = '';
+            });
+
+            // Xoá tất cả class error
+            const inputElements = document.querySelectorAll('.form-control');
+            inputElements.forEach(inputElement => {
+                inputElement.classList.remove('form-input-error');
+            });
+
+            // Hiển thị lỗi
+            Object.keys(result.errors).forEach(key => {
+                // Lấy element chứa lỗi
+                const formControlWrapper = document.querySelector(`.form-control-wrapper[data-for="${key}"]`);
+
+                // Nếu có lỗi
+                if (formControlWrapper) {
+                    // Hiển thị lỗi
+                    const errorElement = formControlWrapper.querySelector('.error-message-input');
+                    errorElement.innerText = result.errors[key];
+
+                    const inputElement = formControlWrapper.querySelector('.form-control[name="' + key + '"]');
+                    inputElement.classList.add('form-input-error');
+                }
+            });
+        } else {
+            // Thành công thì submit form
+            form.submit();
+        }
+    } catch (error) {
+        console.error('Error:', error);
+    }
+};
+
+/*******************************************
+ * 
+ *         Update Profile
+ * 
+ * *****************************************/
+
+document.addEventListener("DOMContentLoaded", () => {
     const popup = document.getElementById("confirmPopup");
     const saveBtn = document.getElementById("saveBtn");
     const confirmBtn = document.getElementById("confirmBtn");
@@ -16,8 +79,8 @@ document.addEventListener("DOMContentLoaded", () => {
         e.preventDefault();
         popup.style.display = "none";
 
-        // Gửi form
-        form.submit();
+        // Gọi hàm validateForm
+        validateForm();
     });
 
     // Đóng popup
@@ -206,3 +269,4 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 });
+

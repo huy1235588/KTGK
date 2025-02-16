@@ -334,7 +334,7 @@ button {
 }
 
 .form-group td {
-    padding-bottom: 1.5rem;
+    padding-bottom: 1.75rem;
 }
 
 .col-form-label {
@@ -342,7 +342,7 @@ button {
     width: 100%;
     padding: 9px 15px;
     padding-left: 0;
-    max-width: 25%;
+    max-width: 30%;
 }
 
 .col-form-label label {
@@ -459,7 +459,7 @@ button {
 
 .error-message-input {
     position: absolute;
-    bottom: 5px;
+    bottom: 10px;
     left: 0;
     color: #ef4444;
     font-size: 14px;
@@ -469,16 +469,27 @@ span.error-message-input[data-error-for="lastName"] {
     left: 50%;
 }
 
-.col-form-name {
+.form-group .col-form-name {
     display: flex;
     width: 100%;
     max-width: 100%;
+    padding-bottom: 0;
 }
 
 .form-control-text {
     width: 1%;
     flex: 1 1 auto;
     min-width: 0;
+}
+
+/* Form Control Name */
+.form-control-name {
+    position: relative;
+    flex: 1 1 auto;
+    width: 1%;
+    min-width: 0;
+    display: flex;
+    padding-bottom: 1.75rem;
 }
 
 #firstNameInput {
