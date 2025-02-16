@@ -236,16 +236,19 @@ $genres = $productController->getGenres();
                 </div>
             </li>
         <?php else: ?>
-            <li class="menu-item">
-                <a href="dangnhap.php?redirect=<?= $currentUrl ?>" class="menu-link">
-                    Log in
-                </a>
-            </li>
-            <li class="menu-item">
-                <a href="dangky.php">
-                    Sign up
-                </a>
-            </li>
+            <?php if (strpos($_SERVER['REQUEST_URI'], 'dangnhap.php') === false): ?>
+                <li class="menu-item">
+                    <a href="dangnhap.php?redirect=<?= $currentUrl ?>" class="menu-link">
+                        Log in
+                    </a>
+                </li>
+            <?php elseif (strpos($_SERVER['REQUEST_URI'], 'dangky.php') === false): ?>
+                <li class="menu-item">
+                    <a href="dangky.php" class="menu-link">
+                        Sign up
+                    </a>
+                </li>
+            <?php endif; ?>
         <?php endif; ?>
     </ul>
 </nav>
