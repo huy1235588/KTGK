@@ -270,3 +270,27 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 });
 
+/*******************************************
+ * 
+ *         Show Password
+ * 
+ * *****************************************/
+// Toggle password visibility
+document.querySelectorAll('.form-input-password').forEach(element => {
+    const showPasswordBtn = element.getElementsByClassName('show-password')[0];
+
+    showPasswordBtn.addEventListener('click', () => {
+        const passwordField = element.getElementsByTagName('input')[0];
+
+        // Chuyển đổi giữa 'password' and 'text' input
+        if (passwordField.type === 'password') {
+            passwordField.type = 'text';
+            element.getElementsByClassName('show-password-icon')[0].style.display = "none";
+            element.getElementsByClassName('hide-password-icon')[0].style.display = "block";
+        } else {
+            passwordField.type = 'password';
+            element.getElementsByClassName('show-password-icon')[0].style.display = "block";
+            element.getElementsByClassName('hide-password-icon')[0].style.display = "none";
+        }
+    });
+});
