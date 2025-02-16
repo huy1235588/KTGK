@@ -159,4 +159,55 @@ class UserController
 
         return $stmt->affected_rows > 0;
     }
+
+    // Hàm để cập nhật user
+    public function updateUser($id, $data)
+    {
+        // Danh sách các cột được phép cập nhật và kiểu dữ liệu tương ứng
+        $allowedColumns = [
+            'avatar' => 's',
+            'firstname' => 's',
+            'lastname' => 's',
+            'email' => 's',
+            'phone' => 's',
+            'address' => 's',
+            'country' => 's',
+            'birthday' => 's',
+            'gender' => 's',
+            'username' => 's',
+            'password' => 's',
+            'role' => 's'
+        ];
+
+        // Chuẩn bị các phần của câu lệnh SQL
+        $setClause = [];
+        $bindTypes = '';
+        $bindValues = [];
+
+        foreach ($data as $key => $value) {
+            // Kiểm tra cột có được phép không
+            if (!isset($allowedColumns[$key])) continue;
+
+            $setClause[] = "`$key` = ?";
+            $bindTypes .= $allowedColumns[$key];
+            $bindValues[] = $value;
+        }
+
+        // Không có trường hợp nào để cập nhật
+        if (empty($setClause)) return false;
+
+        // Thêm id vào cuối mảng bind values
+        $bindTypes .= 'i';
+        $bindValues[] = $id;
+
+        // Tạo câu lệnh SQL
+        $sql = "UPDATE users SET " . implode(', ', $setClause) . " WHERE id = ?";
+
+        // Thực thi câu lệnh
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param($bindTypes, ...$bindValues);
+        $stmt->execute();
+
+        return $stmt->affected_rows > 0;
+    }
 }

@@ -16,6 +16,7 @@ function TaoDatabaseVaTable()
         phone VARCHAR(15) NOT NULL,
         email VARCHAR(100) NOT NULL UNIQUE,
         address VARCHAR(255),
+        country VARCHAR(100),
         gender ENUM('male', 'female') NOT NULL,
         birthday DATE,
         avatar VARCHAR(255) DEFAULT 'uploads/users/avatar/default_avatar.jpg',

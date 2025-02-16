@@ -32,8 +32,39 @@ document.addEventListener("DOMContentLoaded", () => {
             popup.style.display = "none";
         }
     }
-
 });
+
+const updatedProfilePopupHandler = () => {
+    const popup = document.getElementById("updatePopup");
+    const saveBtn = document.getElementById("saveBtn");
+    const confirmBtn = document.getElementById("confirmBtn");
+    const cancelBtn = document.getElementById("cancelBtn");
+
+    // Mở popup
+    saveBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        popup.style.display = "block";
+    });
+
+    // Xác nhận lưu
+    confirmBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        popup.style.display = "none";
+    });
+
+    // Đóng popup
+    cancelBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        popup.style.display = "none";
+    });
+
+    // Đóng popup khi click vào nhấn ra ngoài
+    window.onclick = function (event) {
+        if (event.target == popup) {
+            popup.style.display = "none";
+        }
+    }
+}
 
 /*******************************************
 * 
