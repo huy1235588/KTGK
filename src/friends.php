@@ -39,6 +39,22 @@
 
     ?>
 
+    <script>
+        // Kiểm tra thông báo từ sessionStorage khi trang load
+        document.addEventListener('DOMContentLoaded', function() {
+            const notification = sessionStorage.getItem('notification');
+
+            if (notification) {
+                const {
+                    message,
+                    type
+                } = JSON.parse(notification);
+                setNotification(message, type); // Gọi hàm hiển thị thông báo của bạn
+                sessionStorage.removeItem('notification'); // Xóa thông báo sau khi hiển thị
+            }
+        });
+    </script>
+
     <article class="container">
         <!-- Sidebar -->
         <aside class="sidebar">
@@ -84,7 +100,7 @@
             <ul class="friend-list">
                 <?php if ($result->num_rows > 0) : ?>
                     <?php foreach ($friends as $friend) : ?>
-                        <li class="friend">
+                        <li class="friend" id="<?php echo $friend['id']; ?>">
                             <!-- Avatar -->
                             <img class="friend-avatar"
                                 src="/<?php echo $friend['avatar']; ?>"
@@ -96,6 +112,13 @@
                                     <?php echo $friend['userName']; ?>
                                 </a>
                             </span>
+
+
+                            <!-- Delete Button -->
+                            <button class="delete-btn"
+                                onclick="showDeleteModal(<?php echo $friend['id']; ?>, '<?php echo addslashes(htmlspecialchars($friend['userName'])); ?>')">
+                                ✕
+                            </button>
                         </li>
                     <?php endforeach; ?>
                 <?php else : ?>
@@ -105,7 +128,58 @@
         </main>
     </article>
 
+    <!-- Delete Confirmation Modal -->
+    <div id="deleteModal" class="modal">
+        <div class="modal-content">
+            <p>Are you sure you want to delete <span id="friendName"></span>?</p>
+            <div class="modal-buttons">
+                <button onclick="hideDeleteModal()">Cancel</button>
+                <a id="confirmDelete" href="#" class="confirm-delete-btn">Delete</a>
+            </div>
+        </div>
+    </div>
+
     <!-- <script src="script.js"></script> -->
+    <script>
+        function showDeleteModal(friendId, friendName) {
+            const confirmDelete = document.getElementById('confirmDelete');
+            document.getElementById('friendName').textContent = friendName;
+            document.getElementById('deleteModal').style.display = 'block';
+
+
+            confirmDelete.addEventListener('click', function() {
+                fetch(`/api/delete_friend.php?userId=<?php echo $userId; ?>&friendId=${friendId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            sessionStorage.setItem('notification', JSON.stringify({
+                                message: 'Friend deleted successfully!',
+                                type: 'success'
+                            }));
+                            window.location.reload();
+                        } else {
+                            sessionStorage.setItem('notification', JSON.stringify({
+                                message: 'Failed to delete friend. Please try again later.',
+                                type: 'error'
+                            }));
+                        }
+                    });
+            });
+        }
+
+        // Ẩn modal
+        function hideDeleteModal() {
+            document.getElementById('deleteModal').style.display = 'none';
+        }
+
+        // Đóng modal khi click ra ngoài
+        window.onclick = function(event) {
+            const modal = document.getElementById('deleteModal');
+            if (event.target === modal) {
+                hideDeleteModal();
+            }
+        }
+    </script>
 
     <?php
     include 'footer.php';
