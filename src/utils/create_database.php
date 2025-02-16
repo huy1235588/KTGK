@@ -26,6 +26,17 @@ function TaoDatabaseVaTable()
         role varchar(10) DEFAULT 'user' 
     )";
 
+    // Bảng bạn bè
+    $sqlFriends = "CREATE TABLE IF NOT EXISTS friends (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        user_id INT NOT NULL,
+        friend_id INT NOT NULL,
+        status ENUM('pending', 'accepted', 'blocked') DEFAULT 'pending',
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+        FOREIGN KEY (friend_id) REFERENCES users(id) ON DELETE CASCADE
+    )";
+
     // SQL tạo bảng type nếu chưa tồn tại
     $sqlType = "CREATE TABLE IF NOT EXISTS types (
         id INT AUTO_INCREMENT PRIMARY KEY,
@@ -245,6 +256,7 @@ function TaoDatabaseVaTable()
     // Mảng chứa các câu lệnh SQL
     $sqlArray = [
         $sqlUsers,
+        $sqlFriends,
         $sqlType,
         $sqlProducts,
         $sqlProductDevelopers,
@@ -316,6 +328,7 @@ echo "Database và các bảng đã được tạo thành công!<br><br>";
 // Danh sách các file chứa dữ liệu cần chèn
 $list_tables = [
     "../../database/insert_user.sql",
+    "../../database/insert_friend.sql",
     "../../database/insert_type.sql",
     "../../database/insert_product.sql",
     "../../database/insert_developer.sql",

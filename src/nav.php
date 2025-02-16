@@ -215,6 +215,18 @@ if ($result->num_rows > 0) {
                             </a>
                         </li>
 
+                        <!-- Friends -->
+                        <li class="account-dropdown-item">
+                            <a href="friends.php">
+                                <div class="icon">
+                                    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 24 24" font-size="20px" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M12 2C6.486 2 2 6.486 2 12c0 3.865 2.905 7.06 6.646 7.917-.05-.572-.146-1.156-.146-1.75 0-2.761 2.239-5 5-5s5 2.239 5 5c0 .594-.096 1.178-.146 1.75C19.095 19.06 22 15.865 22 12c0-5.514-4.486-10-10-10zm0 16c-2.761 0-5-2.239-5-5 0-.594.096-1.178.146-1.75C4.905 12.94 2 9.745 2 6c0-3.314 2.686-6 6-6s6 2.686 6 6c0 .594-.096 1.178-.146 1.75.05.572.146 1.156.146 1.75 0 2.761-2.239 5-5 5z"></path>
+                                    </svg>
+                                </div>
+                                Friends
+                            </a>
+                        </li>
+
                         <!-- Library -->
                         <li class="account-dropdown-item">
                             <a href="library.php">
