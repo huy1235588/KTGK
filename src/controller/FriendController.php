@@ -135,6 +135,76 @@ class FriendController
         return $stmt->affected_rows > 0;
     }
 
+    // Hàm lấy toàn bộ lời mời kết bạn
+    public function getAllFriendRequests($userId)
+    {
+        // Viết câu truy vấn
+        $sql = "SELECT *
+                FROM friends f JOIN users u ON f.user_id = u.id
+                WHERE f.friend_id = ?
+                AND f.status = 'pending'
+        ";
+
+        // Chuẩn bị
+        $stmt = $this->conn->prepare($sql);
+
+        // Bind
+        $stmt->bind_param('i', $userId);
+
+        // Thực thi
+        $stmt->execute();
+
+        // Lấy kết quả
+        $result = $stmt->get_result();
+
+        return $result->fetch_all(MYSQLI_ASSOC);
+    }
+
+    // Hàm để chấp nhận lời mời kết bạn
+    public function acceptFriendRequest($userId, $friendId)
+    {
+        // Viết câu truy vấn
+        $sql = "UPDATE friends
+                SET status = 'accepted'
+                WHERE user_id = ?
+                AND friend_id = ?
+        ";
+
+        // Chuẩn bị
+        $stmt = $this->conn->prepare($sql);
+
+        // Bind
+        $stmt->bind_param('ii', $friendId, $userId);
+
+        // Thực thi
+        $stmt->execute();
+
+        // Trả về true nếu chấp nhận thành công
+        return $stmt->affected_rows > 0;
+    }
+
+    // Hàm để từ chối lời mời kết bạn
+    public function rejectFriendRequest($userId, $friendId)
+    {
+        // Viết câu truy vấn
+        $sql = "DELETE FROM friends
+                WHERE user_id = ?
+                AND friend_id = ?
+        ";
+
+        // Chuẩn bị
+        $stmt = $this->conn->prepare($sql);
+
+        // Bind
+        $stmt->bind_param('ii', $friendId, $userId);
+
+        // Thực thi
+        $stmt->execute();
+
+        // Trả về true nếu từ chối thành công
+        return $stmt->affected_rows > 0;
+    }
+
     // Hàm để xoá bạn bè
     public function deleteFriend($userId, $friendId)
     {
