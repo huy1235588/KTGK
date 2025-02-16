@@ -25,10 +25,12 @@ if (isset($_GET['userId']) && isset($_GET['friendId'])) {
         // tra ve json
         echo json_encode([
             'success' => true,
+            'friendId' => $friendId,
         ]);
     } else {
         echo json_encode([
             'success' => false,
+            'friendId' => $friendId,
         ]);
     }
 }

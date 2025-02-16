@@ -176,6 +176,7 @@
         function createFriendElement(friend) {
             const div = document.createElement('div');
             div.className = 'add-friend-item';
+            div.dataset.friendId = friend.id;
 
             // Tạo ảnh hiển thị avatar
             const img = document.createElement('img');
@@ -224,18 +225,7 @@
 
                 // Lấy kết quả từ response
                 const data = await response.json();
-
-                // Xử lý kết quả
-                if (data.success) {
-                    button.textContent = "Added";
-                    button.classList.add('added');
-                    showTempNotification('Friend request sent!', 'success');
-                } else {
-                    button.textContent = "Add Friend";
-                    button.disabled = false;
-                    showTempNotification(data.message || 'Request failed', 'error');
-                }
-
+                handleRequestResponse(data);
             } catch (error) {
                 console.error('Request error:', error);
                 handleRequestResponse({
@@ -254,7 +244,14 @@
             };
 
             setNotification(notification.message, notification.type);
-            // window.location.reload();
+
+            // Đổi trạng thái button
+            if (data.success) {
+                // Tìm button có data-friend-id tương ứng
+                const button = document.querySelector(`.add-friend-item[data-friend-id="${data.friendId}"] .add-friend-button`);
+                button.textContent = 'Request Sent';
+                button.classList.add('request-status');
+            }
         }
 
         // UI helpers

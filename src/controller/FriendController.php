@@ -38,6 +38,30 @@ class FriendController
         return $result->fetch_all(MYSQLI_ASSOC);
     }
 
+    // Hàm để lấy bạn bè theo friendId
+    public function getFriendByFriendId($friendId)
+    {
+        // Viết câu truy vấn
+        $sql = "SELECT *
+            FROM friends f JOIN users u ON f.user_id = u.id
+            WHERE f.friend_id = ?
+        ";
+
+        // Chuẩn bị
+        $stmt = $this->conn->prepare($sql);
+
+        // Bind
+        $stmt->bind_param('i', $friendId);
+
+        // Thực thi
+        $stmt->execute();
+
+        // Lấy kết quả
+        $result = $stmt->get_result();
+
+        return $result->fetch_all(MYSQLI_ASSOC);
+    }
+
     // Hàm xem đã gửi lời mời kết bạn chưa
     public function isFriendRequestSent($userId, $friendId)
     {
