@@ -236,13 +236,17 @@ $genres = $productController->getGenres();
                 </div>
             </li>
         <?php else: ?>
-            <?php if (strpos($_SERVER['REQUEST_URI'], 'dangnhap.php') === false): ?>
+            <?php 
+            // Get the current script file name without query parameters
+            $currentScript = basename(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH));
+            ?>
+            <?php if ($currentScript !== 'dangnhap.php'): ?>
                 <li class="menu-item">
                     <a href="dangnhap.php?redirect=<?= $currentUrl ?>" class="menu-link">
                         Log in
                     </a>
                 </li>
-            <?php elseif (strpos($_SERVER['REQUEST_URI'], 'dangky.php') === false): ?>
+            <?php elseif ($currentScript !== 'dangky.php'): ?>
                 <li class="menu-item">
                     <a href="dangky.php" class="menu-link">
                         Sign up
