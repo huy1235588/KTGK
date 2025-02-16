@@ -39,6 +39,19 @@ class UserController
         return $result;
     }
 
+    // Hàm để tìm user theo username
+    public function findUserByUsername($username)
+    {
+        $username = '%' . $username . '%';
+
+        $sql = "SELECT * FROM users WHERE userName LIKE ?";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param("s", $username);
+        $stmt->execute();
+        $result = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+        return $result;
+    }
+
     // Hàm để lấy toàn bộ user
     public function getUserByPage($offset, $limit, $columns, $query, $sort, $order)
     {

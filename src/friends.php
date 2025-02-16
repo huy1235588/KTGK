@@ -113,7 +113,6 @@
                                 </a>
                             </span>
 
-
                             <!-- Delete Button -->
                             <button class="delete-btn"
                                 onclick="showDeleteModal(<?php echo $friend['id']; ?>, '<?php echo addslashes(htmlspecialchars($friend['userName'])); ?>')">
