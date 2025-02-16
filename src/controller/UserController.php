@@ -44,7 +44,9 @@ class UserController
     {
         $username = '%' . $username . '%';
 
-        $sql = "SELECT * FROM users WHERE userName LIKE ?";
+        $sql = "SELECT *
+                FROM users u
+                WHERE userName LIKE ?";
         $stmt = $this->conn->prepare($sql);
         $stmt->bind_param("s", $username);
         $stmt->execute();

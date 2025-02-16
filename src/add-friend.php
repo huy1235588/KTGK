@@ -49,7 +49,7 @@
         });
     </script>
 
-    <article class="container">
+    <article class="container" id="addFriendContainer" data-user-id="<?php echo $userId; ?>">
         <!-- Sidebar -->
         <aside class="sidebar">
             <ul class="sidebar-list">
@@ -107,7 +107,8 @@
         // Cache DOM elements
         const friendSearchInput = document.getElementById('friendSearch');
         const resultsContainer = document.getElementById('searchResults');
-        const userId = document.body.dataset.userId; // Get userId from data attribute
+        // Lấy userId từ data attribute
+        const userId = document.getElementById('addFriendContainer').dataset.userId;
 
         // Hàm debounce để giảm số lần gửi request khi người dùng nhập nhanh
         const debounce = (func, delay = 500) => {
@@ -136,7 +137,7 @@
                 showLoadingIndicator();
 
                 // Gửi request tìm kiếm bạn bè
-                const response = await fetch(`api/search_friend.php?userName=${encodeURIComponent(query)}`);
+                const response = await fetch(`api/search_friend.php?userId=${userId}&userName=${encodeURIComponent(query)}`);
 
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
@@ -176,19 +177,34 @@
             const div = document.createElement('div');
             div.className = 'add-friend-item';
 
+            // Tạo ảnh hiển thị avatar
             const img = document.createElement('img');
             img.className = 'add-friend-avatar';
             img.src = `/${friend.avatar}`;
             img.alt = 'Avatar';
 
+            // Tạo span hiển thị tên
             const span = document.createElement('span');
             span.className = 'add-friend-info';
             span.textContent = friend.userName;
 
+            // Tạo button thêm bạn bè
             const button = document.createElement('button');
-            button.textContent = 'Add Friend';
-            button.addEventListener('click', () => sendFriendRequest(friend.id));
+            button.className = 'add-friend-button';
 
+            // Xử lý trạng thái
+            if (friend.isFriend) {
+                button.textContent = 'Friends';
+                button.classList.add('friend-status');
+            } else if (friend.isSentRequest) {
+                button.textContent = 'Request Sent';
+                button.classList.add('request-status');
+            } else {
+                button.textContent = 'Add Friend';
+                button.addEventListener('click', () => sendFriendRequest(friend.id));
+            }
+
+            // Thêm các element vào div
             div.append(img, span, button);
             return div;
         }
@@ -196,16 +212,29 @@
         // Gửi request kết bạn
         async function sendFriendRequest(friendId) {
             try {
+                // Gửi request
                 const response = await fetch(
                     `api/send_friend_request.php?userId=${userId}&friendId=${friendId}`
                 );
 
+                // Nếu request không thành công thì throw error
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
 
+                // Lấy kết quả từ response
                 const data = await response.json();
-                handleRequestResponse(data);
+
+                // Xử lý kết quả
+                if (data.success) {
+                    button.textContent = "Added";
+                    button.classList.add('added');
+                    showTempNotification('Friend request sent!', 'success');
+                } else {
+                    button.textContent = "Add Friend";
+                    button.disabled = false;
+                    showTempNotification(data.message || 'Request failed', 'error');
+                }
 
             } catch (error) {
                 console.error('Request error:', error);
@@ -217,14 +246,15 @@
 
         // Xử lý kết quả request
         function handleRequestResponse(data) {
+            // Hiển thị thông báo
             const notification = {
                 message: data.success ?
                     'Friend request sent!' : 'Failed to send friend request. Please try again later.',
                 type: data.success ? 'success' : 'error'
             };
 
-            sessionStorage.setItem('notification', JSON.stringify(notification));
-            window.location.reload();
+            setNotification(notification.message, notification.type);
+            // window.location.reload();
         }
 
         // UI helpers

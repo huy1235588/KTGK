@@ -430,7 +430,7 @@ button {
 /*===================================*
     04. START SEARCH
 *===================================*/
-.content.add-friend{
+.content.add-friend {
     min-height: 100vh;
 }
 
@@ -477,7 +477,7 @@ button {
 }
 
 .search-results .add-friend-item {
-    width: 50%;
+    width: 100%;
     padding: 15px 20px;
     margin: 10px 0;
     background-color: #fff;
@@ -509,11 +509,12 @@ button {
     font-weight: 500;
 }
 
-.search-results .add-friend-item button {
+/* Add Friend Button */
+.search-results .add-friend-item .add-friend-button {
     background-color: #3498db;
     color: white;
     border: none;
-    padding: 0.5rem 1.5rem;
+    padding: 0.75rem 1.5rem;
     border-radius: 20px;
     cursor: pointer;
     transition: all 0.2s ease;
@@ -522,10 +523,34 @@ button {
     font-size: 0.9rem;
 }
 
-.search-results .add-friend-item button:hover {
+.search-results .add-friend-item .add-friend-button:hover {
     background-color: #2980b9;
     transform: translateY(-1px);
     box-shadow: 0 2px 8px rgba(41, 128, 185, 0.3);
+}
+
+/* Khi đã là bạn */
+.add-friend-item .add-friend-button.friend-status {
+    background-color: #2ecc71;
+    cursor: default;
+}
+
+.add-friend-item .add-friend-button.friend-status:hover {
+    transform: none;
+    box-shadow: none;
+    background-color: #2ecc71;
+}
+
+/* Khi đã gửi yêu cầu */
+.add-friend-item .add-friend-button.request-status {
+    background-color: #95a5a6;
+    cursor: default;
+}
+
+.add-friend-item .add-friend-button.request-status:hover {
+    transform: none;
+    box-shadow: none;
+    background-color: #95a5a6;
 }
 
 /* Status Messages */
