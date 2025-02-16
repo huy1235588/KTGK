@@ -55,12 +55,18 @@ include 'components/notification.php';
 
             // Tạo thông báo đăng nhập thành công
             echo "<script>setNotification('Login successfully!', 'success');</script>";
-            
+
             // Chuyển hướng tới trang chủ hoặc trang được chuyển hướng
             if (isset($_SESSION['redirect'])) {
                 $redirect = $_SESSION['redirect'];
+                // Nếu trang trước đó là dangky.php, chuyển hướng về trang chủ
+                if (strpos($redirect, 'dangky.php') !== false) {
+                    $redirect = 'index.php';
+                }
+
                 unset($_SESSION['redirect']);
                 echo "<script>location.href='$redirect';</script>";
+
                 exit();
             } else {
                 echo "<script>location.href='index.php';</script>";

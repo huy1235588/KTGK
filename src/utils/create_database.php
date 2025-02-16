@@ -18,7 +18,7 @@ function TaoDatabaseVaTable()
         address VARCHAR(255),
         gender ENUM('Nam', 'Nữ') NOT NULL,
         birthday DATE,
-        avatar VARCHAR(255) DEFAULT 'uploads/default_avatar.png',
+        avatar VARCHAR(255) DEFAULT 'uploads/users/avatar/default_avatar.png',
         userName VARCHAR(50) NOT NULL UNIQUE,
         password VARCHAR(255) NOT NULL,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
