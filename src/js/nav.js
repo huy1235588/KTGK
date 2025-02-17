@@ -3,6 +3,45 @@ const buttonSearch = document.querySelector('.button-search');
 const buttonClear = document.querySelector('.button-clear');
 const dropdown = document.querySelector('.search-dropdown');
 
+// Debounce function
+function debounce(func, wait) {
+    let timeout;
+    return function () {
+        const context = this;
+        const args = arguments;
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func.apply(context, args), wait);
+    };
+}
+
+// Hàm fetch API
+async function fetchSearchResults() {
+    const query = searchInput.value.trim();
+
+    if (query.length > 0) {
+        buttonClear.style.opacity = 1;
+        try {
+            // Gọi API để lấy danh sách sản phẩm
+            const response = await fetch(`api/search.php?q=${encodeURIComponent(query)}`);
+
+            // Chuyển đổi response sang text (HTML)
+            const html = await response.text();
+
+            // Hiển thị danh sách sản phẩm
+            dropdown.innerHTML = html;
+
+            // Hiển thị dropdown
+            dropdown.style.display = 'block';
+        } catch (error) {
+            console.error(error);
+        }
+    } else {
+        buttonClear.style.opacity = 0;
+        dropdown.style.display = 'none';
+    }
+
+}
+
 // Xoá nội dung trong ô search
 buttonClear.addEventListener('click', () => {
     searchInput.value = '';
@@ -13,32 +52,11 @@ buttonClear.addEventListener('click', () => {
 });
 
 // Hiển thị gợi ý sản phẩm
-searchInput.addEventListener('input', async () => {
-    const query = searchInput.value.trim();
+searchInput.addEventListener('input', debounce(fetchSearchResults, 300));
 
-    // khi nhấn nút search
-    buttonSearch.addEventListener('click', () => {
-        window.location.href = `search.php?q=${encodeURIComponent(query)}`;
-    });
-
-    if (query.length > 0) {
-        buttonClear.style.opacity = 1;
-
-        // Gọi API để lấy danh sách sản phẩm
-        const response = await fetch(`api/search.php?q=${encodeURIComponent(query)}`);
-
-        // Chuyển đổi response sang text (HTML)
-        const html = await response.text();
-
-        // Hiển thị danh sách sản phẩm
-        dropdown.innerHTML = html;
-
-        // Hiển thị dropdown
-        dropdown.style.display = 'block';
-    } else {
-        buttonClear.style.opacity = 0;
-        dropdown.style.display = 'none';
-    }
+// khi nhấn nút search
+buttonSearch.addEventListener('click', () => {
+    window.location.href = `search.php?q=${encodeURIComponent(query)}`;
 });
 
 // Ẩn dropdown khi click ra ngoài
