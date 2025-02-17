@@ -108,7 +108,7 @@
 
                             <!-- Mame -->
                             <span class="friend-info">
-                                <a href="profile.php?id=<?php echo $friend['id']; ?>" class="friend-name">
+                                <a href="#" class="friend-name">
                                     <?php echo $friend['userName']; ?>
                                 </a>
                             </span>
