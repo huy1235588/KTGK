@@ -54,7 +54,12 @@ include 'components/notification.php';
             DongKetNoi($conn);
 
             // Tạo thông báo đăng nhập thành công
-            echo "<script>setNotification('Login successfully!', 'success');</script>";
+            echo "<script>
+                    sessionStorage.setItem('notification', JSON.stringify({
+                            message: 'Welcome back, $username!',
+                            type: 'success'
+                        }));
+                </script>";
 
             // Chuyển hướng tới trang chủ hoặc trang được chuyển hướng
             if (isset($_SESSION['redirect'])) {
@@ -77,6 +82,22 @@ include 'components/notification.php';
         }
     }
     ?>
+
+    <script>
+        // Kiểm tra thông báo từ sessionStorage khi trang load
+        document.addEventListener('DOMContentLoaded', function() {
+            const notification = sessionStorage.getItem('notification');
+
+            if (notification) {
+                const {
+                    message,
+                    type
+                } = JSON.parse(notification);
+                setNotification(message, type); // Gọi hàm hiển thị thông báo của bạn
+                sessionStorage.removeItem('notification'); // Xóa thông báo sau khi hiển thị
+            }
+        });
+    </script>
 
     <!-- Content -->
     <main class="container">

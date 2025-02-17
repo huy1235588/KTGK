@@ -95,7 +95,12 @@
 
             if ($stmt->execute()) {
                 // Tạo thông báo đăng ký thành công
-                echo "<script>setNotification('Sign up successfully!', 'success');</script>";
+                echo "<script>
+                        sessionStorage.setItem('notification', JSON.stringify({
+                            message: 'Sign up successfully!',
+                            type: 'success'
+                        }));
+                    </script>";
 
                 // Đóng kết nói database
                 $stmt->close();

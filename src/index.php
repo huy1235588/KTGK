@@ -34,6 +34,22 @@
     $productIdList = [];
     ?>
 
+    <script>
+        // Kiểm tra thông báo từ sessionStorage khi trang load
+        document.addEventListener('DOMContentLoaded', function() {
+            const notification = sessionStorage.getItem('notification');
+
+            if (notification) {
+                const {
+                    message,
+                    type
+                } = JSON.parse(notification);
+                setNotification(message, type); // Gọi hàm hiển thị thông báo của bạn
+                sessionStorage.removeItem('notification'); // Xóa thông báo sau khi hiển thị
+            }
+        });
+    </script>
+
     <!-- Content -->
     <article class="container article">
         <!-- Menu phụ -->
