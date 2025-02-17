@@ -125,14 +125,14 @@
                                                     <!-- Ảnh -->
                                                     <?php if (!empty($screenshots)): ?>
                                                         <?php foreach ($screenshots as $screenshot): ?>
-                                                            <img class="product-img"
+                                                            <img class="product-img product-img-hot-game"
                                                                 src="<?= htmlspecialchars($screenshot['screenshot']) ?>"
                                                                 alt="<?= htmlspecialchars($product['title']) ?>"
                                                                 loading="lazy" />
                                                         <?php endforeach; ?>
                                                     <?php endif; ?>
 
-                                                    <video class="product-img product-img-header active video"
+                                                    <video class="product-video-header active video"
                                                         loop
                                                         muted
                                                         autoplay
@@ -252,12 +252,12 @@
                                         <a href="product.php?id=<?= htmlspecialchars($product['product_id']) ?>">
                                             <!-- Image -->
                                             <div class="product-img-container">
-                                                <div class="skeleton-wrapper product-img-skeleton">
+                                                <div class="skeleton-wrapper product-img-skeleton product-img-skeleton-genre">
                                                     <!-- Skeleton loader -->
                                                     <div class="skeleton skeleton-img"></div>
 
                                                     <!-- Ảnh -->
-                                                    <img class="product-img"
+                                                    <img class="product-img product-img-genre"
                                                         src=""
                                                         data-src="<?= htmlspecialchars($product['headerImage']) ?>"
                                                         alt="<?= htmlspecialchars($product['title']) ?>"
@@ -321,9 +321,11 @@
             <?php endif; ?>
             <script>
                 document.addEventListener("DOMContentLoaded", function() {
-                    const productImg = document.querySelector('.product-img:not(.video)');
-                    const skeletonWrappers = document.querySelectorAll('.skeleton-wrapper.product-img-skeleton');
+                    const productImg = document.querySelector('.product-img.product-img-genre');
+                    const skeletonWrappers = document.querySelectorAll('.skeleton-wrapper.product-img-skeleton-genre');
 
+                    console.log(productImg);
+                    
                     // Nếu không có ảnh hoặc không có skeleton thì không cần làm gì
                     if (!productImg || skeletonWrappers.length === 0) return;
 

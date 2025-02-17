@@ -50,7 +50,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Lắng nghe sự kiện `slideChangeTransitionEnd`
     swiperHotGame.on('slideChangeTransitionEnd', () => {
-        console.log('slideChangeTransitionEnd');
         handleVideoAutoplay();
     });
 
@@ -63,7 +62,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const productLinks = document.querySelectorAll('.hot-game .product-link');
     productLinks.forEach(function (link) {
         const productImage = link.querySelectorAll('.product-img');
-        const productImageHeader = link.querySelector('.product-img-header');
+        const productVideoHeader = link.querySelector('.product-video-header');
         const productScreenshots = link.querySelectorAll('.screenshot');
 
         // Khi rê chuột vào ảnh screenshot thì thay ảnh chính
@@ -77,7 +76,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 img.classList.add('active');
 
                 // Ẩn ảnh header
-                productImageHeader.style.display = 'none';
+                productVideoHeader.style.display = 'none';
             });
 
             // Khi rê chuột ra khỏi ảnh screenshot thì hiện ảnh chính
@@ -86,10 +85,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     img.classList.remove('active');
                 });
 
-                productImageHeader.classList.add('active');
+                productVideoHeader.classList.add('active');
 
                 // Hiện ảnh header
-                productImageHeader.style.display = 'block';
+                productVideoHeader.style.display = 'block';
             });
         });
     });
