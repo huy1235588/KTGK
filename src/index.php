@@ -323,8 +323,6 @@
                 document.addEventListener("DOMContentLoaded", function() {
                     const productImg = document.querySelector('.product-img.product-img-genre');
                     const skeletonWrappers = document.querySelectorAll('.skeleton-wrapper.product-img-skeleton-genre');
-
-                    console.log(productImg);
                     
                     // Nếu không có ảnh hoặc không có skeleton thì không cần làm gì
                     if (!productImg || skeletonWrappers.length === 0) return;
