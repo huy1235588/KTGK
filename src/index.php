@@ -98,8 +98,18 @@
                                                     FROM product_screenshots
                                                     WHERE product_id = '" . $product['id'] . "'
                                                     LIMIT 4";
+
                                     // Thực thi truy vấn
                                     $screenshots = $conn->query($sqlScreenshots);
+
+                                    // Truy vấn video sản phẩm
+                                    $sqlVideos = "SELECT * 
+                                                    FROM product_videos
+                                                    WHERE product_id = '" . $product['id'] . "'
+                                                    LIMIT 1";
+
+                                    // Thực thi truy vấn
+                                    $videos = $conn->query($sqlVideos);
 
                                     // Đóng kết nối
                                     DongKetNoi($conn);
@@ -122,10 +132,20 @@
                                                         <?php endforeach; ?>
                                                     <?php endif; ?>
 
-                                                    <img class="product-img product-img-header active"
-                                                        src="<?= htmlspecialchars($product['headerImage']) ?>"
-                                                        alt="<?= htmlspecialchars($product['title']) ?>"
-                                                        loading="lazy" />
+                                                    <video class="product-img product-img-header active video"
+                                                        loop
+                                                        muted
+                                                        autoplay
+                                                        playsinline>
+                                                        <?php if (!empty($videos)): ?>
+                                                            <?php foreach ($videos as $video): ?>
+                                                                <source src="<?= htmlspecialchars($video['webm']) ?>"
+                                                                    type="video/webm">
+                                                                <source src="<?= htmlspecialchars($video['mp4']) ?>"
+                                                                    type="video/mp4">
+                                                            <?php endforeach; ?>
+                                                        <?php endif; ?>
+                                                    </video>
                                                 </div>
 
                                                 <!-- Product info -->
@@ -195,55 +215,6 @@
                         <div class="swiper-button swiper-button-next hot-game-next"></div>
                         <div class="swiper-button swiper-button-prev hot-game-prev"></div>
                     </div>
-
-                    <script>
-                        document.addEventListener("DOMContentLoaded", function() {
-                            new Swiper('.swiper-hot-game', {
-                                slidesPerView: 1,
-                                spaceBetween: 10,
-                                navigation: {
-                                    nextEl: '.swiper-button-next.hot-game-next',
-                                    prevEl: '.swiper-button-prev.hot-game-prev',
-                                },
-                                loop: true,
-                            });
-                        });
-
-                        // Khi rê chuột vào ảnh screenshot thì thay ảnh chính
-                        const productLinks = document.querySelectorAll('.hot-game .product-link');
-                        productLinks.forEach(function(link) {
-                            const productImage = link.querySelectorAll('.product-img');
-                            const productImageHeader = link.querySelector('.product-img-header');
-                            const productScreenshots = link.querySelectorAll('.screenshot');
-
-                            // Khi rê chuột vào ảnh screenshot thì thay ảnh chính
-                            productScreenshots.forEach(function(screenshot) {
-                                screenshot.addEventListener('mouseover', function() {
-                                    productImage.forEach(function(img) {
-                                        img.classList.remove('active');
-                                    });
-
-                                    const img = link.querySelector(`.product-img[src="${screenshot.src}"]`);
-                                    img.classList.add('active');
-
-                                    // Ẩn ảnh header
-                                    productImageHeader.style.display = 'none';
-                                });
-
-                                // Khi rê chuột ra khỏi ảnh screenshot thì hiện ảnh chính
-                                screenshot.addEventListener('mouseout', function() {
-                                    productImage.forEach(function(img) {
-                                        img.classList.remove('active');
-                                    });
-
-                                    productImageHeader.classList.add('active');
-
-                                    // Hiện ảnh header
-                                    productImageHeader.style.display = 'block';
-                                });
-                            });
-                        });
-                    </script>
                 </div>
             </section>
 
@@ -350,8 +321,8 @@
             <?php endif; ?>
             <script>
                 document.addEventListener("DOMContentLoaded", function() {
-                    const productImg = document.querySelector('.product-img');
-                    const skeletonWrapper = document.querySelectorAll('.skeleton-wrapper.product-img-skeleton');
+                    const productImg = document.querySelector('.product-img:not(.video)');
+                    const skeletonWrappers = document.querySelectorAll('.skeleton-wrapper.product-img-skeleton');
 
                     // Nếu không có ảnh hoặc không có skeleton thì không cần làm gì
                     if (!productImg || skeletonWrappers.length === 0) return;
@@ -361,7 +332,7 @@
                         const imgHeight = productImg.offsetHeight;
 
                         // Set chiều cao cho skeleton loader
-                        skeletonWrapper.forEach(function(wrapper) {
+                        skeletonWrappers.forEach(function(wrapper) {
                             wrapper.style.setProperty('--skeleton-height', `${imgHeight}px`);
                         });
                     };
@@ -426,6 +397,8 @@
             });
         });
     </script>
+
+    <script src="js/index.js"></script>
 
     <?php
     include 'footer.php';

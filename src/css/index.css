@@ -568,6 +568,14 @@ h1 {
     align-items: center;
 }
 
+@media screen and (max-width: 1280px) {
+    .hot-game .product-link .product-img-container {
+        width: 650px;
+        height: 304px;
+    }
+    
+}
+
 .hot-game .product-link .product-img-container .product-img {
     display: none;
     transition: opacity 0.3s ease;
@@ -584,6 +592,13 @@ h1 {
     height: 353px;
     display: flex;
     flex-direction: column;
+}
+
+@media screen and (max-width: 1280px) {
+    .hot-game .product-link .product-info {
+        height: 304px;
+    }
+    
 }
 
 .hot-game .product-link .product-info .product-title {
@@ -634,6 +649,14 @@ h1 {
     -webkit-box-orient: vertical;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+@media screen and (max-width: 1280px) {
+    .hot-game .product-link .product-info .description {
+        -webkit-line-clamp: 3;
+        line-clamp: 3;
+    }
+    
 }
 
 /* Price */
