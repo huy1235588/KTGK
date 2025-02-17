@@ -153,8 +153,8 @@
                             'Content-Type': 'application/json',
                         },
                         body: JSON.stringify({
-                            user_id: <?php echo $userId; ?>,
-                            friend_id: friendId,
+                            userId: <?php echo $userId; ?>,
+                            friendId: friendId,
                             action: action
                         })
                     });

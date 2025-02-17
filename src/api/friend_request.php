@@ -8,15 +8,19 @@ $conn = MoKetNoi();
 // Khởi tạo FriendController
 $userController = new FriendController($conn);
 
+// Đọc toàn bộ nội dung từ input stream
+$json = file_get_contents('php://input');
+$data = json_decode($json, true); // Chuyển đổi JSON thành mảng associative
+
 // Set Content-Type
 header('Content-Type: application/json');
 
 // Nếu ;à POST request
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Lấy id từ POST param
-    $action = $_POST['action'];
-    $userId = $_POST['userId'];
-    $friendId = $_POST['friendId'];
+    $action = $data['action'];
+    $userId = $data['userId'];
+    $friendId = $data['friendId'];
 
     // Nếu action là accept
     if ($action === 'accept') {

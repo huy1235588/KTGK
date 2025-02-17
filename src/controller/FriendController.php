@@ -11,6 +11,32 @@ class FriendController
         $this->conn = $conn;
     }
 
+    /**
+     * Hàm thực thi câu truy vấn
+     * @param string $sql đoạn sql cần thực thi
+     * @param array $params mảng chứa các giá trị cần bind vào câu sql
+     * @param string $types kiểu dữ liệu của các biến cần bind
+     * @return mysqli_stmt kết quả trả về sau khi thực thi
+     * @throws Exception lỗi nếu thực thi không thành công
+     */
+    private function executeQuery(string $sql, string $types = '', array $params = []): mysqli_stmt
+    {
+        $stmt = $this->conn->prepare($sql);
+        if (!$stmt) {
+            throw new Exception("Prepare failed: " . $this->conn->error);
+        }
+
+        if (!empty($params)) {
+            $stmt->bind_param($types, ...$params);
+        }
+
+        if (!$stmt->execute()) {
+            throw new Exception("Execute failed: " . $stmt->error);
+        }
+
+        return $stmt;
+    }
+
     // Hàm để lấy toàn bộ bạn bè
     public function getAllFriends($userId)
     {
@@ -19,21 +45,17 @@ class FriendController
             FROM friends f JOIN users u ON f.friend_id = u.id
             WHERE f.user_id = ?
             AND f.status = 'accepted'
+            UNION
+            SELECT *
+            FROM friends f JOIN users u ON f.user_id = u.id
+            WHERE f.friend_id = ? AND f.status = 'accepted'
         ";
 
         // Chuẩn bị
-        $stmt = $this->conn->prepare($sql);
-
-        // Bind
-        $stmt->bind_param('i', $userId);
-
-        // Thực thi
-        $stmt->execute();
+        $stmt = $this->executeQuery($sql, 'ii', [$userId, $userId]);
 
         // Lấy kết quả
         $result = $stmt->get_result();
-
-        // print_r($result->fetch_all(MYSQLI_ASSOC));
 
         return $result->fetch_all(MYSQLI_ASSOC);
     }
@@ -48,13 +70,7 @@ class FriendController
         ";
 
         // Chuẩn bị
-        $stmt = $this->conn->prepare($sql);
-
-        // Bind
-        $stmt->bind_param('i', $friendId);
-
-        // Thực thi
-        $stmt->execute();
+        $stmt = $this->executeQuery($sql, 'i', [$friendId]);
 
         // Lấy kết quả
         $result = $stmt->get_result();
@@ -73,13 +89,7 @@ class FriendController
         ";
 
         // Chuẩn bị
-        $stmt = $this->conn->prepare($sql);
-
-        // Bind
-        $stmt->bind_param('ii', $userId, $friendId);
-
-        // Thực thi
-        $stmt->execute();
+        $stmt = $this->executeQuery($sql, 'ii', [$userId, $friendId]);
 
         // Lấy kết quả
         $result = $stmt->get_result();
@@ -93,19 +103,13 @@ class FriendController
     {
         // Viết câu truy vấn
         $sql = "SELECT * FROM friends
-                WHERE user_id = ? 
-                AND friend_id = ?
+                WHERE (user_id = ? AND friend_id = ?)
+                OR (user_id = ? AND friend_id = ?)
                 AND status = 'accepted'
         ";
 
         // Chuẩn bị
-        $stmt = $this->conn->prepare($sql);
-
-        // Bind
-        $stmt->bind_param('ii', $userId, $friendId);
-        
-        // Thực thi
-        $stmt->execute();
+        $stmt = $this->executeQuery($sql, 'iiii', [$userId, $friendId, $friendId, $userId]);
 
         // Lấy kết quả
         $result = $stmt->get_result();
@@ -123,13 +127,7 @@ class FriendController
         ";
 
         // Chuẩn bị
-        $stmt = $this->conn->prepare($sql);
-
-        // Bind
-        $stmt->bind_param('ii', $userId, $friendId);
-
-        // Thực thi
-        $stmt->execute();
+        $stmt = $this->executeQuery($sql, 'ii', [$userId, $friendId]);
 
         // Trả về true nếu thêm thành công
         return $stmt->affected_rows > 0;
@@ -146,13 +144,7 @@ class FriendController
         ";
 
         // Chuẩn bị
-        $stmt = $this->conn->prepare($sql);
-
-        // Bind
-        $stmt->bind_param('i', $userId);
-
-        // Thực thi
-        $stmt->execute();
+        $stmt = $this->executeQuery($sql, 'i', [$userId]);
 
         // Lấy kết quả
         $result = $stmt->get_result();
@@ -163,24 +155,31 @@ class FriendController
     // Hàm để chấp nhận lời mời kết bạn
     public function acceptFriendRequest($userId, $friendId)
     {
-        // Viết câu truy vấn
-        $sql = "UPDATE friends
+        $this->conn->begin_transaction();
+
+        try {
+            // Cập nhật trạng thái lời mời kết bạn thành chấp nhận
+            $sql = "UPDATE friends
                 SET status = 'accepted'
                 WHERE user_id = ?
                 AND friend_id = ?
-        ";
+            ";
+            // Thực thi
+            $stmt = $this->executeQuery($sql, 'ii', [$friendId, $userId]);
 
-        // Chuẩn bị
-        $stmt = $this->conn->prepare($sql);
+            // Thêm vào bảng friends với trạng thái chấp nhận
+            $sql = "INSERT INTO friends (user_id, friend_id, status)
+                    VALUES (?, ?, 'accepted')
+            ";
+            // Thực thi
+            $stmt = $this->executeQuery($sql, 'ii', [$userId, $friendId]);
 
-        // Bind
-        $stmt->bind_param('ii', $friendId, $userId);
-
-        // Thực thi
-        $stmt->execute();
-
-        // Trả về true nếu chấp nhận thành công
-        return $stmt->affected_rows > 0;
+            // Trả về true nếu chấp nhận thành công
+            return $stmt->affected_rows > 0;
+        } catch (Exception $e) {
+            $this->conn->rollback();
+            return false;
+        }
     }
 
     // Hàm để từ chối lời mời kết bạn
@@ -193,13 +192,7 @@ class FriendController
         ";
 
         // Chuẩn bị
-        $stmt = $this->conn->prepare($sql);
-
-        // Bind
-        $stmt->bind_param('ii', $friendId, $userId);
-
-        // Thực thi
-        $stmt->execute();
+        $stmt = $this->executeQuery($sql, 'ii', [$friendId, $userId]);
 
         // Trả về true nếu từ chối thành công
         return $stmt->affected_rows > 0;
@@ -215,13 +208,7 @@ class FriendController
         ";
 
         // Chuẩn bị
-        $stmt = $this->conn->prepare($sql);
-
-        // Bind
-        $stmt->bind_param('iiii', $userId, $friendId, $friendId, $userId);
-
-        // Thực thi
-        $stmt->execute();
+        $stmt = $this->executeQuery($sql, 'iiii', [$userId, $friendId, $friendId, $userId]);
 
         // Trả về true nếu xoá thành công
         return $stmt->affected_rows > 0;
