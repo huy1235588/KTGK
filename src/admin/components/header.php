@@ -177,7 +177,7 @@
                             <div class="dropdown-divider"></div>
 
                             <!-- Sign out -->
-                            <a class="dropdown-item" href="/dangxuat.php">
+                            <a class="dropdown-item" href="/logout.php">
                                 <span class="text-truncate pr-2" title="Sign out">Sign out</span>
                             </a>
                         </div>

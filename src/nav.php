@@ -246,7 +246,7 @@ if ($result->num_rows > 0) {
 
                         <!-- Log out -->
                         <li class="account-dropdown-item">
-                            <a href="dangxuat.php?redirect=<?= $currentUrl ?>">
+                            <a href="logout.php?redirect=<?= $currentUrl ?>">
                                 <div class="icon">
                                     <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 24 24" font-size="20px" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
                                         <path d="M16 13v-2H7V8l-5 4 5 4v-3z"></path>
@@ -264,15 +264,15 @@ if ($result->num_rows > 0) {
             // Get the current script file name without query parameters
             $currentScript = basename(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH));
             ?>
-            <?php if ($currentScript !== 'dangnhap.php'): ?>
+            <?php if ($currentScript !== 'login.php'): ?>
                 <li class="menu-item">
-                    <a href="dangnhap.php?redirect=<?= $currentUrl ?>" class="menu-link">
+                    <a href="login.php?redirect=<?= $currentUrl ?>" class="menu-link">
                         Log in
                     </a>
                 </li>
-            <?php elseif ($currentScript !== 'dangky.php'): ?>
+            <?php elseif ($currentScript !== 'signup.php'): ?>
                 <li class="menu-item">
-                    <a href="dangky.php" class="menu-link">
+                    <a href="signup.php" class="menu-link">
                         Sign up
                     </a>
                 </li>

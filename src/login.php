@@ -64,8 +64,8 @@ include 'components/notification.php';
             // Chuyển hướng tới trang chủ hoặc trang được chuyển hướng
             if (isset($_SESSION['redirect'])) {
                 $redirect = $_SESSION['redirect'];
-                // Nếu trang trước đó là dangky.php, chuyển hướng về trang chủ
-                if (strpos($redirect, 'dangky.php') !== false) {
+                // Nếu trang trước đó là signup.php, chuyển hướng về trang chủ
+                if (strpos($redirect, 'signup.php') !== false) {
                     $redirect = 'index.php';
                 }
 
@@ -106,7 +106,7 @@ include 'components/notification.php';
         <?php if ($error): ?>
             <p class="error-login"><?= htmlspecialchars($error) ?></p>
         <?php endif; ?>
-        <form action="dangnhap.php" method="post">
+        <form action="login.php" method="post">
             <table>
                 <tr>
                     <td class="label">Username:</td>

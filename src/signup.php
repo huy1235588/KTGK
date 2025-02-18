@@ -107,7 +107,7 @@
                 $conn->close();
 
                 // Chuyển hướng đến trang đăng nhập
-                echo "<script>location.href='dangnhap.php';</script>";
+                echo "<script>location.href='login.php';</script>";
                 exit();
             } else {
                 $errors['general'] = "Error: " . $conn->error;
@@ -119,7 +119,7 @@
     <!-- Content -->
     <main class="container">
         <h1>Sign up</h1>
-        <form action="dangky.php" method="post">
+        <form action="signup.php" method="post">
             <table>
                 <tr>
                     <td class="label">

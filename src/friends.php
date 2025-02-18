@@ -25,7 +25,7 @@
     // Nếu chưa đăng nhập thì chuyển hướng về trang đăng nhập
     if (!$userId) {
         echo "<script>
-                window.location.href = 'dangnhap.php';
+                window.location.href = 'login.php';
             </script>";
         exit();
     }

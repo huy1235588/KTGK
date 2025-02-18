@@ -10,7 +10,7 @@ function authMiddleware()
     // Kiểm  tra người dùng có đăng nhập hay chưa
     if (!isset($_SESSION['user']['username'])) {
         // Nếu chưa thì chuyển hướng đến trang đăng nhập
-        header('Location: /dangnhap.php');
+        header('Location: /login.php');
         exit();
     }
 }

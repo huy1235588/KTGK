@@ -6,7 +6,7 @@ session_start();
 
 // Nếu không đăng nhập, chuyển hướng về trang đăng nhập
 if (!isset($_SESSION['user']['id'])) {
-    header('Location: dangnhap.php');
+    header('Location: login.php');
     exit;
 }
 
