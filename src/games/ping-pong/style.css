@@ -1,0 +1,77 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #1a1a1a, #2d3436);
+    overflow: hidden;
+}
+
+.game-container {
+    position: relative;
+    width: 800px;
+    height: 500px;
+    background: #000;
+    border: 2px solid #fff;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+    overflow: hidden;
+}
+
+.paddle {
+    position: absolute;
+    width: 10px;
+    height: 80px;
+    background: linear-gradient(to bottom, #00ffcc, #00cc99);
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 255, 204, 0.7);
+}
+
+#player {
+    left: 20px;
+}
+
+#computer {
+    right: 20px;
+}
+
+.ball {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    background: radial-gradient(circle at 30% 30%, #ff00ff, #9900cc);
+    border-radius: 50%;
+    box-shadow: 0 0 15px rgba(255, 0, 255, 0.8);
+}
+
+.center-line {
+    position: absolute;
+    left: 50%;
+    width: 2px;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateX(-50%);
+}
+
+.score {
+    position: absolute;
+    top: 20px;
+    color: #fff;
+    font-family: Arial, sans-serif;
+    font-size: 24px;
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+}
+
+#player-score {
+    left: 20%;
+}
+
+#computer-score {
+    right: 20%;
+}

@@ -61,7 +61,7 @@ DongKetNoi($conn);
 
         <div class="library-grid">
             <?php foreach ($libraryItems as $item): ?>
-                <a class="library-item" href="games/snake-game/index.html">
+                <a class="library-item" href="games/ping-pong/index.html">
                     <!-- Image -->
                     <div class="image-container">
                         <img src="<?= htmlspecialchars($item['headerImage']) ?>" alt="<?= htmlspecialchars($item['title']) ?>">
