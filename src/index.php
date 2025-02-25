@@ -312,7 +312,7 @@
                             <?php endif; ?>
                         </ul>
                         <div class="view-more">
-                            <a href="genre.php?genre=<?= htmlspecialchars($genre['name']) ?>">
+                            <a href="genre.php?id=<?= htmlspecialchars($genre['id']) ?>">
                                 View more
                             </a>
                         </div>
